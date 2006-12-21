@@ -1,0 +1,29 @@
+This tests the programmatically removal of a referred to item or rather its
+prevention because of link integrity. First we need to create the link in
+question:
+
+  >>> self.setRoles(('Manager',))
+  >>> doc = self.portal.doc1
+  >>> img = self.portal.image1
+  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % img.tag()})
+  >>> self.assertEqual(doc.getReferences(), [img])
+
+Then we try to delete the image using ObjectManager's `manage_delObjects`,
+which should raise an exception:
+
+  >>> self.portal.manage_delObjects(ids=['image1'])
+  Traceback (most recent call last):
+  ...
+  LinkIntegrityNotificationException: <img src="http://nohost/plone/image1/image" ... />
+
+Since the implementation is based on `IObjectRemovedEvent` on the real objects
+now (as opposed to on the special references used before), the above exception
+is raised only after the item in question ('image1') was already deleted from
+the folder, and on top of that the exception was expected, the testrunner will
+consider the test successful and therefore not abort the current transaction.
+This results in the image being deleted, even though an exception was raised
+during the call.  Hence we cannot change the document and try removing the
+image again as we did in earlier versions of this test. In real life (i.e.
+outside the testrunner) the exception would cause the transaction to be
+aborted, of course.
+

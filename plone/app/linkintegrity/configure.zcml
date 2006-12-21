@@ -1,0 +1,55 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <five:registerPackage package="." initialize=".initialize" />
+    
+  <adapter
+      for="zope.publisher.interfaces.browser.IBrowserRequest"
+      provides=".interfaces.ILinkIntegrityInfo"
+      factory=".info.LinkIntegrityInfo" />
+
+  <five:implements
+    class="OFS.Image.Image"
+    interface=".interfaces.IOFSImage" />
+
+  <!-- Views used to perform link integrity checks and actually remove an object -->
+
+  <browser:page 
+    name="index.html" 
+    for=".interfaces.ILinkIntegrityNotificationException"
+    template="browser/confirmation.pt"
+    class=".browser.confirmation.RemoveConfirmationView"
+    permission="zope2.Public" />
+
+  <browser:page 
+    name="removeConfirmationAction"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".browser.remove.RemoveReferencedObjectView"
+    permission="zope2.Public" /> 
+
+  <!-- Event handleres for updating link integrity references -->
+
+  <subscriber
+    for="Products.Archetypes.interfaces.IBaseObject
+         zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+    handler=".handlers.modifiedArchetype" />
+
+  <subscriber
+    for="Products.Archetypes.interfaces.IBaseObject
+         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".handlers.modifiedArchetype" />
+
+  <subscriber
+    for="Products.Archetypes.interfaces.IBaseObject
+         zope.app.container.interfaces.IObjectRemovedEvent" 
+    handler=".handlers.referencedObjectRemoved" />
+
+  <subscriber
+    for="Products.Archetypes.interfaces.IReference
+         zope.app.container.interfaces.IObjectRemovedEvent" 
+    handler=".handlers.referenceRemoved" />
+
+
+</configure>

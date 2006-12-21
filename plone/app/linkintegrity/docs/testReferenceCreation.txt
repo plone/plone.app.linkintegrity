@@ -1,0 +1,40 @@
+This tests the correct creation of references used for ensuring link
+integrity.  Any archetype-based content object which refers to other (local)
+objects by `<img>` or `<a>` tags should create references between those
+objects on save.  First we check neither the document nor the image have any
+references yet:
+
+  >>> doc = self.portal.doc1
+  >>> self.assertEqual(doc.getReferences(), [])
+  >>> self.assertEqual(doc.getBackReferences(), [])
+  >>> img = self.portal.image1
+  >>> self.assertEqual(img.getReferences(), [])
+  >>> self.assertEqual(img.getBackReferences(), [])
+
+Then we edit the document and insert a link to the image, which should
+trigger the creation of the references.  We need to use ``processForm()`` here,
+because using the mutator won't call ``notify`` and therefore not trigger
+the `IObjectModifiedEvent` event either:
+
+  >>> self.setRoles(('Manager',))
+  >>> tag = img.tag()
+  >>> tag
+  '<img src="http://nohost/plone/image1/image" ... title="Test Image 1" ... />'
+  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % tag})
+  >>> doc.getReferences()
+  [<ATImage at /plone/image1>]
+  >>> doc.getBackReferences()
+  []
+  >>> img.getReferences()
+  []
+  >>> img.getBackReferences()
+  [<ATDocument at /plone/doc1>]
+
+Next we change the document again and insert a link to another page:
+
+  >>> doc.processForm(values={'text':'<html> <body> <a href="news">news</a> </body> </html>'})
+  >>> doc.getReferences()
+  [<ATTopic at /plone/news>]
+  >>> self.portal.news.getBackReferences()
+  [<ATDocument at /plone/doc1>]
+

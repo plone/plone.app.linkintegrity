@@ -1,0 +1,77 @@
+This tests the behaviour when one of multiple removals gets cancelled.  This
+should result in cancelling the complete removal operation, that is, none of
+previously confirmed removals are performed, either.
+
+First we need to create the necessary links:
+
+  >>> self.setRoles(('Manager',))
+  >>> tmpl = '<html> <body> %s, %s </body> </html>'
+  >>> p = self.portal
+  >>> p.doc1.processForm(values={'text':tmpl % (p.image1.tag(), p.image2.tag())})
+  >>> p.doc2.processForm(values={'text':tmpl % (p.image1.tag(), p.image3.tag())})
+
+Then we use a browser to try to delete the referenced images.  Before we
+can do this we need to prevent the test framework from choking on the
+exception we intentionally throw and also set up a referer for cancelling the
+removal (see docs/testRemovalTriggersConfirmation.txt for more info about
+both issues).  Also, we disable the event count helper (as set in
+folder_contents), so that all tests written so far won't need modification:
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> self.disableEventCountHelper()
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.addHeader('Referer', browser.url)
+  >>> browser.getControl('Test Image 1').selected = True
+  >>> browser.getControl('Test Image 2').selected = True
+  >>> browser.getControl('Test Image 3').selected = True
+  >>> browser.getControl('Delete').click()
+  >>> browser.contents
+  '...Test Image 1...(Type Image... at http://nohost/plone/image1) is referenced...
+   ...by the following objects:...
+   ...<li>...Test Page 1...(http://nohost/plone/doc1)...</li>...
+   ...<li>...Test Page 2...(http://nohost/plone/doc2)...</li>...
+   ...Would you like to delete it anyway?...'
+  >>> browser.getControl(name='delete').click()
+
+Since separate events are fired for every item deleted by `manage_delObjects`
+there is no way to handle all potential integrity breaches in one single form,
+at least no general way. Therefore we are presented with several forms asking
+for confirmation in regard to breaches caused by deleting the individual
+items:
+
+  >>> browser.contents
+  '...Test Image 2...(Type Image... at http://nohost/plone/image2) is referenced...
+   ...by the following objects:...
+   ...<li>...Test Page 1...(http://nohost/plone/doc1)...</li>...
+   ...Would you like to delete it anyway?...'
+  >>> browser.getControl(name='delete').click()
+  >>> browser.contents
+  '...Test Image 3...(Type Image... at http://nohost/plone/image3) is referenced...
+   ...by the following objects:...
+   ...<li>...Test Page 2...(http://nohost/plone/doc2)...</li>...
+   ...Would you like to delete it anyway?...'
+
+Instead of also confirming the last removal we change our minds and cancel the
+whole operation:
+
+  >>> browser.getControl(name='cancel').click()
+  >>> browser.url
+  'http://nohost/plone/folder_contents'
+  >>> browser.contents
+  '...<div class="portalMessage">Removal cancelled.</div>...'
+
+This should result in all images and references still being existent:
+
+  >>> self.portal.image1
+  <ATImage at /plone/image1>
+  >>> self.portal.image2
+  <ATImage at /plone/image2>
+  >>> self.portal.image3
+  <ATImage at /plone/image3>
+  
+  >>> self.portal.doc1.getReferences()
+  [<ATImage at /plone/image1>, <ATImage at /plone/image2>]
+  >>> self.portal.doc2.getReferences()
+  [<ATImage at /plone/image1>, <ATImage at /plone/image3>]
+

@@ -1,0 +1,45 @@
+This tests the behaviour of the link integrity code when a to be deleted
+item is referred to by some page the current user has no permission to view.
+In this case the privacy of the linking user should be protected, so neither
+the name or url of the linking page should be shown.  First we need to create
+the link in question and set up the permissions accordingly:
+
+  >>> doc = self.portal.doc1
+  >>> img = self.portal.image1
+  >>> self.setRoles(('Manager',))
+  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % img.tag()})
+  >>> self.setRoles(('Member',))
+  >>> self.portal.manage_permission('List folder contents', roles=('Member',))
+  >>> self.portal.manage_permission('Delete objects', roles=('Member',))
+  >>> doc.manage_permission('View', roles=('Manager',), acquire=0)
+  >>> doc.manage_permission('Access contents information', roles=('Manager',), acquire=0)
+  >>> checkPermission = self.portal.portal_membership.checkPermission
+  >>> self.failIf(checkPermission('View', doc))
+  >>> self.failIf(checkPermission('Access contents information', doc))
+
+Next we use a browser to try to delete the image used in the document.  Before
+we can do this we need to prevent the test framework from choking on the
+exception we intentionally throw again (see
+docs/testRemovalTriggersConfirmation.txt for more info):
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+
+Now we can go ahead and try to delete the image and thereby check if we're
+told we cannot access the document referencing our image:
+
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.getControl('Test Image 1').selected = True
+  >>> self.handleErrors = False
+  >>> browser.getControl('Delete').click()
+  >>> browser.contents
+  '...<div class="documentContent"...
+   ...<form ... action="http://nohost/plone/removeConfirmationAction">...
+   ...Test Image 1...(Type Image... at http://nohost/plone/image1) is referenced...
+   ...by the following objects:...
+   ...<ul>...Title not accessible...</ul>...
+   ...Would you like to delete it anyway?...
+   ...<input type="hidden" name="original_request"...
+   ...<input type="submit" name="delete" value="yes" />...
+   ...<input type="submit" name="cancel" value="cancel" />...'
+

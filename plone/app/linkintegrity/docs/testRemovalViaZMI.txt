@@ -1,0 +1,36 @@
+This tests ensuring link integrity when removing an object via the ZMI.  First
+we need to set up the a link between two documents:
+
+  >>> self.setRoles(('Manager',))
+  >>> self.portal.doc1.processForm(values={'text':'<a href="doc2">a document</a>'})
+
+Then we use a browser to try to delete the referenced document.  Before we can
+do this we need to prevent the test framework from choking on the exception we
+intentionally throw (see docs/testRemovalTriggersConfirmation.txt for more
+info):
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/manage_main')
+  >>> browser.getControl(name='ids:list').getControl(value='doc2').selected = True
+  >>> browser.getControl('Delete').click()
+  >>> browser.contents
+  '...<div class="documentContent"...
+   ...<form ... action="http://nohost/plone/removeConfirmationAction">...
+   ...Test Page 2...(Type Document... at http://nohost/plone/doc2) is referenced...
+   ...by the following objects:...
+   ...<ul>...Test Page 1...(http://nohost/plone/doc1)...</ul>...
+   ...Would you like to delete it anyway?...
+   ...<input type="hidden" name="original_request"...
+   ...<input type="submit" name="delete" value="yes" />...
+   ...<input type="submit" name="cancel" value="cancel" />...'
+
+After we have acknowledged the breach in link integrity the document should
+have been deleted:
+
+  >>> browser.getControl(name='delete').click()
+  >>> self.portal.doc2
+  Traceback (most recent call last):
+  ...
+  AttributeError: doc2
+

@@ -1,0 +1,235 @@
+[ these notes are a bit outdated now as they were written looking at
+  revision 29942 and there have been quite a number of changes since;
+  however, they should still give some hints about the problems and
+  make it easier to follow the recent changes;  nevertheless i'll try
+  to update soon... ]
+
+
+The how and why of link integrity when deleting objects
+=======================================================
+
+Okay, so here are some notes and explanations about the code in the
+Plone 3.0 review bundle for PLIP 125 -- Ensuring link/reference
+integrity, for the use case "deleting an item".  I've first tried to
+write this in a rather serious-documentation-like way, but realized soon
+enough that this would take much too long, so here's my second take in a
+more email-like fashion...
+
+First of all, it is important to note that one goal of the PLIP is to
+try to create a preferably generic way of ensuring link integrity.
+While it would have been relatively easy to enhance plone by integrity
+checks in a number of important places where objects can get deleted
+by the user, i.e. most visibly in `folder_contents`, trying to cover
+all possible ways of deleting objects, even future ones, seemed if
+at all only possible using the zope3-style event system.  However,
+this had a number of implications on the code, making it potentially
+look a bit hacky at first sight.
+
+Furthermore, another goal was to be able to interrupt any request that
+would cause an integrity breach and possibly continue it (after asking
+the user), which add to that effect.  Therefore I'd like to explain what
+problems I encountered and how a tried to solve them one by one after
+which it's hopefully more clear why the code turned out like it did, or
+in some cases even needed to, imho.
+
+
+Events and special references
+-----------------------------
+
+According to the PLIP the bundle tries to ensure link integrity by
+using references indicating that a document or other content object is
+refering to an image or another page.  When an item is supposed to be
+removed by the user, those references are then used to check if the
+removal would cause a breach of link integrity.  Events are used both
+for setting up those references and also to invoke the check.  The
+former can be done using `IObjectModifiedEvent` whenever an object was
+saved and is relatively straight-forward.  However, invoking the check
+using events brought up some problems ultimatively preventing it.  There
+is still an event involved in the process, so the above statement is not
+wrong, but I'll get to that soon.
+
+Before I'd like to point out why although it seemed logical to subscribe
+to `IObjectWillBeRemovedEvent`, it wouldn't help much in this case.
+This is because any additional subscriber to `IObjectWillBeRemovedEvent`
+will be called after the legacy support for `manage_beforeDelete`
+has been handled (OFS/ObjectManager.py:374[1]).  This means that the
+subscriber used for checking the link integrity references is also only
+called after the object's `manage_beforeDelete`, which in turn calls
+`Referenceable.manage_beforeDelete` (Archetypes/BaseObject.py:201),
+where all references held by the object are removed before it is
+deleted itself.  So at the time the "checking" subscriber gets called
+the references representing the links to the object will already be
+removed.  At least, this is true when the subscriber is called for
+`OFS.interfaces.IItem`, that is the referred to object itself.
+
+Now it should be possible to use a subscriber set up for
+`IObjectWillBeRemovedEvent` on the references themselves, possibly even
+producing cleaner code, but I think there was some reason that I cannot
+recall right now :), but that made me opt for another approach instead.
+Ben Saller suggested to use `HoldingReferences` to automatically raise
+an exception when a referenced object is going to be removed.  However,
+`HoldingReferences` as such won't work, because they always raise an
+exception, which makes it impossible to successfully continue the
+request after the user has confirmed it.  But, using the same idea,
+the code introduces a new reference type, which instead of raising an
+exception will notify subscribers of a special event before its target
+is deleted, and that's also where the link integrity checks use events
+as mentioned above.  This way the references created on modification can
+be easily hooked up with the code creating confirmation page, but won't
+hurt (by raising uncaught exceptions) when link integrity should be
+disabled, for example.
+
+
+Events have no return value
+---------------------------
+
+So with an event handler being called whenever an referred to object
+is supposed to be deleted, the handler "only" needs to take care of
+presenting the user with a confirmation form giving some information
+about which objects refer to the one to be removed and asking if it
+should still be deleted.  While this sounds easy, the fact that event
+subscribers support no return value (for obvious reasons) is a problem,
+because the subscriber itself cannot provide the confirmation form.  Not
+even setting up a redirection to the form is possible, because this
+would very likely remove the item before the redirection happens, in
+most cases anyway.
+
+The idea to work around this problem was to raise an exception whenever
+an referred to object was going to be removed and use Zope's error
+mechanism to provide the necessary form as a response to the otherwise
+uncaught exception.  To do this zope3-style an approach inspired by
+FiveException[2] was used:  ZPublisher's exception hook is extended by
+an attempt to look up an adapter for an exception and the request, or in
+other words, a view.  This is done by using sort of a monkey patch at
+the moment, but unlike with FiveException the function registered as the
+new exception hook is just a wrapper around the original one instead of
+a patched version, which would potentially need to be updated after new
+Zope releases.
+
+Obviously patching the exception hook like that is not a desirable
+long-term solution, but maybe a similar approach can be introduced into
+Zope's standard exception hook in the future as such a feature would
+be helpful in a number of places, imho.  Anyway, now it's possible to
+register a view for a given exception via zcml and use it to render a
+response whenever that exception is raised.  One immediate consequence
+was that rendering the view without a context turned out to be not
+very useful, since the page should look like a part of plone, after
+all.  This problem exists at all, since the view in question adapts an
+exception and a request, and not as usual an object and a request.  To
+be able to access the context and hereby the other parts of the plone
+site as well, the code uses the convention that an object representing
+the context is passed as the exception value.  This solves the problem,
+but leaves room for improvement, too, of course.
+
+
+Which exception?
+----------------
+
+The next problem was to find a suitable exception to raise in order to
+call the view containing the confirmation page.  Normally, a specially
+defined exception should have been used, but this proved to be tricky
+without changing code in several places of Plone, Archetypes and Zope.
+
+This is because the exception is raised from an event subscriber
+of the event called by the supposed to be deleted reference in its
+`beforeTargetDeleteInformSource` function, as described before.  This
+limits the choice of exceptions which can potentially be raised, because
+at this time the point of execution (or whatever you'd call that
+properly :)) is inside
+
+  a) the `try` block handling the removal of all references held
+     by an object that is to be removed itself
+     (Archetypes/Referenceable.py:262-274)
+
+  b) the `try` block in the event handler for legacy support of
+     `manage_beforeDelete` (OFS/subscribers.py:153-164)
+
+To have an exception propagate in order to be able to catch and respond
+to it using the view-based approach described before, a) wouldn't be
+problematic, since it only catches instances of `ReferenceException`.
+However, b) would log and ignore (in most conditions, at least) all
+exceptions but `OFS.ObjectManager.BeforeDeleteException` and, well,
+`ConflictError`, but this really shouldn't be raised.  So basically,
+without changing Zope's OFS module and potentially Archetypes as well,
+the only viable option left is `BeforeDeleteException`.
+
+On the other hand, hooking up `BeforeDeleteException` with the
+confirmation form can of course create some other problems, namely when
+a `BeforeDeleteException` is raised for another reason (and not caught
+elsewhere).  So the code should eventually be changed to use its own
+exception type, but for the time being it seemed more important to keep
+is a simple as possible and avoid too many changes in Zope, Archetypes
+etc.
+
+
+Interrupting and continuing a request
+-------------------------------------
+
+The last thing I'd like to write about is how the current code
+interrupts and continues requests in order to be able to "pause" any
+action leading to a link integrity breach, presenting the user with a
+form asking for confirmation, and, depending on the answer, either go
+through with the original request or cancel it.
+
+Continuing a request admittedly sounds very hacky as such, but the idea
+of the PLIP was to try to implement a method of ensuring integrity
+independent of how objects are moved, renamed or deleted (unless I
+understood it wrong, of course :)).  So, to be able to do that in
+a generic fashion, the code cannot make any assumptions about the
+offending request, but should still "insert" the necessary confirmation
+step before it gets processed.
+
+The only possible solution I could think of was to try to "remember"
+the request and later on set it up and re-request it again.  While this
+really doesn't sound like a good idea at first, with the knowledge that
+Zope already supports retrying requests (via the `Retry` exception) and
+after looking at the corresponding code, it turned out to be not too bad
+at all as I can hopefully show in the remainder of this document.
+
+When a `Retry` exception is raised the current transaction is aborted,
+a new request object is built by calling its `retry` function
+(ZPublisher/Publish.py:159) and then published again.  A closer look at
+`retry` (ZPublisher/HTTPRequest.py:131) shows that apart from increasing
+the retry counter only the original request's `stdin` and `_orig_env`
+attributes are used to construct the new request instance.  But that
+also means that only those two attributes are relevant when trying to
+interrupt and continue any given request.
+
+This seems much cleaner than possibly trying to pickle the whole request
+instance or some other approach.  In fact, after saving those values
+accross the confirmation page by compressing and base64-encoding their
+pickled tuple and putting the resulting string in a hidden field, the
+original request can be continued or rather replayed by simply
+overwriting the corresponding attributes of the current request
+instance and raising a `Retry`.
+
+Of course this would normally lead to the same exception being raised,
+since the to be deleted object is still referenced by others, just like
+before.  Since the only two values making it into the new request are
+`stdin` and `_orig_env`, it becomes necessary to set some kind of marker
+in one of the two to indicate that the request was already interrupted
+and confirmed by the user.  The subscriber of the event triggered by the
+removal of the special Archetypes reference as described before can then
+check for this marker and simply not raise `BeforeDeleteException` again
+if it exists.  This results in the original request getting executed as
+it had never been interrupted in the first place.
+
+
+An excuse for hackyness :)
+--------------------------
+
+While all the solutions to the problems described so far are very
+likely not the cleanest and best way in terms of code simplicity and
+maintainability, most of them were the only way to work around the
+limitations I've run into, or at least the cleanest possible way, imho.
+As mentioned before, some things could be better with more changes to
+Zope, Archetypes and/or Plone, but I was trying to find ways to avoid
+or minimize that in order to make the code more suitable as an add-on
+product to Plone.  Also, I've tried to clean up as much as possible and
+comment the trickier parts of the code, so that it hopefully stands a
+chance of being accepted for the 3.0 release... :)
+
+
+[1] all line numbers refer to Zope 2.10.0b1 and the Plone 3.0 review bundle
+[2] http://codespeak.net/svn/z3/FiveException/
+

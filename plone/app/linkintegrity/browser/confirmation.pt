@@ -1,0 +1,51 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+<body>
+
+<metal:main fill-slot="main">
+
+<form method="post" action="removeConfirmationAction"
+      tal:attributes="action view/callbackURL">
+
+  <tal:breaches repeat="breach view/integrityBreaches">
+    <p> <span tal:replace="breach/title" />
+    (Type <span tal:replace="breach/type" />
+     at <span tal:replace="breach/url" />) is referenced
+     by the following objects: </p>
+
+    <ul>
+      <li tal:repeat="src breach/sources">
+        <tal:unauthorized on-error="string:Title not accessible">
+          <span tal:replace="src/Title" /> (<span tal:replace="src/absolute_url" />)
+        </tal:unauthorized>
+      </li>
+    </ul>
+  </tal:breaches>
+
+  <br />
+
+  <p> Would you like to delete it anyway? </p>
+
+  <input type="hidden" name="original_request"
+         tal:attributes="value view/originalRequest" />
+
+  <input type="hidden" name="confirmed_items"
+         tal:attributes="value view/confirmedItems" />
+
+  <input type="hidden" name="cancel_url"
+         tal:attributes="value view/cancelURL" />
+
+  <input type="submit" name="delete" value="yes" />
+
+  <input type="submit" name="delete_all" value="yes to all" />
+
+  <input type="submit" name="cancel" value="cancel" />
+
+</form>
+
+</metal:main>
+
+</body>
+</html>

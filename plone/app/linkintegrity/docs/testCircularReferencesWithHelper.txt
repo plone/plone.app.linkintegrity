@@ -1,0 +1,44 @@
+This tests the behaviour when removing three objects referencing each other
+in a circle.  With the helper value set in 'folder_contents' this situation
+can now be resolved completely, so no confirmation form is needed anymore:
+
+  >>> self.setRoles(('Manager',))
+  >>> p = self.portal
+  >>> p.doc1.processForm(values={'text':'<a href="doc2">documents...</a>'})
+  >>> p.doc2.processForm(values={'text':'<a href="folder1/doc3">linking...</a>'})
+  >>> p.folder1.doc3.processForm(values={'text':'<a href="../doc1">in circles.</a>'})
+  >>> p.doc1.getReferences()
+  [<ATDocument at /plone/doc2>]
+  >>> p.doc2.getReferences()
+  [<ATDocument at /plone/folder1/doc3>]
+  >>> p.folder1.doc3.getReferences()
+  [<ATDocument at /plone/doc1>]
+
+We use a browser to try to delete all three documents:
+
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.getControl('Test Page 1').selected = True
+  >>> browser.getControl('Test Page 2').selected = True
+  >>> browser.getControl('Test Folder 1').selected = True
+  >>> browser.getControl('Delete').click()
+  >>> browser.url
+  'http://nohost/plone/folder_contents'
+  >>> browser.contents
+  '...<div class="portalMessage">Item(s) deleted.</div>...'
+
+The documents should have been deleted:
+
+  >>> self.portal.doc1
+  Traceback (most recent call last):
+  ...
+  AttributeError: doc1
+  >>> self.portal.doc2
+  Traceback (most recent call last):
+  ...
+  AttributeError: doc2
+  >>> self.portal.folder1.doc3
+  Traceback (most recent call last):
+  ...
+  AttributeError: folder1
+

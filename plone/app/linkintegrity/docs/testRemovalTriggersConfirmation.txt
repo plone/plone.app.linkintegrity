@@ -1,0 +1,77 @@
+This tests one aspect of ensuring link integrity by automatically redirecting
+the user to a confirmation form after trying to delete an object that is
+referred to by another object (i.e. document).  First we need to create the
+link in question:
+
+  >>> self.setRoles(('Manager',))
+  >>> doc = self.portal.doc1
+  >>> img = self.portal.image1
+  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % img.tag()})
+  >>> self.assertEqual(doc.getReferences(), [img])
+
+Then we use a browser to try to delete the image used in the document:
+
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.getControl('Test Image 1').selected = True
+
+Now before we try to go ahead and "click" the "delete" button, we need to
+prevent the test framework from choking on the exception we intentionally
+throw. Normally the zope publisher would handle the exception by returning the
+exception value which is nothing else but a html page responding to the error,
+or in this case our confirmation page asking about the removal.  However, the
+doctest framework doesn't support this kind of error handling but catches and
+reports the exception instead (why we need to throw this exception in the
+first place will be explained soon in a different document).  So we "trick"
+the framework by letting it know about the exception and telling it that it's
+okay (by means of status code 200).  This way the intended error message (our
+confirmation page) is returned and we can continue the test:
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+
+Also, the handling of the 'Referer' header doesn't seem to work properly,
+unless we set it explicitely, so we do that:
+
+  >>> browser.addHeader('Referer', browser.url)
+
+Now we can continue and finally "click" the "delete" button:
+
+  >>> browser.getControl('Delete').click()
+  >>> browser.contents
+  '...<div class="documentContent"...
+   ...<form ... action="http://nohost/plone/removeConfirmationAction">...
+   ...Test Image 1...(Type Image... at http://nohost/plone/image1) is referenced...
+   ...by the following objects:...
+   ...<ul>...Test Page 1...(http://nohost/plone/doc1)...</ul>...
+   ...Would you like to delete it anyway?...
+   ...<input type="hidden" name="original_request"...
+   ...<input type="submit" name="delete" value="yes" />...
+   ...<input type="submit" name="cancel" value="cancel" />...'
+
+At first we cancel the removal to see if plone could really help us
+maintaining link integrity:
+
+  >>> browser.getControl(name='cancel').click()
+  >>> browser.url
+  'http://nohost/plone/folder_contents'
+  >>> browser.contents
+  '...<div class="portalMessage">Removal cancelled.</div>...'
+
+The removal was cancelled, so the image should still exist:
+
+  >>> self.portal.image1
+  <ATImage at /plone/image1>
+
+Finally we decided to remove the image anyway, so we can test that too:
+
+  >>> browser.goBack()
+  >>> browser.getControl(name='delete').click()
+
+The original request should have been "continued" at that point, so the image
+should be deleted:
+
+  >>> self.portal.image1
+  Traceback (most recent call last):
+  ...
+  AttributeError: image1
+

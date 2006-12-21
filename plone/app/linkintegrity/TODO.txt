@@ -1,0 +1,17 @@
+to do for a first real version:
+- create a local utility to be able to switch link integrity on and off
+- integrate with already existing confirmation page?
+- integrate topp.rose for handling moved items
+- what about ftp/dav?
+
+nice things to have later on:
+- update implementation notes
+- it would be possible to cancel single removals while going through with
+  the others, but only if a potentially uncaught (by other code, i.e. third
+  party products) exception was raised on cancel;  atm it's unclear if this
+  would be desirable, though...
+- reintroduce objects names/path in portal message on cancel
+- add warnings about moved images/pages
+- factor out all archetypes related stuff using adapters etc (i.e. references)
+- possibly replace atreferences by something more generic (five.intid should do)
+- use pullparser.py instead of the newly written link-parser?
