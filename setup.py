@@ -10,7 +10,7 @@ setup(name='plone.app.linkintegrity',
 """,
       classifiers=[], # Get strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       keywords='link integrity plone',
-      author='Andi Zeitler',
+      author='Andi Zeidler',
       author_email='plone-developers@lists.sourceforge.net',
       url='https://svn.plone.org/svn/plone/plone.app.linkintegrity',
       license='GPL',
