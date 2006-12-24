@@ -64,9 +64,9 @@ def referenceRemoved(obj, event):
     if not obj.relationship == referencedRelationship:
         return                          # skip for other removed references
     storage = ILinkIntegrityInfo(obj.REQUEST)
-    info = storage.getIntegrityInfo()
-    info.setdefault(obj.getTargetObject(), []).append(obj.getSourceObject())
-    storage.setIntegrityInfo(info)      # unnecessary, but sticking to the api
+    breaches = storage.getIntegrityBreaches()
+    breaches.setdefault(obj.getTargetObject(), []).append(obj.getSourceObject())
+    storage.setIntegrityBreaches(breaches)
 
 
 def referencedObjectRemoved(obj, event):
@@ -89,7 +89,7 @@ def referencedObjectRemoved(obj, event):
     # link integrity breaches caused by that have been collected as well;
     # if there aren't any (after circular references have been removed),
     # we keep lurking in the shadows...
-    breaches = dict(info.getIntegrityInfo())
+    breaches = dict(info.getIntegrityBreaches())
     targets = breaches.keys()
     for target, sources in breaches.items():    # first remove deleted sources
         for source in list(sources):

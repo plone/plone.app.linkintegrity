@@ -13,11 +13,11 @@ class ILinkIntegrityInfo(Interface):
     """ a place to store information about link integrity, i.e. breaches;
         the storage is assumed to be unique per browser request """
     
-    def getIntegrityInfo():
-        """ return stored information regarding link integrity """
+    def getIntegrityBreaches():
+        """ return stored information regarding link integrity breaches """
     
-    def setIntegrityInfo(info):
-        """ stored information regarding link integrity """
+    def setIntegrityBreaches(breaches):
+        """ store information regarding link integrity breaches """
     
     def getEnvMarker():
         """ return the marker string used to pass the already confirmed

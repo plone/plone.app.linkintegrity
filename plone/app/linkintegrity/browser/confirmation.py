@@ -49,7 +49,7 @@ class RemoveConfirmationView(BrowserView):
         return encode((body, self.request._orig_env))
     
     def integrityBreaches(self):
-        info = ILinkIntegrityInfo(self.request).getIntegrityInfo()
+        info = ILinkIntegrityInfo(self.request).getIntegrityBreaches()
         breaches = []
         for target, sources in info.items():
             breaches.append({
@@ -62,7 +62,7 @@ class RemoveConfirmationView(BrowserView):
     
     def confirmedItems(self):
         info = ILinkIntegrityInfo(self.request)
-        targets = info.getIntegrityInfo().keys()
+        targets = info.getIntegrityBreaches().keys()
         return info.encodeConfirmedItems(additions=targets)
     
     def callbackURL(self):

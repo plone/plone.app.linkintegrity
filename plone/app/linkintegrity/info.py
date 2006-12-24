@@ -19,8 +19,18 @@ class LinkIntegrityInfo(object):
         return getattr(self.context, self.attribute, {})
     
     def setIntegrityInfo(self, info):
-        """ stored information regarding link integrity """
-        return setattr(self.context, self.attribute, info)
+        """ store information regarding link integrity """
+        setattr(self.context, self.attribute, info)
+    
+    def getIntegrityBreaches(self):
+        """ return stored information regarding link integrity breaches """
+        return self.getIntegrityInfo().get('breaches', {})
+    
+    def setIntegrityBreaches(self, breaches):
+        """ store information regarding link integrity breaches """
+        info = self.getIntegrityInfo()
+        info['breaches'] = breaches
+        self.setIntegrityInfo(info)     # unnecessary, but sticking to the api
     
     def getEnvMarker(self):
         """ return the marker string used to pass the already confirmed
