@@ -23,29 +23,7 @@ class RemoveConfirmationView(BrowserView):
         # the original request to be able to possibly continue it later on,
         # so we pickle and encode its body and environment...
         self.request.stdin.seek(0)
-        
-        # unfortunately on top of all that now we have to work around a bug
-        # in ZopeTestCase:  in zopedoctest's function `http()` (in
-        # Testing/ZopeTestCase/zopedoctest/functional.py:113) the passed in
-        # request_string is used as stdin for `publish_module` (line 177),
-        # but still contains http headers;  it doesn't matter normally,
-        # because the headers are read when it is parsed as a rfc822 message
-        # (line 164), so later in `processInputs()` (HTTPRequest.py:357) the
-        # stream isn't read from its beginning and only the remaining request
-        # body is parsed by the `FieldStorage` (HTTPRequest.py:389);  however,
-        # when a Retry exception is raised, the stream is reset to its start
-        # (HTTPRequest.py:133), so this time `processInputs()` gets all the
-        # headers, including 'content-length';  this causes 'FieldStorage' to
-        # only read the number of bytes as specified by 'content-length' from
-        # the stream in `read_urlencoded()`;  since the stream contains the
-        # headers, it is much longer than just the given length of the body
-        # and therefore cut off...
-        # to work around this (until it's fixed upstream) stdin is parsed
-        # here using rfc822.Message (just like in `http()`) and only the
-        # actual request body is stored for setting up the Retry later on...
-        from rfc822 import Message
-        dummy = Message(self.request.stdin)     # eat up the headers
-        body = self.request.stdin.read()        # read the remainder...
+        body = self.request.stdin.getvalue()    # zope2 request body...
         return encode((body, self.request._orig_env))
     
     def integrityBreaches(self):
