@@ -32,6 +32,10 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
         self.portal.invokeFactory('Folder', id='folder1', title='Test Folder 1')
         self.portal.folder1.invokeFactory('Document', id='doc3', title='Test Page 3',
             text='<html> <body> a test page in a subfolder </body> </html>')
+        self.portal.folder1.invokeFactory('Document', id='doc4', title='Test Page 4',
+            text='<html> <body> another test page </body> </html>')
+        self.portal.folder1.invokeFactory('Document', id='doc5', title='Test Page 5',
+            text='<html> <body> another test page </body> </html>')
         self.login()
         # HTTPRequest's 'set' function is set to it's original implementation
         # at the start of each new test, since otherwise the below monkey

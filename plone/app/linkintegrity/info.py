@@ -32,6 +32,16 @@ class LinkIntegrityInfo(object):
         info['breaches'] = breaches
         self.setIntegrityInfo(info)     # unnecessary, but sticking to the api
     
+    def getDeletedItems(self):
+        """ return information about all items deleted during the request """
+        return self.getIntegrityInfo().get('deleted', [])
+    
+    def addDeletedItem(self, item):
+        """ remember an item deleted during the request """
+        info = self.getIntegrityInfo()
+        info.setdefault('deleted', []).append(item)
+        self.setIntegrityInfo(info)     # unnecessary, but sticking to the api
+    
     def getEnvMarker(self):
         """ return the marker string used to pass the already confirmed
             items across the retry exception """

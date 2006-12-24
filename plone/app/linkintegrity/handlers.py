@@ -71,17 +71,19 @@ def referenceRemoved(obj, event):
 
 def referencedObjectRemoved(obj, event):
     """ check if the removal was already confirmed or redirect to the form """
+    info = ILinkIntegrityInfo(obj.REQUEST)
+    
     # since the event gets called for every subobject before it's
     # called for the item deleted directly via _delObject (event.object)
     # itself, but we do not want to present the user with a confirmation
-    # form for every (referred) subobject, so we skip them...
+    # form for every (referred) subobject, so we remember and skip them...
+    info.addDeletedItem(obj)
     if obj is not event.object:
         return
     
     # if the number of expected events has been stored to help us prevent
     # multiple forms (i.e. in folder_delete), we wait for the next event
     # if we know there will be another...
-    info = ILinkIntegrityInfo(obj.REQUEST)
     if info.moreEventsToExpect():
         return
     
@@ -89,11 +91,12 @@ def referencedObjectRemoved(obj, event):
     # link integrity breaches caused by that have been collected as well;
     # if there aren't any (after circular references have been removed),
     # we keep lurking in the shadows...
+    deleted = info.getDeletedItems()
     breaches = dict(info.getIntegrityBreaches())
     targets = breaches.keys()
     for target, sources in breaches.items():    # first remove deleted sources
         for source in list(sources):
-            if source in targets or source is obj:
+            if source in targets or source in deleted:
                 sources.remove(source)
     for target, sources in breaches.items():    # then remove "empty" targets
         if not sources or info.isConfirmedItem(target):

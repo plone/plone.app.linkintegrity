@@ -1,0 +1,40 @@
+This tests the behaviour when removing an object which is referencing
+some page or image and at the same time is referenced by a third.  This
+should result in no confirmation form whatsoever, of course:
+
+  >>> self.setRoles(('Manager',))
+  >>> p = self.portal
+  >>> p.doc1.processForm(values={'text':'<a href="folder1/doc5">a document</a>'})
+  >>> p.folder1.doc4.processForm(values={'text':'<a href="doc3">a document</a>'})
+  >>> p.doc1.getReferences()
+  [<ATDocument at /plone/folder1/doc5>]
+  >>> p.folder1.doc4.getReferences()
+  [<ATDocument at /plone/folder1/doc3>]
+
+Then we use a browser to try to delete all three documents
+involved above.  Before we can do this we need to prevent the test
+framework from choking on the exception we intentionally throw (see
+docs/testRemovalTriggersConfirmation.txt for more info):
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.getControl('Test Page 1').selected = True
+  >>> browser.getControl('Test Folder 1').selected = True
+  >>> browser.getControl('Delete').click()
+  >>> browser.url
+  'http://nohost/plone/folder_contents'
+  >>> browser.contents
+  '...<div class="portalMessage">Item(s) deleted.</div>...'
+
+The documents should have been deleted:
+
+  >>> self.portal.doc1
+  Traceback (most recent call last):
+  ...
+  AttributeError: doc1
+  >>> self.portal.folder1.doc4
+  Traceback (most recent call last):
+  ...
+  AttributeError: folder1
+

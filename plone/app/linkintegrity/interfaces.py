@@ -19,6 +19,12 @@ class ILinkIntegrityInfo(Interface):
     def setIntegrityBreaches(breaches):
         """ store information regarding link integrity breaches """
     
+    def getDeletedItems():
+        """ return information about all items deleted during the request """
+    
+    def addDeletedItem(item):
+        """ remember an item deleted during the request """
+    
     def getEnvMarker():
         """ return the marker string used to pass the already confirmed
             items across the retry exception """
