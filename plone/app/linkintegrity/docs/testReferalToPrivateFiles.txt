@@ -30,7 +30,6 @@ told we cannot access the document referencing our image:
   >>> browser = self.getBrowser(loggedIn=True)
   >>> browser.open('http://nohost/plone/folder_contents')
   >>> browser.getControl('Test Image 1').selected = True
-  >>> self.handleErrors = False
   >>> browser.getControl('Delete').click()
   >>> browser.contents
   '...<div class="documentContent"...
