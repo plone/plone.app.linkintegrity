@@ -1,6 +1,7 @@
 from plone.app.linkintegrity import referencedRelationship
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
+from Products.Archetypes.exceptions import ReferenceException
 from OFS.interfaces import IItem
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
@@ -54,7 +55,10 @@ def modifiedArchetype(obj, event):
     for ref, extra in refs:
         if IOFSImage.providedBy(ref):
             ref = ref.aq_parent     # use atimage object for scaled images
-        obj.addReference(ref, relationship=referencedRelationship)
+        try:
+            obj.addReference(ref, relationship=referencedRelationship)
+        except ReferenceException:
+            pass
 
 
 def referenceRemoved(obj, event):
