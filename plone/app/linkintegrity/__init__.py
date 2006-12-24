@@ -1,9 +1,6 @@
-from os.path import abspath, dirname, basename
+from os.path import abspath, dirname
 
 packageHome = abspath(dirname(__file__))
-packageName = basename(packageHome)
-packageGlobals = globals()
-
 referencedRelationship = 'isReferencing'
 
 def initialize(context):

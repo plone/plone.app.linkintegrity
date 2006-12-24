@@ -1,6 +1,6 @@
 # setup tests with all doctests found in docs/
 
-from plone.app.linkintegrity import packageHome, packageName, docs
+from plone.app.linkintegrity import packageHome, docs
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase import PloneTestCase
 from Products.Five.testbrowser import Browser
