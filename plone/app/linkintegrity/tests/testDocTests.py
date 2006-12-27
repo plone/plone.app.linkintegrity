@@ -1,14 +1,15 @@
 # setup tests with all doctests found in docs/
 
-from plone.app.linkintegrity import packageHome, docs
+from plone.app.linkintegrity import docs
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase import PloneTestCase
 from Products.Five.testbrowser import Browser
 from unittest import TestSuite
 from StringIO import StringIO
 from base64 import decodestring
-from os.path import join
+from os.path import join, abspath, dirname
 from os import walk
+
 
 PloneTestCase.setupPloneSite()
 
@@ -72,7 +73,7 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
 def test_suite():
     suite = TestSuite()
-    docs_dir = join(packageHome, 'docs/')
+    docs_dir = abspath(dirname(docs.__file__)) + '/'
     for path, dirs, files in walk(docs_dir):
         for name in files:
             relative = join(path, name)[len(docs_dir):]
