@@ -1,7 +1,7 @@
 to do for a first real version:
 - create a local utility to be able to switch link integrity on and off
+- migration for the above utility
 - integrate with already existing confirmation page?
-- integrate topp.rose for handling moved items
 - what about ftp/dav?
 
 nice things to have later on:
