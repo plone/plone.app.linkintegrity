@@ -1,7 +1,6 @@
 from os.path import abspath, dirname
 
 packageHome = abspath(dirname(__file__))
-referencedRelationship = 'isReferencing'
 
 def initialize(context):
     

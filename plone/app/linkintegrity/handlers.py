@@ -1,4 +1,3 @@
-from plone.app.linkintegrity import referencedRelationship
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.exceptions import ReferenceException
@@ -7,6 +6,8 @@ from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
 from urlparse import urlsplit, urlunsplit
 from parser import extractLinks
+
+referencedRelationship = 'isReferencing'
 
 
 def findObject(base, path):
