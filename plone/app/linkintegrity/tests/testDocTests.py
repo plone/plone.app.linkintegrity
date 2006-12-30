@@ -1,6 +1,7 @@
 # setup tests with all doctests found in docs/
 
 from plone.app.linkintegrity import docs
+from plone.app.linkintegrity.tests import layer
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase import PloneTestCase
 from Products.Five.testbrowser import Browser
@@ -17,6 +18,8 @@ from ZPublisher.HTTPRequest import HTTPRequest
 set_orig = HTTPRequest.set
 
 class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
+
+    layer = layer.PloneLinkintegrity
     
     def afterSetUp(self):
         """ create some sample content to test with """
