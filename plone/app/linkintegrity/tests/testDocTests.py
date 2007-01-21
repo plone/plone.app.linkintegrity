@@ -17,6 +17,11 @@ PloneTestCase.setupPloneSite()
 from ZPublisher.HTTPRequest import HTTPRequest
 set_orig = HTTPRequest.set
 
+from zope.testing import doctest
+OPTIONFLAGS = (doctest.REPORT_ONLY_FIRST_FAILURE |
+               doctest.ELLIPSIS |
+               doctest.NORMALIZE_WHITESPACE)
+
 class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
     layer = layer.PloneLinkintegrity
@@ -82,8 +87,7 @@ def test_suite():
             relative = join(path, name)[len(docs_dir):]
             if name.startswith('test') and name.endswith('.txt'):
                 suite.addTest(FunctionalDocFileSuite(relative,
+                    optionflags=OPTIONFLAGS,
                     package=docs.__name__,
                     test_class=LinkIntegrityFunctionalTestCase))
     return suite
-
-
