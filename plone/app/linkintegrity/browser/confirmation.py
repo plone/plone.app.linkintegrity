@@ -36,7 +36,7 @@ class RemoveConfirmationView(BrowserView):
                 'url': target.absolute_url(),
                 'sources': sources,
             })
-        return breaches
+        return sorted(breaches, lambda a,b: cmp(a['title'], b['title']))
     
     def confirmedItems(self):
         info = ILinkIntegrityInfo(self.request)
