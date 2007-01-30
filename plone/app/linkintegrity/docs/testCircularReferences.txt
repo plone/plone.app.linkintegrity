@@ -35,6 +35,17 @@ folder_contents), so that all tests written so far won't need modification:
    ...This...Document...is referenced by the following objects:...
    ...<li>...<a href="http://nohost/plone/folder1/doc3"...Test Page 3...</li>...
    ...Would you like to delete it anyway?...'
+
+Before we continue with the removal of the item, we test for the presence of
+'Test Page 2' in the list of referenced items.  This should not appear as it
+links to an object contained in also to be deleted `folder1/`, and this breach
+can be filtered out even without the helper:
+
+  >>> '<dt><a href="http://nohost/plone/doc2">Test Page 2</a></dt>' in browser.contents
+  False
+
+Now we can continue, i.e. confirm the breaches:
+
   >>> browser.getControl(name='delete').click()
 
 At this point the remaining integrity breaches can be resolved automatically,

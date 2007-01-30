@@ -94,19 +94,9 @@ def referencedObjectRemoved(obj, event):
     
     # at this point all subobjects have been removed already, so all
     # link integrity breaches caused by that have been collected as well;
-    # if there aren't any (after circular references have been removed),
+    # if there aren't any (after things have been cleaned up),
     # we keep lurking in the shadows...
-    deleted = info.getDeletedItems()
-    breaches = dict(info.getIntegrityBreaches())
-    targets = breaches.keys()
-    for target, sources in breaches.items():    # first remove deleted sources
-        for source in list(sources):
-            if source in targets or source in deleted:
-                sources.remove(source)
-    for target, sources in breaches.items():    # then remove "empty" targets
-        if not sources or info.isConfirmedItem(target):
-            del breaches[target]
-    if not breaches:
+    if not info.getIntegrityBreaches():
         return
     
     # if the user has confirmed to remove the currently handled item in a

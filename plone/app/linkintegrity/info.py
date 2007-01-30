@@ -23,8 +23,19 @@ class LinkIntegrityInfo(object):
         setattr(self.context, self.attribute, info)
     
     def getIntegrityBreaches(self):
-        """ return stored information regarding link integrity breaches """
-        return self.getIntegrityInfo().get('breaches', {})
+        """ return stored information regarding link integrity breaches
+            after removing circular references, confirmed items etc """
+        deleted = self.getDeletedItems()
+        breaches = dict(self.getIntegrityInfo().get('breaches', {}))
+        targets = breaches.keys()
+        for target, sources in breaches.items():    # first remove deleted sources
+            for source in list(sources):
+                if source in targets or source in deleted:
+                    sources.remove(source)
+        for target, sources in breaches.items():    # then remove "empty" targets
+            if not sources or self.isConfirmedItem(target):
+                del breaches[target]
+        return breaches
     
     def setIntegrityBreaches(self, breaches):
         """ store information regarding link integrity breaches """
