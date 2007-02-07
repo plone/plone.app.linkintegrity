@@ -2,7 +2,7 @@ plone.app.linkintegrity
 
 Description
 
-  This products tries to integrate PLIP 125 into Plone using the zope3 event
+  This product tries to integrate PLIP 125 into Plone using the zope3 event
   system in order to modify Plone itself as little as possible.
 
 Status
