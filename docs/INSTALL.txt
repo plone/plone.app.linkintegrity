@@ -1,16 +1,10 @@
 plone.app.linkintegrity Installation
-=======================
+====================================
 
  * When you're reading this you have probably already run 
-   ``easy_install plone.app.linkintegrity``. Find out how to install setuptools
-   (and EasyInstall) here:
+   ``easy_install plone.app.linkintegrity``. Find out how to install
+   setuptools (and EasyInstall) here:
    http://peak.telecommunity.com/DevCenter/EasyInstall
-
- * Get `pythonproducts`_ and install it via::
-
-       python setup.py install --home /path/to/instance
-
-   into your Zope instance.
 
  * Create a file called ``plone.app.linkintegrity-configure.zcml`` in the
    ``/path/to/instance/etc/package-includes`` directory.  The file
@@ -18,4 +12,3 @@ plone.app.linkintegrity Installation
 
        <include package="plone.app.linkintegrity" />
 
-.. _pythonproducts: http://plone.org/products/pythonproducts

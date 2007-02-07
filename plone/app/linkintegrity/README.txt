@@ -1,4 +1,4 @@
-Link Integrity Tool v0.3alpha
+plone.app.linkintegrity
 
 Description
 
@@ -19,7 +19,6 @@ Status
   is used to do it. A more detailed explanation of how this works can be found
   in NOTES.txt.
   
-  The second use case of PLIP 125, moving items, will also be integrated soon
-  using the topp.rose product available from
-  https://svn.openplans.org/svn/topp.rose/.
-
+  The second use case of PLIP 125, which is provides better handling of moved
+  items, is implemented by plone.app.redirector, available from
+  https://svn.plone.org/svn/plone/plone.app.redirector/.
