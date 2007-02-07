@@ -1,27 +1,32 @@
 from setuptools import setup, find_packages
-import sys, os
 
-version = '1.0a2'
-
-setup(name='plone.app.linkintegrity',
-      version=version,
-      description="link integrity management",
-      long_description="""\
-""",
-      classifiers=[], # Get strings from http://www.python.org/pypi?%3Aaction=list_classifiers
-      keywords='link integrity plone',
-      author='Andi Zeidler',
-      author_email='plone-developers@lists.sourceforge.net',
-      url='https://svn.plone.org/svn/plone/plone.app.linkintegrity',
-      license='GPL',
-      packages=find_packages(exclude=['ez_setup']),
-      namespace_packages=['plone.app'],
-      include_package_data=True,
-      zip_safe=False,
-      install_requires=[
-        'setuptools',
+setup(name = 'plone.app.linkintegrity',
+      version = '1.0a2',
+      description = 'Manage link integrity in Plone.',
+      keywords = 'link integrity plone',
+      author = 'Plone Foundation',
+      author_email = 'plone-developers@lists.sourceforge.net',
+      url = 'http://svn.plone.org/svn/plone/plone.app.linkintegrity/',
+      download_url = 'http://cheeseshop.python.org/pypi/plone.app.linkintegrity/',
+      license = 'GPL',
+      packages = find_packages(),
+      namespace_packages = ['plone.app'],
+      include_package_data = True,
+      install_requires = ['setuptools',],
+      platforms = 'Any',
+      zip_safe = False,
+      classifiers = [
+        'Development Status :: 3 - Alpha',
+        'Environment :: Web Environment',
+        'Framework :: Zope2',
+        'Intended Audience :: Other Audience',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking',
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
-      )
+      long_description = """\
+        """,
+)
+
