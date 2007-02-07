@@ -2,7 +2,16 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 0.1 Unreleased
+plone.app.linkintegrity - 1.0a2 Released February 7, 2007
+
+    - Bugfixes & other minor enhancements
+      [witsch]
+
+    - Eggification and move into plone.app namespace
+      [optilude]
+
+    - Proof of concept & initial version
+      [witsch]
 
     - Initial package structure.
       [zopeskel]
