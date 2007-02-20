@@ -18,6 +18,7 @@ setup(name = 'plone.app.linkintegrity',
       classifiers = [
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
+	'Framework :: Plone',
         'Framework :: Zope2',
         'Intended Audience :: Other Audience',
         'Intended Audience :: System Administrators',
