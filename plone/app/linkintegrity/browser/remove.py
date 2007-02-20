@@ -5,6 +5,7 @@ from Products.Five import BrowserView
 from ZPublisher.Publish import Retry
 from Acquisition import aq_inner
 from StringIO import StringIO
+from base64 import b64encode
 
 
 class RemoveReferencedObjectView(BrowserView):
@@ -30,6 +31,9 @@ class RemoveReferencedObjectView(BrowserView):
                 env[marker] = 'all'
             else:
                 env[marker] = request.get('confirmed_items')
+            authtoken = b64encode('%s:%s' % request._authUserPW())
+            env['HTTP_AUTHORIZATION'] = 'Basic %s' % authtoken
+            env['HTTP_COOKIE'] = request.get('HTTP_COOKIE', '')
             setattr(request, 'stdin', StringIO(body))
             setattr(request, '_orig_env', env)
             raise Retry

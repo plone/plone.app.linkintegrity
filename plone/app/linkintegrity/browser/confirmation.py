@@ -24,7 +24,11 @@ class RemoveConfirmationView(BrowserView):
         # so we pickle and encode its body and environment...
         self.request.stdin.seek(0)
         body = self.request.stdin.getvalue()    # zope2 request body...
-        return encode((body, self.request._orig_env))
+        env = dict(self.request._orig_env)
+        for key in 'HTTP_AUTHORIZATION', 'HTTP_COOKIE':
+            if env.has_key(key):
+                del env[key]
+        return encode((body, env))
     
     def integrityBreaches(self):
         info = ILinkIntegrityInfo(self.request).getIntegrityBreaches()
