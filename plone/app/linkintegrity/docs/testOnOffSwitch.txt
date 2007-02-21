@@ -1,0 +1,41 @@
+This tests switching link integrity checking on and off.  First we need to
+set up the necessary links:
+
+  >>> self.setRoles(('Manager',))
+  >>> portal.doc1.processForm(values={'text':'<a href="doc2">a document</a>'})
+
+Next we try to delete the referenced document.  Before we can do this we need
+to prevent the test framework from choking on the exception we intentionally
+throw (see docs/testRemovalTriggersConfirmation.txt for more info):
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.getControl('Test Page 2').selected = True
+  >>> browser.getControl('Delete').click()
+  >>> browser.contents
+  '...<div class="documentContent"...
+   ...<form ... action="http://nohost/plone/removeConfirmationAction">...
+   ...<a href="http://nohost/plone/doc2"...Test Page 2...
+   ...This...Document...is referenced by the following objects:...
+   ...<li>...<a href="http://nohost/plone/doc1"...Test Page 1...</li>...
+   ...Would you like to delete it anyway?...'
+
+Now we turn the switch for link integrity checking off via the site
+properties and try again:
+
+  >>> props = portal.portal_properties.site_properties
+  >>> props.manage_changeProperties(enable_link_integrity_checks=False)
+  >>> browser.reload()
+  >>> browser.url
+  'http://nohost/plone/folder_contents'
+  >>> browser.contents
+  '...<div class="portalMessage">Item(s) deleted.</div>...'
+
+The document should have been deleted:
+
+  >>> portal.doc2
+  Traceback (most recent call last):
+  ...
+  AttributeError: doc2
+

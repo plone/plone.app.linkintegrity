@@ -1,7 +1,7 @@
 to do for a first real version:
-- create a local utility to be able to switch link integrity on and off
-- migration for the above utility
+- create form to switch li on/off in the control panel
 - integrate with already existing confirmation page?
+- what about creation of integrity refs in existing sites?
 - what about ftp/dav?
 
 nice things to have later on:

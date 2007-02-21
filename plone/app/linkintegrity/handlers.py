@@ -1,6 +1,7 @@
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.exceptions import ReferenceException
+from Products.CMFCore.utils import getToolByName
 from OFS.interfaces import IItem
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
@@ -77,6 +78,14 @@ def referenceRemoved(obj, event):
 def referencedObjectRemoved(obj, event):
     """ check if the removal was already confirmed or redirect to the form """
     info = ILinkIntegrityInfo(obj.REQUEST)
+    
+    # first we check the site properties to see if link integrity
+    # checking was enabled
+    ptool = getToolByName(event.object, 'portal_properties')
+    props = ptool.site_properties
+    enabled = props.getProperty('enable_link_integrity_checks', False)
+    if not enabled:
+        return
     
     # since the event gets called for every subobject before it's
     # called for the item deleted directly via _delObject (event.object)
