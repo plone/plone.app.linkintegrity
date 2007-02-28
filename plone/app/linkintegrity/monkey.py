@@ -49,11 +49,17 @@ def installExceptionHook():
     import sys
     Zope2 = sys.modules['Zope2']
     if bobo_before is None:
-        bobo_before = getattr(Zope2, '__bobo_before__', None)
-    if transactions_manager is None:
-        transactions_manager = getattr(Zope2, 'zpublisher_transactions')
+        from AccessControl.SecurityManagement import noSecurityManager
+        bobo_before = noSecurityManager
+
+    # Do not test if transactions_manager is None: there always is a default
+    # transaction manager from ZPublisher which needs to be replaced.
+    from Zope2.App.startup import TransactionsManager
+    transactions_manager = TransactionsManager()
+
     if validated_hook is None:
-        validated_hook = getattr(Zope2, 'zpublisher_validated_hook')
+        from Zope2.App.startup import validated_hook as z2_validated_hook
+        validated_hook = z2_validated_hook
 
     modules['Zope2'] = (bobo_before, bobo_after, object, realm,
                         debug_mode, zpublisher_exception_hook_wrapper,
