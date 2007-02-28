@@ -29,42 +29,17 @@ def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
         traceback = None
 
 
+from ZPublisher.Publish import get_module_info
+def proxy_get_module_info(*args, **kwargs):
+    results = list(get_module_info(*args, **kwargs))
+    if results[5] is zpublisher_exception_hook:
+        results[5] = zpublisher_exception_hook_wrapper
+    return tuple(results)
+
+
 def installExceptionHook():
-    # notes from FiveException:
-    #   really hairy hack to get the modules dictionary from the
-    #   default argument of get_module_info. We need to modify this in order
-    #   modify the err_hook (which is zpublisher_exception_hook) after Zope
-    #   has already started up
-    from ZPublisher.Publish import get_module_info
-    #   we need to call this once to initialize the modules dictionary
-    get_module_info('Zope2')
-    modules = get_module_info.func_defaults[0]
-    (bobo_before, bobo_after, object, realm, debug_mode, err_hook,
-     validated_hook, transactions_manager) = modules['Zope2']
-
-
-    # Since we call get_module_info before Zope2.App.startup.startup()
-    # finishes it will cache the Zope2 module before it is fully
-    # initialised. That means that we need to do this setup ourselves.
-    import sys
-    Zope2 = sys.modules['Zope2']
-    if bobo_before is None:
-        from AccessControl.SecurityManagement import noSecurityManager
-        bobo_before = noSecurityManager
-
-    # Do not test if transactions_manager is None: there always is a default
-    # transaction manager from ZPublisher which needs to be replaced.
-    from Zope2.App.startup import TransactionsManager
-    transactions_manager = TransactionsManager()
-
-    if validated_hook is None:
-        from Zope2.App.startup import validated_hook as z2_validated_hook
-        validated_hook = z2_validated_hook
-
-    modules['Zope2'] = (bobo_before, bobo_after, object, realm,
-                        debug_mode, zpublisher_exception_hook_wrapper,
-                        validated_hook, transactions_manager)
-
+    import ZPublisher.Publish
+    ZPublisher.Publish.get_module_info = proxy_get_module_info
 
 
 def retry(self):
