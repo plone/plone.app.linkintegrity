@@ -36,19 +36,25 @@ def installExceptionHook():
     #   modify the err_hook (which is zpublisher_exception_hook) after Zope
     #   has already started up
     from ZPublisher.Publish import get_module_info
-    from AccessControl.SecurityManagement import noSecurityManager
     #   we need to call this once to initialize the modules dictionary
     get_module_info('Zope2')
     modules = get_module_info.func_defaults[0]
     (bobo_before, bobo_after, object, realm, debug_mode, err_hook,
      validated_hook, transactions_manager) = modules['Zope2']
+
+
+    # Since we call get_module_info before Zope2.App.startup.startup()
+    # finishes it will cache the Zope2 module before it is fully
+    # initialised. That means that we need to do this setup ourselves.
+    import sys.modules
+    Zope2 = sys.modules['Zope2']
     if bobo_before is None:
-        # Make sure bobo_before for Zope2 is set correctly, otherwhise the
-        # Zope security machinery breaks down. Since we are called before
-        # Zope2.App.startup has setup its __bobo_before__ hook and
-        # get_module_info will cache that information we need to set that
-        # explicitly ourselves.
-        bobo_before = noSecurityManager
+        bobo_before = getattr(Zope2, '__bobo_before__', None)
+    if transactions_manager is None:
+        transactions_manager = getattr(Zope2, 'zpublisher_transactions')
+    if validated_hook is None:
+        validated_hook = getattr(Zope2, 'zpublisher_validated_hook')
+
     modules['Zope2'] = (bobo_before, bobo_after, object, realm,
                         debug_mode, zpublisher_exception_hook_wrapper,
                         validated_hook, transactions_manager)
