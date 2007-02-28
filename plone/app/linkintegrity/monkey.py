@@ -46,7 +46,7 @@ def installExceptionHook():
     # Since we call get_module_info before Zope2.App.startup.startup()
     # finishes it will cache the Zope2 module before it is fully
     # initialised. That means that we need to do this setup ourselves.
-    import sys.modules
+    import sys
     Zope2 = sys.modules['Zope2']
     if bobo_before is None:
         bobo_before = getattr(Zope2, '__bobo_before__', None)
