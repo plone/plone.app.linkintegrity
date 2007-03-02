@@ -8,8 +8,10 @@ from Products.Five.testbrowser import Browser
 from unittest import TestSuite
 from StringIO import StringIO
 from base64 import decodestring
-from os.path import join, abspath, dirname
+from os.path import join, split, abspath, dirname
 from os import walk
+from re import compile
+from sys import argv
 
 
 PloneTestCase.setupPloneSite()
@@ -77,7 +79,13 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
                 value = 0
             set_orig(self, key, value)
         HTTPRequest.set = set
-    
+
+
+# we check argv to enable testing of explicitely named doctests
+if '-t' in argv:
+    pattern = compile('.*\.(txt|rst)$')
+else:
+    pattern = compile('^test.*\.(txt|rst)$')
 
 def test_suite():
     suite = TestSuite()
@@ -85,7 +93,7 @@ def test_suite():
     for path, dirs, files in walk(docs_dir):
         for name in files:
             relative = join(path, name)[len(docs_dir):]
-            if name.startswith('test') and name.endswith('.txt'):
+            if not '.svn' in split(path) and pattern.search(name):
                 suite.addTest(FunctionalDocFileSuite(relative,
                     optionflags=OPTIONFLAGS,
                     package=docs.__name__,
