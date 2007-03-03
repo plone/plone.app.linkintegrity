@@ -2,7 +2,10 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 1.0b1 Released March 2, 2007
+plone.app.linkintegrity - 1.0b1 Released March 3, 2007
+
+    - Fix tests in regard to changed `folder_contents` and unicode issues
+      [witsch]
 
     - Updates to the monkey patch needed for five exceptions
       [wiggy]

@@ -23,7 +23,7 @@ We use a browser to try to delete all three documents:
   >>> browser.getControl('Test Folder 1').selected = True
   >>> browser.getControl('Delete').click()
   >>> browser.url
-  'http://nohost/plone/folder_contents'
+  'http://nohost/plone/@@folder_contents'
   >>> browser.contents
   '...<div class="portalMessage">Item(s) deleted.</div>...'
 

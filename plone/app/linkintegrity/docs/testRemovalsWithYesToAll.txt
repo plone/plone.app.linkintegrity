@@ -34,7 +34,7 @@ here we choose to skip any further questions:
 
   >>> browser.getControl(name='delete_all').click()
   >>> browser.url
-  'http://nohost/plone/folder_contents'
+  'http://nohost/plone/@@folder_contents'
   >>> browser.contents
   '...<div class="portalMessage">Item(s) deleted.</div>...'
 
