@@ -18,7 +18,7 @@ setup(name = 'plone.app.linkintegrity',
       classifiers = [
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
-	'Framework :: Plone',
+        'Framework :: Plone',
         'Framework :: Zope2',
         'Intended Audience :: Other Audience',
         'Intended Audience :: System Administrators',
@@ -29,6 +29,6 @@ setup(name = 'plone.app.linkintegrity',
       ],
       long_description = """\
         This package tries to integrate PLIP 125, link integrity checking,
-	into Plone using the zope3 event system. """,
+        into Plone using the zope3 event system. """,
 )
 
