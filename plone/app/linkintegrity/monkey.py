@@ -24,6 +24,8 @@ def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
             # raise_standardErrorMessage does...
             view = view.__of__(published)
             message = view()
+            if isinstance(message, unicode):
+                message = message.encode('utf-8')
             raise t, message, traceback
     finally:
         traceback = None
