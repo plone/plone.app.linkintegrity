@@ -1,7 +1,8 @@
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.exceptions import ReferenceException
-from Products.CMFCore.utils import getToolByName
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IPropertiesTool
 from OFS.interfaces import IItem
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
@@ -81,7 +82,7 @@ def referencedObjectRemoved(obj, event):
     
     # first we check the site properties to see if link integrity
     # checking was enabled
-    ptool = getToolByName(event.object, 'portal_properties')
+    ptool = getUtility(IPropertiesTool)
     props = ptool.site_properties
     enabled = props.getProperty('enable_link_integrity_checks', False)
     if not enabled:
