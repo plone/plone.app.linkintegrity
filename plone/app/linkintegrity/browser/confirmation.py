@@ -1,5 +1,8 @@
+from zope.component import getUtility
+
 from Products.Five import BrowserView
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import IURLTool
+
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.app.linkintegrity.utils import encode
 
@@ -48,13 +51,13 @@ class RemoveConfirmationView(BrowserView):
         return info.encodeConfirmedItems(additions=targets)
     
     def callbackURL(self):
-        portal = getToolByName(self.context, 'portal_url')
+        portal = getUtility(IURLTool)
         return portal() + '/removeConfirmationAction'
     
     def cancelURL(self):
         url = self.request.environ.get('HTTP_REFERER', None)
         if url is None:
-            url = getToolByName(self.context, 'portal_url')()
+            url = getUtility(IURLTool)()
         return url
     
 

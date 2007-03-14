@@ -1,11 +1,14 @@
+from Acquisition import aq_inner
+from base64 import b64encode
+from StringIO import StringIO
+from ZPublisher.Publish import Retry
+
+from Products.CMFPlone import PloneMessageFactory as _
+from Products.Five import BrowserView
+from Products.statusmessages.interfaces import IStatusMessage
+
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.app.linkintegrity.utils import decode
-from Products.CMFCore.utils import getToolByName
-from Products.Five import BrowserView
-from ZPublisher.Publish import Retry
-from Acquisition import aq_inner
-from StringIO import StringIO
-from base64 import b64encode
 
 
 class RemoveReferencedObjectView(BrowserView):
@@ -40,8 +43,6 @@ class RemoveReferencedObjectView(BrowserView):
         else:
             # the user choose to cancel the removal, in which case we
             # redirect back to the original HTTP_REFERER url...
-            msg = 'Removal cancelled.'
-            getToolByName(self.context, 'plone_utils').addPortalMessage(msg)
+            msg = _(u'Removal cancelled.')
+            IStatusMessage(request).addStatusMessage(msg, type='info')
             request.RESPONSE.redirect(request.get('cancel_url'))
-    
-
