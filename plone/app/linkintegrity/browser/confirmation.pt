@@ -11,11 +11,12 @@
     in your portal to become broken.
 </p>
 
-<h1 i18n:translate="linkintegrity_breaches_title">Link integrity breaches</h1>
+<h1 class="documentFirstHeading"
+    i18n:translate="linkintegrity_breaches_title">Link integrity breaches</h1>
 
 <p i18n:translate="linkintegrity_instructions">
     Please review the links that may be broken below. If you are sure you
-    wish to delete the item(s) anyway, click "Yes" or, to make sure you get
+    wish to delete the items anyway, click "Yes" or, to make sure you get
     no further warnings, click "Yes to all". To cancel the delete operation,
     click "Cancel".
 </p>
