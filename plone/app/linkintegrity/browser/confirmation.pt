@@ -8,7 +8,7 @@
 
 <p class="portalMessage" i18n:translate="linkintegrity_warning">
     One or more of the items you are attempting to delete may cause links
-    in your portal to become broken.
+    in your site to break.
 </p>
 
 <h1 class="documentFirstHeading"
@@ -30,8 +30,8 @@
         <dt><a tal:attributes="href breach/url" tal:content="breach/title" /></dt>
         <dd>
             <span i18n:translate="linkintegrity_is_referenced">
-                This <em i18n:name="portal_type" tal:content="breach/type" /> 
-                is referenced by the following objects:
+                This <span i18n:name="portal_type" tal:content="breach/type" /> 
+                is referenced by the following items:
             </span>
 
             <ul>
@@ -48,7 +48,7 @@
 
   <br />
 
-  <p> Would you like to delete it anyway? </p>
+  <p>Would you like to delete it anyway?</p>
 
   <input type="hidden" name="original_request"
          tal:attributes="value view/originalRequest" />
@@ -59,11 +59,11 @@
   <input type="hidden" name="cancel_url"
          tal:attributes="value view/cancelURL" />
 
-  <input class="destructive" type="submit" name="delete" value="yes" />
+  <input class="destructive" type="submit" name="delete" value="Yes" />
 
-  <input class="destructive" type="submit" name="delete_all" value="yes to all" />
+  <input class="destructive" type="submit" name="delete_all" value="Yes to all" />
 
-  <input class="standalone" type="submit" name="cancel" value="cancel" />
+  <input class="standalone" type="submit" name="cancel" value="Cancel" />
 
 </form>
 
