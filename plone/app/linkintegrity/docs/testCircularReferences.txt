@@ -32,7 +32,7 @@ folder_contents), so that all tests written so far won't need modification:
   >>> browser.getControl('Delete').click()
   >>> browser.contents
   '...<a href="http://nohost/plone/doc1"...Test Page 1...
-   ...This...Document...is referenced by the following objects:...
+   ...This...Document...is referenced by the following items:...
    ...<li>...<a href="http://nohost/plone/folder1/doc3"...Test Page 3...</li>...
    ...Would you like to delete it anyway?...'
 
@@ -55,7 +55,7 @@ no further confirmation forms:
   >>> browser.url
   'http://nohost/plone/@@folder_contents'
   >>> browser.contents
-  '...<div class="portalMessage">Item(s) deleted.</div>...'
+  '...<dl class="portalMessage...Item(s) deleted...</dl>...'
 
 The documents should have been deleted:
 

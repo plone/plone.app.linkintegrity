@@ -25,7 +25,7 @@ We use a browser to try to delete all three documents:
   >>> browser.url
   'http://nohost/plone/@@folder_contents'
   >>> browser.contents
-  '...<div class="portalMessage">Item(s) deleted.</div>...'
+  '...<dl class="portalMessage...Item(s) deleted...</dl>...'
 
 The documents should have been deleted:
 

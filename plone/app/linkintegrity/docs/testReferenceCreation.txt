@@ -34,7 +34,7 @@ Next we change the document again and insert a link to another page:
 
   >>> doc.processForm(values={'text':'<html> <body> <a href="news">news</a> </body> </html>'})
   >>> doc.getReferences()
-  [<ATTopic at /plone/news>]
+  [<AT... at /plone/news>]
   >>> self.portal.news.getBackReferences()
   [<ATDocument at /plone/doc1>]
 
