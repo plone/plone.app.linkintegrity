@@ -1,7 +1,6 @@
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.exceptions import ReferenceException
-from zope.component import getUtility
 from zope.component import queryUtility
 from Products.CMFCore.interfaces import IPropertiesTool
 from OFS.interfaces import IItem
