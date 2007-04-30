@@ -8,6 +8,7 @@ the link in question and set up the permissions accordingly:
   >>> img = self.portal.image1
   >>> self.setRoles(('Manager',))
   >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % img.tag()})
+  >>> self.portal.portal_workflow.doActionFor(img, 'publish')
   >>> self.setRoles(('Member',))
   >>> self.portal.manage_permission('List folder contents', roles=('Member',))
   >>> self.portal.manage_permission('Delete objects', roles=('Member',))
@@ -16,6 +17,8 @@ the link in question and set up the permissions accordingly:
   >>> checkPermission = self.portal.portal_membership.checkPermission
   >>> self.failIf(checkPermission('View', doc))
   >>> self.failIf(checkPermission('Access contents information', doc))
+  >>> self.failUnless(checkPermission('View', img))
+  >>> self.failUnless(checkPermission('Access contents information', img))
 
 Next we use a browser to try to delete the image used in the document.  Before
 we can do this we need to prevent the test framework from choking on the
