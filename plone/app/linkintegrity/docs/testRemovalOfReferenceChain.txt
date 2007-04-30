@@ -29,11 +29,11 @@ docs/testRemovalTriggersConfirmation.txt for more info):
 
 The documents should have been deleted:
 
-  >>> self.portal.doc1
+  >>> portal.doc1
   Traceback (most recent call last):
   ...
   AttributeError: doc1
-  >>> self.portal.folder1.doc4
+  >>> portal.folder1.doc4
   Traceback (most recent call last):
   ...
   AttributeError: folder1

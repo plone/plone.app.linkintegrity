@@ -28,10 +28,10 @@ docs/testRemovalTriggersConfirmation.txt for more info):
 
 The first document should have been deleted, while the others still exist:
 
-  >>> self.portal.doc1
+  >>> portal.doc1
   Traceback (most recent call last):
   ...
   AttributeError: doc1
-  >>> self.portal.folder1.doc4
+  >>> portal.folder1.doc4
   <ATDocument at /plone/folder1/doc4>
 

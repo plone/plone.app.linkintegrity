@@ -29,15 +29,15 @@ We use a browser to try to delete all three documents:
 
 The documents should have been deleted:
 
-  >>> self.portal.doc1
+  >>> portal.doc1
   Traceback (most recent call last):
   ...
   AttributeError: doc1
-  >>> self.portal.doc2
+  >>> portal.doc2
   Traceback (most recent call last):
   ...
   AttributeError: doc2
-  >>> self.portal.folder1.doc3
+  >>> portal.folder1.doc3
   Traceback (most recent call last):
   ...
   AttributeError: folder1

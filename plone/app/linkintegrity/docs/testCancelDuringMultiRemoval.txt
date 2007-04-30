@@ -63,15 +63,15 @@ whole operation:
 
 This should result in all images and references still being existent:
 
-  >>> self.portal.image1
+  >>> portal.image1
   <ATImage at /plone/image1>
-  >>> self.portal.image2
+  >>> portal.image2
   <ATImage at /plone/image2>
-  >>> self.portal.image3
+  >>> portal.image3
   <ATImage at /plone/image3>
   
-  >>> self.portal.doc1.getReferences()
+  >>> portal.doc1.getReferences()
   [<ATImage at /plone/image1>, <ATImage at /plone/image2>]
-  >>> self.portal.doc2.getReferences()
+  >>> portal.doc2.getReferences()
   [<ATImage at /plone/image1>, <ATImage at /plone/image3>]
 

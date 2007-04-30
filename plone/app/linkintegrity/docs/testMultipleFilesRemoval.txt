@@ -53,15 +53,15 @@ items:
 After we acknowledge the breaches in link integrity the images should have
 been deleted:
 
-  >>> self.portal.image1
+  >>> portal.image1
   Traceback (most recent call last):
   ...
   AttributeError: image1
-  >>> self.portal.image2
+  >>> portal.image2
   Traceback (most recent call last):
   ...
   AttributeError: image2
-  >>> self.portal.image3
+  >>> portal.image3
   Traceback (most recent call last):
   ...
   AttributeError: image3

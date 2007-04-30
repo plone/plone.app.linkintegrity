@@ -3,8 +3,8 @@ contained in a folder that is removed.  First we need to set up the necessary
 links:
 
   >>> self.setRoles(('Manager',))
-  >>> self.portal.doc1.processForm(values={'text':'<a href="folder1/doc3">a document</a>'})
-  >>> self.portal.doc2.processForm(values={'text':'<a href="folder1/doc3">a document</a>'})
+  >>> portal.doc1.processForm(values={'text':'<a href="folder1/doc3">a document</a>'})
+  >>> portal.doc2.processForm(values={'text':'<a href="folder1/doc3">a document</a>'})
 
 Then we try to delete the folder holding the referenced document.  Before we
 can do this we need to prevent the test framework from choking on the
@@ -29,7 +29,7 @@ After we have acknowledged the breach in link integrity the document should
 have been deleted:
 
   >>> browser.getControl(name='delete').click()
-  >>> self.portal.folder1.doc3
+  >>> portal.folder1.doc3
   Traceback (most recent call last):
   ...
   AttributeError: folder1

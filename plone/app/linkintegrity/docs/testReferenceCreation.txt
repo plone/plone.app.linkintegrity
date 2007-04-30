@@ -4,10 +4,10 @@ objects by `<img>` or `<a>` tags should create references between those
 objects on save.  First we check neither the document nor the image have any
 references yet:
 
-  >>> doc = self.portal.doc1
+  >>> doc = portal.doc1
   >>> self.assertEqual(doc.getReferences(), [])
   >>> self.assertEqual(doc.getBackReferences(), [])
-  >>> img = self.portal.image1
+  >>> img = portal.image1
   >>> self.assertEqual(img.getReferences(), [])
   >>> self.assertEqual(img.getBackReferences(), [])
 
@@ -35,6 +35,6 @@ Next we change the document again and insert a link to another page:
   >>> doc.processForm(values={'text':'<html> <body> <a href="news">news</a> </body> </html>'})
   >>> doc.getReferences()
   [<AT... at /plone/news>]
-  >>> self.portal.news.getBackReferences()
+  >>> portal.news.getBackReferences()
   [<ATDocument at /plone/doc1>]
 
