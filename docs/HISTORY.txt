@@ -2,6 +2,8 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
+plone.app.linkintegrity - 1.0b3 Released May 4, 2007
+
 plone.app.linkintegrity - 1.0b2 Released April 30, 2007
 
     - Integration of Plone's "delete confirmation" page
