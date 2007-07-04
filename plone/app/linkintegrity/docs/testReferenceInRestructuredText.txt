@@ -1,0 +1,33 @@
+This tests the behaviour when using document formats other than text/plain
+for referencing files, in this case RestructuredText.  As usual, we need to
+create the necessary links first:
+
+  >>> self.setRoles(('Manager',))
+  >>> portal.doc1.processForm(values={'text': 'doc2_\n\n.. _doc2: doc2',
+  ...   'text_text_format': 'text/x-rst'})
+
+Then we use a browser to try to delete the referenced document.  Before we
+can do this we need to prevent the test framework from choking on the
+exception we intentionally throw (see docs/testRemovalTriggersConfirmation.txt
+for more info):
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.getControl('Test Page 2').selected = True
+  >>> browser.getControl('Delete').click()
+  >>> browser.contents
+  '...<a href="http://nohost/plone/doc2"...Test Page 2...
+   ...This...Document...is referenced by the following items:...
+   ...<li>...<a href="http://nohost/plone/doc1"...Test Page 1...</li>...
+   ...Would you like to delete it anyway?...'
+  >>> browser.getControl(name='delete').click()
+
+After we acknowledge the breaches in link integrity the document should have
+been deleted:
+
+  >>> portal.doc2
+  Traceback (most recent call last):
+  ...
+  AttributeError: doc2
+
