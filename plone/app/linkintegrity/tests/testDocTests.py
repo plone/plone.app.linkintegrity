@@ -6,8 +6,6 @@ from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase import PloneTestCase
 from Products.Five.testbrowser import Browser
 from unittest import TestSuite
-from StringIO import StringIO
-from base64 import decodestring
 from os.path import join, split, abspath, dirname
 from os import walk
 from re import compile
@@ -30,24 +28,6 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
     
     def afterSetUp(self):
         """ create some sample content to test with """
-        gif = 'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
-        gif = StringIO(decodestring(gif))
-        self.loginAsPortalOwner()
-        self.portal.invokeFactory('Document', id='doc1', title='Test Page 1',
-            text='<html> <body> a test page </body> </html>')
-        self.portal.invokeFactory('Document', id='doc2', title='Test Page 2',
-            text='<html> <body> another test page </body> </html>')
-        self.portal.invokeFactory('Image', id='image1', title='Test Image 1', image=gif)
-        self.portal.invokeFactory('Image', id='image2', title='Test Image 2', image=gif)
-        self.portal.invokeFactory('Image', id='image3', title='Test Image 3', image=gif)
-        self.portal.invokeFactory('Folder', id='folder1', title='Test Folder 1')
-        self.portal.folder1.invokeFactory('Document', id='doc3', title='Test Page 3',
-            text='<html> <body> a test page in a subfolder </body> </html>')
-        self.portal.folder1.invokeFactory('Document', id='doc4', title='Test Page 4',
-            text='<html> <body> another test page </body> </html>')
-        self.portal.folder1.invokeFactory('Document', id='doc5', title='Test Page 5',
-            text='<html> <body> another test page </body> </html>')
-        self.login()
         # HTTPRequest's 'set' function is set to it's original implementation
         # at the start of each new test, since otherwise the below monkey
         # patch will apply to all remaining tests (and break them);  see
