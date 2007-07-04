@@ -1,4 +1,6 @@
 to do for a first real version:
+- the cooked output of the at-field should probably be parsed (instead the raw data)
+- link integrity vs iterate
 - create form to switch li on/off in the control panel
 - create method to re-create integrity refs for the whole site and
   integrate that into migration and the control panel
@@ -6,6 +8,7 @@ to do for a first real version:
 - what about ftp/dav?
 
 nice things to have later on:
+- use annotations in info adapter (info.py)
 - update implementation notes
 - it would be possible to cancel single removals while going through with
   the others, but only if a potentially uncaught (by other code, i.e. third
