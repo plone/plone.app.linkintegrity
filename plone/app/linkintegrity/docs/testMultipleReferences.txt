@@ -1,0 +1,31 @@
+This tests against #6537, doubled listing of pages affected by link integrity
+breaches.  Of course, every page linking to the to be removed item should only
+be listed once.  As usual, we need to create the necessary links first:
+
+  >>> self.setRoles(('Manager',))
+  >>> tmpl = '<html> <body> %s </body> </html>'
+  >>> portal.doc1.processForm(values={'text':tmpl % portal.image1.tag()})
+
+Then we use a browser to try to delete the referenced image.  Before we
+can do this we need to prevent the test framework from choking on the
+exception we intentionally throw (see docs/testRemovalTriggersConfirmation.txt
+for more info):
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/image1/view')
+  >>> browser.getLink('Delete').click()
+
+The resulting confirmation page should list the page linking to the image, but
+only once:
+
+  >>> browser.contents
+  '...<a href="http://nohost/plone/image1"...Test Image 1...
+   ...This...Image...is referenced by the following items:...
+   ...<li>...<a href="http://nohost/plone/doc1"...Test Page 1...</li>...
+   ...Would you like to delete it anyway?...'
+  >>> marker = 'is referenced by the following items:'
+  >>> listing = browser.contents[browser.contents.index(marker):]
+  >>> listing.count('Test Page 1')
+  1
+
