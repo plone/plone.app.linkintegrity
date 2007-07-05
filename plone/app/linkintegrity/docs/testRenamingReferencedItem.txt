@@ -1,0 +1,60 @@
+This tests makes sure items that are linked to can still be renamed (see the
+related bug report in #6608).  First we need to create the necessary links:
+
+  >>> self.setRoles(('Manager',))
+  >>> markup = '<html> <body> <a href="doc2">doc2</a> </body> </html>'
+  >>> portal.doc1.processForm(values={'text': markup})
+
+Then we use a browser to rename the referenced image:
+
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.getControl('Test Page 2').selected = True
+  >>> browser.getControl('Rename').click()
+  >>> browser.getControl('New Short Name').value = 'nuname'
+  >>> browser.getControl('New Title').value = 'NuName'
+  >>> browser.getControl('Rename All').click()
+
+Now the image should have a new id and title, which we check for:
+
+  >>> portal.nuname
+  <ATDocument at /plone/nuname>
+  >>> portal.doc2
+  Traceback (most recent call last):
+  ...
+  AttributeError: doc2
+
+It should also be available under that name via the browser, of course:
+
+  >>> browser.url
+  'http://nohost/plone/@@folder_contents'
+  >>> browser.getLink('NuName').click()
+  >>> browser.url
+  'http://nohost/plone/nuname'
+
+Even clicking the original link should still lead us to the new location,
+thanks to `plone.app.redirector`:
+
+  >>> browser.goBack()
+  >>> browser.getLink('Test Page 1').click()
+  >>> browser.url
+  'http://nohost/plone/doc1'
+  >>> browser.contents
+  '...<a href="doc2">doc2</a>...'
+  >>> browser.getLink('doc2').click()
+  >>> browser.url
+  'http://nohost/plone/nuname'
+
+Lastly we try to delete the referenced document, which should still give us a
+warning about link integrity.  Before we can do this we need to prevent the
+test framework from choking on the exception we intentionally throw (see
+`docs/testRemovalTriggersConfirmation.txt` for more info):
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> browser.getLink('Delete').click()
+  >>> browser.contents
+  '...<a href="http://nohost/plone/nuname"...NuName...
+   ...This...Document...is referenced by the following items:...
+   ...<li>...<a href="http://nohost/plone/doc1"...Test Page 1...</li>...
+   ...Would you like to delete it anyway?...'
+
