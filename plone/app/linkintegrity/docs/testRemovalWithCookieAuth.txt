@@ -1,0 +1,49 @@
+This tests ensures link integrity working correctly without http basic
+authentication (see the bug report in #6607).  First we need to set up the
+necessary links and create a testbrowser without passing an auth header:
+
+  >>> self.setRoles(('Manager',))
+  >>> portal.doc1.processForm(values={'text':'<a href="doc2">doc2</a>'})
+  >>> browser = self.getBrowser(loggedIn=False)
+
+At this point we shouldn't be able to look at the folder contents (as an
+anonymous user):
+
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.url
+  'http://nohost/plone/.../require_login?came_from=...'
+
+So we log in via the regular plone login form and additionally check that
+there is no 'authorization' header set afterwards:
+
+  >>> from Products.PloneTestCase.PloneTestCase import default_user, default_password
+  >>> browser.getControl(name='__ac_name').value = default_user
+  >>> browser.getControl(name='__ac_password').value = default_password
+  >>> browser.getControl('Log in').click()
+  >>> 'authorization' in [ h.lower() for h in browser.headers.keys() ]
+  False
+
+This should lead us back to the "folder contents" listing, where we try to
+delete the referenced document.  Before we can do this we need to prevent the
+test framework from choking on the exception we intentionally throw (see
+`docs/testRemovalTriggersConfirmation.txt` for more info):
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> browser.open('http://nohost/plone/folder_contents')
+  >>> browser.getControl('Test Page 2').selected = True
+  >>> browser.getControl('Delete').click()
+  >>> browser.contents
+  '...<a href="http://nohost/plone/doc2"...Test Page 2...
+   ...This...Document...is referenced by the following items:...
+   ...<li>...<a href="http://nohost/plone/doc1"...Test Page 1...</li>...
+   ...Would you like to delete it anyway?...'
+
+After we have acknowledged the breach in link integrity the document should
+have been deleted:
+
+  >>> browser.getControl(name='delete').click()
+  >>> portal.doc2
+  Traceback (most recent call last):
+  ...
+  AttributeError: doc2
+

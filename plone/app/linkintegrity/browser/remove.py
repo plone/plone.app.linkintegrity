@@ -12,11 +12,11 @@ from plone.app.linkintegrity.utils import decode
 
 
 class RemoveReferencedObjectView(BrowserView):
-    
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
-    
+
     def __call__(self):
         # this view is intended to provide an action called by the
         # confirmation form;  all it does is prepare the request for
@@ -34,8 +34,10 @@ class RemoveReferencedObjectView(BrowserView):
                 env[marker] = 'all'
             else:
                 env[marker] = request.get('confirmed_items')
-            authtoken = b64encode('%s:%s' % request._authUserPW())
-            env['HTTP_AUTHORIZATION'] = 'Basic %s' % authtoken
+            auth = request._authUserPW()
+            if auth is not None:
+                authtoken = b64encode('%s:%s' % auth)
+                env['HTTP_AUTHORIZATION'] = 'Basic %s' % authtoken
             env['HTTP_COOKIE'] = request.get('HTTP_COOKIE', '')
             setattr(request, 'stdin', StringIO(body))
             setattr(request, '_orig_env', env)
@@ -46,3 +48,4 @@ class RemoveReferencedObjectView(BrowserView):
             msg = _(u'Removal cancelled.')
             IStatusMessage(request).addStatusMessage(msg, type='info')
             request.RESPONSE.redirect(request.get('cancel_url'))
+
