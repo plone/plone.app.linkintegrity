@@ -8,7 +8,6 @@ the link in question and set up the permissions accordingly:
   >>> img = portal.image1
   >>> self.setRoles(('Manager',))
   >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % img.tag()})
-  >>> portal.portal_workflow.doActionFor(img, 'publish')
   >>> self.setRoles(('Member',))
   >>> portal.manage_permission('List folder contents', roles=('Member',))
   >>> portal.manage_permission('Delete objects', roles=('Member',))
