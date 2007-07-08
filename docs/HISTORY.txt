@@ -2,6 +2,11 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
+plone.app.linkintegrity - 1.0rc1 Released July 8, 2007
+
+    - Bugfixes & additional tests
+      [witsch]
+
 plone.app.linkintegrity - 1.0b3 Released May 4, 2007
 
 plone.app.linkintegrity - 1.0b2 Released April 30, 2007
