@@ -33,7 +33,12 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
         # patch will apply to all remaining tests (and break them);  see
         # comment below in 'disableEventCountHelper'
         HTTPRequest.set = set_orig
-    
+
+        # starting with 2.10.4 the products need to be initialized as well
+        from OFS.Application import install_products
+        import Zope2
+        install_products(Zope2.app())
+
     def getBrowser(self, loggedIn=False):
         """ instantiate and return a testbrowser for convenience """
         browser = Browser()
