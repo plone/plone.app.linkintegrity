@@ -78,6 +78,12 @@ def referenceRemoved(obj, event):
 
 def referencedObjectRemoved(obj, event):
     """ check if the removal was already confirmed or redirect to the form """
+    # if the object the event was fired on doesn't have a `REQUEST` attribute
+    # we can safely assume no direct user action was involved and therefore
+    # never raise a link integrity exception...
+    # (this should also fix http://plone.org/products/cachefu/issues/86)
+    if not hasattr(obj, 'REQUEST'):
+        return
     info = ILinkIntegrityInfo(obj.REQUEST)
     
     # first we check the site properties to see if link integrity
