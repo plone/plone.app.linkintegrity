@@ -46,9 +46,11 @@
 
             <ul>
               <li tal:repeat="src breach/sources">
-                <tal:unauthorized on-error="string:Item not accessible">
-                  <a tal:attributes="href src/absolute_url" tal:content="src/Title" />
-                </tal:unauthorized>
+                <a tal:condition="python: view.isAccessible(src)"
+                   tal:attributes="href src/absolute_url" tal:content="src/Title" />
+                <tal:private condition="python: not view.isAccessible(src)">
+                  Item not accessible
+                </tal:private>
               </li>
             </ul>
         </dd>

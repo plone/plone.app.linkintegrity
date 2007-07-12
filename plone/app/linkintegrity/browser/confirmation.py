@@ -1,6 +1,7 @@
 from Acquisition import aq_inner
 from Products.Five import BrowserView
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByName, _checkPermission
+from Products.CMFCore.permissions import AccessContentsInformation
 
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.app.linkintegrity.utils import encode
@@ -43,6 +44,9 @@ class RemoveConfirmationView(BrowserView):
                 'sources': sources,
             })
         return sorted(breaches, lambda a,b: cmp(a['title'], b['title']))
+    
+    def isAccessible(self, obj):
+        return _checkPermission(AccessContentsInformation, obj)
     
     def confirmedItems(self):
         info = ILinkIntegrityInfo(self.request)
