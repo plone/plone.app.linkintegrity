@@ -2,6 +2,11 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
+plone.app.linkintegrity - 1.0rc1.1 Released July 12, 2007
+
+    - Bug and test fixes after upgrade to Zope 2.10.4
+      [witsch]
+
 plone.app.linkintegrity - 1.0rc1 Released July 8, 2007
 
     - Bugfixes & additional tests
