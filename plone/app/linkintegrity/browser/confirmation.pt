@@ -46,8 +46,11 @@
 
             <ul>
               <li tal:repeat="src breach/sources">
-                <a tal:condition="python: view.isAccessible(src)"
-                   tal:attributes="href src/absolute_url" tal:content="src/Title" />
+                <tal:visible condition="python: view.isAccessible(src)">
+                  <a tal:attributes="href src/absolute_url" tal:content="src/Title" />
+                  [<a tal:attributes="href string:${src/absolute_url}/edit"
+                    target="_blank">Edit in new window</a>]
+                </tal:visible>
                 <tal:private condition="python: not view.isAccessible(src)">
                   Item not accessible
                 </tal:private>
