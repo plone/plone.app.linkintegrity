@@ -36,7 +36,7 @@
 
   <dl>
       <tal:breaches repeat="breach view/integrityBreaches">
-      
+
         <dt><a tal:attributes="href breach/url" tal:content="breach/title" /></dt>
         <dd>
             <span i18n:translate="linkintegrity_is_referenced">
@@ -57,7 +57,7 @@
               </li>
             </ul>
         </dd>
-        
+
       </tal:breaches>
   </dl>
 

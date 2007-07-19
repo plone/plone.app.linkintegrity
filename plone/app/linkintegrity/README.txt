@@ -13,12 +13,12 @@ Status
   is "interrupted" and a confirmation form is presented to the user. If they
   then decide to indeed delete the object the original request is followed
   through, hereby breaching link integrity of the site.
-  
+
   This process is implemented independently of how the object is deleted (as
   long as ObjectManager's `_delObject` is used ultimatively) and what request
   is used to do it. A more detailed explanation of how this works can be found
   in NOTES.txt.
-  
+
   The second use case of PLIP 125, which is provides better handling of moved
   items, is implemented by plone.app.redirector, available from
   https://svn.plone.org/svn/plone/plone.app.redirector/.

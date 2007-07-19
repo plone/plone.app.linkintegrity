@@ -25,7 +25,7 @@ OPTIONFLAGS = (doctest.REPORT_ONLY_FIRST_FAILURE |
 class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
     layer = layer.PloneLinkintegrity
-    
+
     def afterSetUp(self):
         """ create some sample content to test with """
         # HTTPRequest's 'set' function is set to it's original implementation
@@ -47,11 +47,11 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
             pwd = PloneTestCase.default_password
             browser.addHeader('Authorization', 'Basic %s:%s' % (user, pwd))
         return browser
-    
+
     def setStatusCode(self, key, value):
         from ZPublisher import HTTPResponse
         HTTPResponse.status_codes[key.lower()] = value
-    
+
     def disableEventCountHelper(self):
         # so here's yet another monkey patch ;), but only to avoid having
         # to change almost all the tests after introducing the setting of
@@ -84,3 +84,4 @@ def test_suite():
                     package=docs.__name__,
                     test_class=LinkIntegrityFunctionalTestCase))
     return suite
+

@@ -10,12 +10,12 @@ class LinkIntegrityInfo(object):
     """ adapter for browserrequests to temporarily store information
         related to link integrity in the request object """
     implements(ILinkIntegrityInfo)
-    
+
     attribute = marker = 'link_integrity_info'
-    
+
     def __init__(self, context):
         self.context = context      # the context is the request
-    
+
     def integrityCheckingEnabled(self):
         """ determine if link integrity checking for the site is enabled """
         ptool = queryUtility(IPropertiesTool)
@@ -24,15 +24,15 @@ class LinkIntegrityInfo(object):
             props = ptool.site_properties
             enabled = props.getProperty('enable_link_integrity_checks', False)
         return enabled
-    
+
     def getIntegrityInfo(self):
         """ return stored information regarding link integrity """
         return getattr(self.context, self.attribute, {})
-    
+
     def setIntegrityInfo(self, info):
         """ store information regarding link integrity """
         setattr(self.context, self.attribute, info)
-    
+
     def getIntegrityBreaches(self):
         """ return stored information regarding link integrity breaches
             after removing circular references, confirmed items etc """
@@ -47,28 +47,28 @@ class LinkIntegrityInfo(object):
             if not sources or self.isConfirmedItem(target):
                 del breaches[target]
         return breaches
-    
+
     def setIntegrityBreaches(self, breaches):
         """ store information regarding link integrity breaches """
         info = self.getIntegrityInfo()
         info['breaches'] = breaches
         self.setIntegrityInfo(info)     # unnecessary, but sticking to the api
-    
+
     def getDeletedItems(self):
         """ return information about all items deleted during the request """
         return self.getIntegrityInfo().get('deleted', set())
-    
+
     def addDeletedItem(self, item):
         """ remember an item deleted during the request """
         info = self.getIntegrityInfo()
         info.setdefault('deleted', set()).add(item)
         self.setIntegrityInfo(info)     # unnecessary, but sticking to the api
-    
+
     def getEnvMarker(self):
         """ return the marker string used to pass the already confirmed
             items across the retry exception """
         return self.marker
-    
+
     def confirmedItems(self):
         """ return internal list of confirmed items """
         confirmed = self.context.environ.get(self.marker, [])
@@ -77,12 +77,12 @@ class LinkIntegrityInfo(object):
         elif confirmed:
             confirmed = decode(confirmed)
         return confirmed
-    
+
     def isConfirmedItem(self, obj):
         """ indicate if the removal of the given object was confirmed """
         confirmed = self.confirmedItems()
         return id(aq_base(obj)) in confirmed or 'all' in confirmed
-    
+
     def encodeConfirmedItems(self, additions):
         """ return the list of previously confirmed (for removeal) items,
             optionally adding the given items, encoded for usage in a form """
@@ -90,12 +90,11 @@ class LinkIntegrityInfo(object):
         for obj in additions:
             confirmed.append(id(aq_base(obj)))
         return encode(confirmed)
-    
+
     def moreEventsToExpect(self):
         attr = 'link_integrity_events_counter'
         counter = getattr(self.context, attr, 0) + 1    # nr of events so far
         setattr(self.context, attr, counter)            # save for next time
         expected = self.context.get('link_integrity_events_to_expect', 0)
         return counter < expected
-    
 

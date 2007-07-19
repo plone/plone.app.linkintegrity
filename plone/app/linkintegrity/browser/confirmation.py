@@ -8,7 +8,7 @@ from plone.app.linkintegrity.utils import encode
 
 
 class RemoveConfirmationView(BrowserView):
-    
+
     def __init__(self, context, request):
         # since this is a view adapting an exception and a request (instead
         # of a regular content object and a request), the exception object
@@ -19,7 +19,7 @@ class RemoveConfirmationView(BrowserView):
         self.exception = context
         self.context, = context.args
         self.request = request
-    
+
     def originalRequest(self):
         # in order to interrupt the current request with a confirmation
         # question about removing the referred to object we need to save
@@ -32,7 +32,7 @@ class RemoveConfirmationView(BrowserView):
             if env.has_key(key):
                 del env[key]
         return encode((body, env))
-    
+
     def integrityBreaches(self):
         info = ILinkIntegrityInfo(self.request).getIntegrityBreaches()
         breaches = []
@@ -44,23 +44,22 @@ class RemoveConfirmationView(BrowserView):
                 'sources': sources,
             })
         return sorted(breaches, lambda a,b: cmp(a['title'], b['title']))
-    
+
     def isAccessible(self, obj):
         return _checkPermission(AccessContentsInformation, obj)
-    
+
     def confirmedItems(self):
         info = ILinkIntegrityInfo(self.request)
         targets = info.getIntegrityBreaches().keys()
         return info.encodeConfirmedItems(additions=targets)
-    
+
     def callbackURL(self):
         portal = getToolByName(aq_inner(self.context), "portal_url")
         return portal() + '/removeConfirmationAction'
-    
+
     def cancelURL(self):
         url = self.request.environ.get('HTTP_REFERER', None)
         if url is None:
             url = getToolByName(aq_inner(self.context), "portal_url")()
         return url
-    
 
