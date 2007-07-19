@@ -14,7 +14,7 @@
     class="OFS.Image.Image"
     interface=".interfaces.IOFSImage" />
 
-  <!-- Views used to perform link integrity checks and actually remove an object -->
+  <!-- views used to perform link integrity checks and actually remove an object -->
 
   <browser:page 
     name="index.html" 
@@ -29,7 +29,7 @@
     class=".browser.remove.RemoveReferencedObjectView"
     permission="zope2.Public" /> 
 
-  <!-- Event handleres for updating link integrity references -->
+  <!-- event handlers for updating link integrity references -->
 
   <subscriber
     for="Products.Archetypes.interfaces.IBaseObject
