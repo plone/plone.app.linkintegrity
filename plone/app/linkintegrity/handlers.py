@@ -86,14 +86,8 @@ def referencedObjectRemoved(obj, event):
         return
     info = ILinkIntegrityInfo(obj.REQUEST)
     
-    # first we check the site properties to see if link integrity
-    # checking was enabled
-    ptool = queryUtility(IPropertiesTool)
-    enabled = False
-    if ptool is not None:
-        props = ptool.site_properties
-        enabled = props.getProperty('enable_link_integrity_checks', False)
-    if not enabled:
+    # first we check if link integrity checking was enabled
+    if not info.integrityCheckingEnabled():
         return
     
     # since the event gets called for every subobject before it's

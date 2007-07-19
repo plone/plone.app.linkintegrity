@@ -1,7 +1,9 @@
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.app.linkintegrity.utils import encode, decode
 from zope.interface import implements
+from zope.component import queryUtility
 from Acquisition import aq_base
+from Products.CMFCore.interfaces import IPropertiesTool
 
 
 class LinkIntegrityInfo(object):
@@ -13,6 +15,15 @@ class LinkIntegrityInfo(object):
     
     def __init__(self, context):
         self.context = context      # the context is the request
+    
+    def integrityCheckingEnabled(self):
+        """ determine if link integrity checking for the site is enabled """
+        ptool = queryUtility(IPropertiesTool)
+        enabled = False
+        if ptool is not None:
+            props = ptool.site_properties
+            enabled = props.getProperty('enable_link_integrity_checks', False)
+        return enabled
     
     def getIntegrityInfo(self):
         """ return stored information regarding link integrity """
