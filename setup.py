@@ -1,7 +1,9 @@
 from setuptools import setup, find_packages
 
+version = '1.0rc2'
+
 setup(name = 'plone.app.linkintegrity',
-      version = '1.0rc1.1',
+      version = version,
       description = 'Manage link integrity in Plone.',
       keywords = 'link integrity plone',
       author = 'Plone Foundation',
