@@ -42,6 +42,12 @@ class PloneLinkintegrity(PloneSite):
         portal.folder1.invokeFactory('Document', id='doc5', title='Test Page 5',
             text='<html> <body> another test page </body> </html>')
 
+        # starting with 2.10.4 product initialization gets delayed for
+	# instance startup and is never called when running tests;  hence
+	# we have to call our own `initialize` method manually...
+        from plone.app.linkintegrity import initialize
+	initialize(app)
+
         # create a starting point for the tests...
         commit()
         ZopeTestCase.close(app)
