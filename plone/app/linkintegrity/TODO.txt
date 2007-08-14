@@ -1,9 +1,7 @@
 to do for a first real version:
 - link integrity vs iterate
-- create form to switch li on/off in the control panel
 - create method to re-create integrity refs for the whole site and
   integrate that into migration and the control panel
-- integrate with already existing confirmation page?
 - what about ftp/dav?
 
 nice things to have later on:
