@@ -43,10 +43,11 @@ class PloneLinkintegrity(PloneSite):
             text='<html> <body> another test page </body> </html>')
 
         # starting with 2.10.4 product initialization gets delayed for
-	# instance startup and is never called when running tests;  hence
-	# we have to call our own `initialize` method manually...
-        from plone.app.linkintegrity import initialize
-	initialize(app)
+        # instance startup and is never called when running tests;  hence
+        # we have to initialize the package method manually...
+        from OFS.Application import install_package
+        import plone.app.linkintegrity
+        install_package(app, plone.app.linkintegrity, plone.app.linkintegrity.initialize)
 
         # create a starting point for the tests...
         commit()
