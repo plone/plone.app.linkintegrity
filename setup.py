@@ -1,7 +1,9 @@
 from setuptools import setup, find_packages
 
+version = '1.0'
+
 setup(name = 'plone.app.linkintegrity',
-      version = '1.0rc1.1',
+      version = version,
       description = 'Manage link integrity in Plone.',
       keywords = 'link integrity plone',
       author = 'Plone Foundation',
@@ -16,15 +18,17 @@ setup(name = 'plone.app.linkintegrity',
       platforms = 'Any',
       zip_safe = False,
       classifiers = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Plone',
         'Framework :: Zope2',
+        'Framework :: Zope3',
         'Intended Audience :: Other Audience',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking',
       ],
       long_description = """\
