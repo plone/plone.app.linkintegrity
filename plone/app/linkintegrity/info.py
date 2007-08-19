@@ -21,8 +21,9 @@ class LinkIntegrityInfo(object):
         ptool = queryUtility(IPropertiesTool)
         enabled = False
         if ptool is not None:
-            props = ptool.site_properties
-            enabled = props.getProperty('enable_link_integrity_checks', False)
+            props = getattr(ptool, 'site_properties', None)
+            if props is not None:
+                enabled = props.getProperty('enable_link_integrity_checks', False)
         return enabled
 
     def getIntegrityInfo(self):

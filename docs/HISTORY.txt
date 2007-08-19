@@ -2,6 +2,12 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
+plone.app.linkintegrity - 1.0.1 Unreleased
+
+    - Made code in info.py more tolerant when encountering missing property
+      sheets.
+      [hannosch]
+
 plone.app.linkintegrity - 1.0 Released August 16, 2007
 
     - Minor bug fixes and enhancements
