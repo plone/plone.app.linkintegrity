@@ -2,7 +2,10 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 1.0.1 Unreleased
+plone.app.linkintegrity - 1.0.1 Released September 10, 2007
+
+    - Added view for updating link integrity information for all site content
+      [witsch]
 
     - Made code in info.py more tolerant when encountering missing property
       sheets.
