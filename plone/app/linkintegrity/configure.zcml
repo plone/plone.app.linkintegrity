@@ -29,6 +29,13 @@
     class=".browser.remove.RemoveReferencedObjectView"
     permission="zope2.Public" /> 
 
+  <browser:page 
+    name="updateLinkIntegrityInformation"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    template="browser/update.pt"
+    class=".browser.update.UpdateView"
+    permission="cmf.ManagePortal" /> 
+
   <!-- event handlers for updating link integrity references -->
 
   <subscriber

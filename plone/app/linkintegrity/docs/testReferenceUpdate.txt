@@ -1,0 +1,32 @@
+This tests updating link integrity information for all site content, i.e.
+after migrating from a previous version.  First we create two sample links and
+remove the generated references afterwards:
+
+  >>> self.setRoles(('Manager',))
+  >>> portal.doc1.processForm(values={'text':'<a href="doc2">a document</a>'})
+  >>> portal.doc2.processForm(values={'text':'<a href="folder1/doc3">a document</a>'})
+  >>> portal.doc1.deleteReferences(relationship='isReferencing')
+  >>> portal.doc2.deleteReferences(relationship='isReferencing')
+
+Just to make sure, we check that there are no references from or to these
+documents at this point:
+
+  >>> self.assertEqual(portal.doc1.getReferences(), [])
+  >>> self.assertEqual(portal.doc2.getReferences(), [])
+
+An update of link integrity information for all content is triggered by
+browsing a specific url:
+
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/updateLinkIntegrityInformation')
+  >>> browser.getControl('Update').click()
+  >>> browser.contents
+  '...<dl class="portalMessage...Link integrity information updated for ... item(s)...</dl>...'
+
+Now the linking documents should hold the correct link integrity references:
+
+  >>> portal.doc1.getReferences()
+  [<ATDocument at /plone/doc2>]
+  >>> portal.doc2.getReferences()
+  [<ATDocument at /plone/folder1/doc3>]
+
