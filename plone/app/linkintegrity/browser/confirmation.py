@@ -4,7 +4,7 @@ from Products.CMFCore.utils import getToolByName, _checkPermission
 from Products.CMFCore.permissions import AccessContentsInformation
 
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.utils import encode
+from plone.app.linkintegrity.utils import encodeRequestData as encode
 
 
 class RemoveConfirmationView(BrowserView):

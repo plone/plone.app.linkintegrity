@@ -8,7 +8,7 @@ from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.utils import decode
+from plone.app.linkintegrity.utils import decodeRequestData as decode
 
 
 class RemoveReferencedObjectView(BrowserView):

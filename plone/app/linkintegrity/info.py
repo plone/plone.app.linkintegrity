@@ -1,5 +1,6 @@
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.utils import encode, decode
+from plone.app.linkintegrity.utils import encodeInts as encode
+from plone.app.linkintegrity.utils import decodeInts as decode
 from zope.interface import implements
 from zope.component import queryUtility
 from Acquisition import aq_base
