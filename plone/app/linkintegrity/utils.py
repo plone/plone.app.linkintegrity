@@ -2,7 +2,7 @@ from base64 import b64encode, b64decode
 from zlib import compress, decompress
 
 
-def _encodeStrings(strings):
+def encodeStrings(strings):
     """ compress and encode a list of strings into a single string """
     def _encode(strings):
         for string in strings:
@@ -10,7 +10,7 @@ def _encodeStrings(strings):
     return b64encode(compress(''.join(_encode(strings))))
 
 
-def _decodeStrings(data):
+def decodeStrings(data):
     """ decode and uncompress a string as a generator """
     data = decompress(b64decode(data))
     while data:
@@ -27,7 +27,7 @@ def encodeRequestData((body, env)):
         for key, val in env.iteritems():
             yield str(key)
             yield str(val)
-    return _encodeStrings(_iterdata())
+    return encodeStrings(_iterdata())
 
 
 def decodeRequestData(data):
@@ -35,7 +35,7 @@ def decodeRequestData(data):
     def _pertwo():
         while True:
             yield data.next(), data.next()
-    data = _decodeStrings(data)
+    data = decodeStrings(data)
     return data.next(), dict(_pertwo())
 
 

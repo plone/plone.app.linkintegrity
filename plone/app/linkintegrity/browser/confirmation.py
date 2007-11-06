@@ -4,7 +4,7 @@ from Products.CMFCore.utils import getToolByName, _checkPermission
 from Products.CMFCore.permissions import AccessContentsInformation
 
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.utils import encodeRequestData as encode
+from plone.app.linkintegrity.utils import encodeRequestData
 
 
 class RemoveConfirmationView(BrowserView):
@@ -31,7 +31,7 @@ class RemoveConfirmationView(BrowserView):
         for key in 'HTTP_AUTHORIZATION', 'HTTP_COOKIE':
             if env.has_key(key):
                 del env[key]
-        return encode((body, env))
+        return encodeRequestData((body, env))
 
     def integrityBreaches(self):
         info = ILinkIntegrityInfo(self.request).getIntegrityBreaches()

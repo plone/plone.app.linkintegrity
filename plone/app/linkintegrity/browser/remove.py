@@ -8,7 +8,7 @@ from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.utils import decodeRequestData as decode
+from plone.app.linkintegrity.utils import decodeRequestData
 
 
 class RemoveReferencedObjectView(BrowserView):
@@ -28,7 +28,7 @@ class RemoveReferencedObjectView(BrowserView):
             # the user choose to actually delete the referred to object,
             # so we reconstruct the original request which we interrupted
             # before, store the so far confirmed items and retry it...
-            body, env = decode(request.get('original_request'))
+            body, env = decodeRequestData(request.get('original_request'))
             marker = ILinkIntegrityInfo(request).getEnvMarker()
             if clicked('delete_all'):
                 env[marker] = 'all'

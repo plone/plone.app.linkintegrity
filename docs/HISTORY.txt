@@ -2,6 +2,11 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
+plone.app.linkintegrity - 1.0.2 unreleased
+
+    - Fixed security issue due to using pickles (see CVE-2007-5741)
+      [witsch]
+
 plone.app.linkintegrity - 1.0.1 Released September 10, 2007
 
     - Added view for updating link integrity information for all site content

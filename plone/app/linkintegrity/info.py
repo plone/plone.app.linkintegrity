@@ -1,6 +1,6 @@
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.utils import encodeInts as encode
-from plone.app.linkintegrity.utils import decodeInts as decode
+from plone.app.linkintegrity.utils import encodeInts
+from plone.app.linkintegrity.utils import decodeInts
 from zope.interface import implements
 from zope.component import queryUtility
 from Acquisition import aq_base
@@ -77,7 +77,7 @@ class LinkIntegrityInfo(object):
         if confirmed == 'all':
             confirmed = ['all']
         elif confirmed:
-            confirmed = decode(confirmed)
+            confirmed = decodeInts(confirmed)
         return confirmed
 
     def isConfirmedItem(self, obj):
@@ -91,7 +91,7 @@ class LinkIntegrityInfo(object):
         confirmed = self.confirmedItems()
         for obj in additions:
             confirmed.append(id(aq_base(obj)))
-        return encode(confirmed)
+        return encodeInts(confirmed)
 
     def moreEventsToExpect(self):
         attr = 'link_integrity_events_counter'
