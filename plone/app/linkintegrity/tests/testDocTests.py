@@ -2,10 +2,11 @@
 
 from plone.app.linkintegrity import docs
 from plone.app.linkintegrity.tests import layer
+from plone.app.linkintegrity.parser import extractLinks
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase import PloneTestCase
 from Products.Five.testbrowser import Browser
-from unittest import TestSuite
+from unittest import TestSuite, TestCase, makeSuite
 from os.path import join, split, abspath, dirname
 from os import walk
 from re import compile
@@ -61,6 +62,13 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
         HTTPRequest.set = set
 
 
+class LinkIntegrityTestCase(TestCase):
+
+    def testHandleParserException(self):
+        self.assertEqual(extractLinks('<foo\'d>'), ())
+        self.assertEqual(extractLinks('<a href="http://foo.com">foo</a><bar\'d>'), ('http://foo.com',))
+
+
 # we check argv to enable testing of explicitely named doctests
 if '-t' in argv:
     pattern = compile('.*\.(txt|rst)$')
@@ -68,7 +76,9 @@ else:
     pattern = compile('^test.*\.(txt|rst)$')
 
 def test_suite():
-    suite = TestSuite()
+    suite = TestSuite([
+        makeSuite(LinkIntegrityTestCase),
+    ])
     docs_dir = abspath(dirname(docs.__file__)) + '/'
     for path, dirs, files in walk(docs_dir):
         for name in files:

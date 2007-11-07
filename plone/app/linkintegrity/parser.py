@@ -1,4 +1,4 @@
-from HTMLParser import HTMLParser
+from HTMLParser import HTMLParser, HTMLParseError
 
 
 class LinkParser(HTMLParser):
@@ -31,7 +31,10 @@ def search_attr(name, attrs):
 def extractLinks(data):
     """ parse the given html and return all links """
     parser = LinkParser()
-    parser.feed(data)
-    parser.close()
+    try:
+        parser.feed(data)
+        parser.close()
+    except HTMLParseError:
+        pass
     return parser.getLinks()
 

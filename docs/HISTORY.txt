@@ -2,7 +2,10 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 1.0.2 unreleased
+plone.app.linkintegrity - 1.0.2 Released November 7, 2007
+
+    - Fixed parser error when handling malformed HTML
+      [witsch]
 
     - Fixed security issue due to using pickles (see CVE-2007-5741)
       [witsch]
