@@ -2,6 +2,9 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
+plone.app.linkintegrity - 1.0.4 Unreleased
+
+
 plone.app.linkintegrity - 1.0.3 Released December 5, 2007
 
     - Fixed setting up the test layer after GenericSetup update
