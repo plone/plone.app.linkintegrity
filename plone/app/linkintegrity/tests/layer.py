@@ -19,11 +19,6 @@ class PloneLinkintegrity(PloneSite):
         user = uf.getUserById(PloneTestCase.portal_owner).__of__(uf)
         newSecurityManager(None, user)
 
-        # apply plone profile to register local utilities etc
-        setup_tool = portal.portal_setup
-        setup_tool.setImportContext('')     # pass empty id to re-apply current state (snapshot)
-        setup_tool.runAllImportSteps()
-
         # create sample content
         gif = 'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
         gif = StringIO(decodestring(gif))

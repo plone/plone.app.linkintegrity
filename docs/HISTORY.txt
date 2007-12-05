@@ -2,6 +2,11 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
+plone.app.linkintegrity - 1.0.3 Unreleased
+
+    - Fixed setting up the test layer after GenericSetup update
+      [witsch]
+
 plone.app.linkintegrity - 1.0.2 Released November 7, 2007
 
     - Fixed parser error when handling malformed HTML
