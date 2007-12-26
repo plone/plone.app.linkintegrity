@@ -4,6 +4,9 @@ Changelog for plone.app.linkintegrity
 
 plone.app.linkintegrity - 1.0.4 Unreleased
 
+    - Updated tests to work with Plone 4.0.
+      [hannosch]
+
     - Referencing items are now listed in alphabetical order
       [witsch]
 

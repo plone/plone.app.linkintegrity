@@ -18,7 +18,7 @@ the `IObjectModifiedEvent` event either:
 
   >>> self.setRoles(('Manager',))
   >>> tag = img.tag()
-  >>> tag
+  >>> str(tag)
   '<img src="http://nohost/plone/image1/image" ... title="Test Image 1" ... />'
   >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % tag})
   >>> doc.getReferences()
