@@ -68,6 +68,11 @@ def referenceRemoved(obj, event):
     assert obj is event.object          # just making sure...
     if not obj.relationship == referencedRelationship:
         return                          # skip for other removed references
+    # if the object the event was fired on doesn't have a `REQUEST` attribute
+    # we can safely assume no direct user action was involved and therefore
+    # never raise a link integrity exception...
+    if not hasattr(obj, 'REQUEST'):
+        return
     storage = ILinkIntegrityInfo(obj.REQUEST)
     breaches = storage.getIntegrityBreaches()
     breaches.setdefault(obj.getTargetObject(), set()).add(obj.getSourceObject())

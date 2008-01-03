@@ -2,7 +2,10 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 1.0.4 Unreleased
+plone.app.linkintegrity - 1.0.4 Released January 3, 2008
+
+    - Handle `IObjectRemovedEvents` with no attached request object.
+      [witsch]
 
     - Updated tests to work with Plone 4.0.
       [hannosch]
