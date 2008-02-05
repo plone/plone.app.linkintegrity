@@ -15,7 +15,7 @@
 <metal:main fill-slot="main">
 
 <dl class="portalMessage warning">
-    <dt>Warning</dt>
+    <dt i18n:translate="">Warning</dt>
     <dd i18n:translate="linkintegrity_warning">
         One or more of the items you are attempting to delete may cause links
         in your site to break.
@@ -51,8 +51,9 @@
                   [<a tal:attributes="href string:${src/absolute_url}/edit"
                     target="_blank">Edit in new window</a>]
                 </tal:visible>
-                <tal:private condition="python: not view.isAccessible(src)">
-                  Item not accessible
+                <tal:private condition="python: not view.isAccessible(src)"
+                             i18n:translate="linkintegrity_item_not_accessible">
+                  The item is not accessible.
                 </tal:private>
               </li>
             </ul>
@@ -63,7 +64,9 @@
 
   <br />
 
-  <p>Would you like to delete it anyway?</p>
+  <p i18n:translate="linkintegrity_delete_anyway">
+      Would you like to delete it anyway?
+  </p>
 
   <input type="hidden" name="original_request"
          tal:attributes="value view/originalRequest" />
@@ -74,11 +77,14 @@
   <input type="hidden" name="cancel_url"
          tal:attributes="value view/cancelURL" />
 
-  <input class="destructive" type="submit" name="delete" value="Yes" />
+  <input class="destructive" type="submit" name="delete"
+         value="Yes" i18n:attributes="value linkintegrity_yes" />
 
-  <input class="destructive" type="submit" name="delete_all" value="Yes to all" />
+  <input class="destructive" type="submit" name="delete_all"
+         value="Yes to all" i18n:attributes="value linkintegrity_yes_to_all" />
 
-  <input class="standalone" type="submit" name="cancel" value="Cancel" />
+  <input class="standalone" type="submit" name="cancel"
+         value="Cancel" i18n:attributes="value linkintegrity_cancel" />
 
 </form>
 
