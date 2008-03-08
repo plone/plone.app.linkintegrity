@@ -4,6 +4,8 @@ Changelog for plone.app.linkintegrity
 
 plone.app.linkintegrity - 1.0.6 Unreleased
 
+    - Added missing namespace declaration to avoid the warning about it.
+      [wiggy]
 
 plone.app.linkintegrity - 1.0.5 Released February 13, 2008
 
