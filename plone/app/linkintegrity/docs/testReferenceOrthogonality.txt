@@ -1,0 +1,55 @@
+This tests the behavior when other references already exist. First we
+check neither the document nor the image have any references yet:
+
+  >>> doc = portal.doc1
+  >>> self.assertEqual(doc.getReferences(), [])
+  >>> self.assertEqual(doc.getBackReferences(), [])
+  >>> img = portal.image1
+  >>> self.assertEqual(img.getReferences(), [])
+  >>> self.assertEqual(img.getBackReferences(), [])
+
+Then establish a reference between the document and image as a related
+item:
+
+  >>> self.setRoles(('Manager',))
+  >>> doc.setRelatedItems(img)
+
+  >>> doc.getRelatedItems()
+  [<ATImage at /plone/image1>]
+
+Next edit the document body and insert a link to the image, which should
+trigger the creation of a link integrity reference:
+
+  >>> tag = img.tag()
+  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % tag})
+
+  >>> from plone.app.linkintegrity.handlers import referencedRelationship
+  >>> doc.getReferences(relationship=referencedRelationship)
+  [<ATImage at /plone/image1>]
+
+And the related item reference remains in place:
+
+  >>> doc.getRelatedItems()
+  [<ATImage at /plone/image1>]
+
+Now edit the document body again with some link to the image, which
+should leave both the references in place:
+
+  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % tag})
+  >>> doc.getReferences(relationship=referencedRelationship)
+  [<ATImage at /plone/image1>]
+
+  >>> doc.getRelatedItems()
+  [<ATImage at /plone/image1>]
+
+Finally, edit the document body again, this time removing the link to the
+image, which should trigger the removal of the link integrity reference:
+
+  >>> doc.processForm(values={'text':'<html> <body> </body> </html>'})
+  >>> doc.getReferences(relationship=referencedRelationship)
+  []
+
+And again the related item reference remains in place:
+
+  >>> doc.getRelatedItems()
+  [<ATImage at /plone/image1>]

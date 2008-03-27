@@ -44,7 +44,8 @@ def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
     try:    # TODO: is this a bug or a needed workaround?
         for ref in obj.getReferences(relationship=referencedRelationship):
-            obj.deleteReference(ref)    # only remove forward references
+            # only remove forward references
+            obj.deleteReference(ref, relationship=referencedRelationship)
     except AttributeError:
         return
     refs = []

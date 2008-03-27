@@ -4,6 +4,8 @@ Changelog for plone.app.linkintegrity
 
 plone.app.linkintegrity - 1.0.7 Unreleased
 
+    - Fixed accidental removal of references not related to link integrity.
+      [dunny]
 
 plone.app.linkintegrity - 1.0.6 Released March 8, 2008
 
