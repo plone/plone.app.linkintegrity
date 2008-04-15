@@ -49,6 +49,7 @@
                 <tal:visible condition="python: view.isAccessible(src)">
                   <a tal:attributes="href src/absolute_url" tal:content="src/Title" />
                   [<a tal:attributes="href string:${src/absolute_url}/edit"
+                    i18n:translate="linkintegrity_edit_in_new_window"
                     target="_blank">Edit in new window</a>]
                 </tal:visible>
                 <tal:private condition="python: not view.isAccessible(src)"
