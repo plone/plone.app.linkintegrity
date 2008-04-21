@@ -4,6 +4,9 @@ Changelog for plone.app.linkintegrity
 
 plone.app.linkintegrity - 1.0.8 Unreleased
 
+    - Added missing i18n markup to `confirmation.pt`, also fixing
+      http://dev.plone.org/plone/ticket/7995.
+      [witsch]
 
 plone.app.linkintegrity - 1.0.7 Released March 27, 2008
 
