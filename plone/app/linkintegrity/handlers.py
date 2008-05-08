@@ -1,3 +1,4 @@
+from Acquisition import aq_parent
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.exceptions import ReferenceException
@@ -36,7 +37,7 @@ def getObjectsFromLinks(base, links):
             obj, extra = findObject(base, path)
             if obj:
                 if IOFSImage.providedBy(obj):
-                    obj = obj.aq_parent     # use atimage object for scaled images
+                    obj = aq_parent(obj)    # use atimage object for scaled images
                 objects.add(obj)
     return objects
 
