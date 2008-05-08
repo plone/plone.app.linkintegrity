@@ -2,7 +2,7 @@ Changelog for plone.app.linkintegrity
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 1.0.9 Unreleased
+plone.app.linkintegrity - 1.0.9 Released May 8, 2008
 
     - Use acquisition API to support the "philikon-aq" branch.
       [witsch]
