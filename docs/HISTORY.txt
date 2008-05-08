@@ -4,6 +4,12 @@ Changelog for plone.app.linkintegrity
 
 plone.app.linkintegrity - 1.0.9 Unreleased
 
+    - Use acquisition API to support the "philikon-aq" branch.
+      [witsch]
+
+    - Fix a problem with updating link integrity references during a
+      request which trying to delete multiple other objects.
+      [witsch]
 
 plone.app.linkintegrity - 1.0.8 Released April 21, 2008
 
