@@ -1,0 +1,84 @@
+This tests against a bug that was triggered by incorrectly remembering link
+integrity breaches due to removing and re-adding all of them and when changing
+a linking content item.  As this will only happen in a specific situation,
+namely when some items are removed from a container object containing an
+Archetypes "TextField", we need a bit of setup first.  The bug was discovered
+using the "RichDocument" product, but Plone's "Collection" luckily also has
+the required properties:
+
+  >>> self.setRoles(('Manager',))
+  >>> portal.portal_properties.site_properties.disable_folder_sections = True
+  >>> topic = portal[portal.invokeFactory('Topic', id='topic', title='a topic',
+  ...   text='<html> <body> a somewhat interesting topic </body> </html>')]
+  >>> topic.invokeFactory('Topic', id='subtopic1', title='a subtopic',
+  ...   text='<html> <body> a boring subtopic </body> </html>')
+  'subtopic1'
+  >>> topic.invokeFactory('Topic', id='subtopic2', title='another subtopic',
+  ...   text='<html> <body> another boring subtopic </body> </html>')
+  'subtopic2'
+
+So we have a "collection" or "topic", which contains two subtopics.  Now we
+refer to these as well as an image outside of the "collection":
+
+  >>> topic.processForm(values={'text': """<html> <body>
+  ...   <a href="../image1">an image</a>
+  ...   <a href="subtopic1">a boring subtopic</a>
+  ...   <a href="subtopic2">another boring subtopic</a> """})
+
+Then we try to delete the subtopics which triggers a `IObjectModifiedEvent`
+on the topic and therefore causes it to recalculate its link integrity
+references.  This used to first remove all references and then determine and
+set the current ones by searching for links contained in the items rendered
+content.  Doing so would in turn trigger a removal event for the reference
+representing the link to the image, i.e. an item that is not supposed to be
+removed.  Nevertheless the event handler added this link to the list of link
+integrity breaches.
+
+Before we can test the fix for the bug we need to prevent the test framework
+from choking on the exception we intentionally throw as usual (see
+`docs/testRemovalTriggersConfirmation.txt` for more info).  Also, we need to
+work around a bug, which causes none of the action buttons to appear in the
+"subfolders" tab of the topic, including the required "delete" button.  To
+work around this we call the `manage_delObjects` method directly, passing in
+the ids of the selected items:
+
+  >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.open('http://nohost/plone/topic/')
+  >>> browser.getLink('Subfolders').click()
+  >>> browser.getControl('a subtopic').selected = True
+  >>> browser.getControl('another subtopic').selected = True
+
+Normally the test would continue by clicking the "delete" button, i.e.
+using `>>> browser.getControl('Delete').click()`, but we need to work around
+the missing buttons as explained above.  We also need to explicitly indicate
+the number of to be removed objects, which is normally taken care of in the
+`delete_folder` script:
+
+  >>> from os.path import basename
+  >>> paths = browser.getControl(name='paths:list').value
+  >>> qs = 'ids:list=' + '&ids:list='.join(map(basename, paths))
+  >>> qs += '&link_integrity_events_to_expect:int=%s' % len(paths)
+  >>> browser.open('manage_delObjects?' + qs)
+
+We should now get a link integrity confirmation page warning us about the
+two subtopics, but only about these two.  The referenced image shouldn't be
+listed:
+
+  >>> browser.contents
+  '...<a href="http://nohost/plone/topic/subtopic1"...a subtopic...
+   ...This...Topic...is referenced by the following items:...
+   ...<li>...<a href="http://nohost/plone/topic"...a topic...</li>...
+   ...<a href="http://nohost/plone/topic/subtopic2"...another subtopic...
+   ...This...Topic...is referenced by the following items:...
+   ...<li>...<a href="http://nohost/plone/topic"...a topic...</li>...
+   ...Would you like to delete it anyway?...'
+  >>> len(browser.contents.split('is referenced by the following items'))
+  3
+  >>> 'Test Image 1' in browser.contents
+  False
+  >>> browser.getLink('Test Image 1')
+  Traceback (most recent call last):
+  ...
+  LinkNotFoundError
+

@@ -25,8 +25,8 @@ def findObject(base, path):
 
 
 def getObjectsFromLinks(base, links):
-    """ determine actual objects (plus extra paths) refered to by given links """
-    objects = []
+    """ determine actual objects refered to by given links """
+    objects = set()
     url = base.absolute_url()
     scheme, host, path, query, frag = urlsplit(url)
     site = urlunsplit((scheme, host, '', '', ''))
@@ -37,29 +37,29 @@ def getObjectsFromLinks(base, links):
             if obj:
                 if IOFSImage.providedBy(obj):
                     obj = obj.aq_parent     # use atimage object for scaled images
-                objects.append(obj)
+                objects.add(obj)
     return objects
 
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
     try:    # TODO: is this a bug or a needed workaround?
-        for ref in obj.getReferences(relationship=referencedRelationship):
-            # only remove forward references
-            obj.deleteReference(ref, relationship=referencedRelationship)
+        existing = set(obj.getReferences(relationship=referencedRelationship))
     except AttributeError:
         return
-    refs = []
+    refs = set()
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
             links = extractLinks(accessor())
-            refs.extend(getObjectsFromLinks(obj, links))
-    for ref in refs:
+            refs = refs.union(getObjectsFromLinks(obj, links))
+    for ref in refs.difference(existing):   # add new references and...
         try:
             obj.addReference(ref, relationship=referencedRelationship)
         except ReferenceException:
             pass
+    for ref in existing.difference(refs):   # removed leftovers
+        obj.deleteReference(ref, relationship=referencedRelationship)
 
 
 def referenceRemoved(obj, event):
