@@ -35,8 +35,9 @@ def getObjectsFromLinks(base, links):
         if (not s and not h) or (s == scheme and h == host):    # relative or local url
             obj, extra = findObject(base, path)
             if obj:
-                extra += urlunsplit(('', '', '', q, f))
-                objects.append((obj, extra))
+                if IOFSImage.providedBy(obj):
+                    obj = obj.aq_parent     # use atimage object for scaled images
+                objects.append(obj)
     return objects
 
 
@@ -54,9 +55,7 @@ def modifiedArchetype(obj, event):
             accessor = field.getAccessor(obj)
             links = extractLinks(accessor())
             refs.extend(getObjectsFromLinks(obj, links))
-    for ref, extra in refs:
-        if IOFSImage.providedBy(ref):
-            ref = ref.aq_parent     # use atimage object for scaled images
+    for ref in refs:
         try:
             obj.addReference(ref, relationship=referencedRelationship)
         except ReferenceException:
