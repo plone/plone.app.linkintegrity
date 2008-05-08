@@ -1,4 +1,5 @@
-Changelog for plone.app.linkintegrity
+Changelog
+---------
 
     (name of developer listed in brackets)
 

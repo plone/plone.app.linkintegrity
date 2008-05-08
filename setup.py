@@ -1,10 +1,16 @@
 from setuptools import setup, find_packages
+from os.path import join
 
-version = '1.0.10'
+name = 'plone.app.linkintegrity'
+path = name.split('.') + ['version.txt']
+version = open(join(*path)).read().strip()
+readme = open("README.txt").read()
+history = open(join('docs', 'HISTORY.txt')).read().replace(name + ' - ', '')
 
-setup(name = 'plone.app.linkintegrity',
+setup(name = name,
       version = version,
       description = 'Manage link integrity in Plone.',
+      long_description = readme[readme.find('\n\n'):] + '\n' + history,
       keywords = 'link integrity plone',
       author = 'Plone Foundation',
       author_email = 'plone-developers@lists.sourceforge.net',
@@ -31,8 +37,5 @@ setup(name = 'plone.app.linkintegrity',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking',
       ],
-      long_description = """\
-        This package tries to integrate PLIP 125, link integrity checking,
-        into Plone using the zope3 event system. """,
 )
 
