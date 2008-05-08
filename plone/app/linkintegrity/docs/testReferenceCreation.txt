@@ -38,3 +38,11 @@ Next we change the document again and insert a link to another page:
   >>> portal.news.getBackReferences()
   [<ATDocument at /plone/doc1>]
 
+Linking image scales should also work:
+
+  >>> doc.processForm(values={'text':'<html> <body> <a href="image1/image_thumb">an image</a> </body> </html>'})
+  >>> doc.getReferences()
+  [<ATImage at /plone/image1>]
+  >>> img.getBackReferences()
+  [<ATDocument at /plone/doc1>]
+
