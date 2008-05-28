@@ -5,6 +5,9 @@ Changelog
 
 plone.app.linkintegrity - 1.0.10 Unreleased
 
+    - Updated tests to work with LinguaPlone by unmarking the creation
+      flag on new objects.
+      [maurits]
 
 plone.app.linkintegrity - 1.0.9 Released May 8, 2008
 

@@ -37,6 +37,19 @@ class PloneLinkintegrity(PloneSite):
         portal.folder1.invokeFactory('Document', id='doc5', title='Test Page 5',
             text='<html> <body> another test page </body> </html>')
 
+        # Unmark the creation flag so any calls processForm will not
+        # rename our content objects.  This is mainly for getting the
+        # tests running in combination with LinguaPlone.
+        portal.doc1.unmarkCreationFlag()
+        portal.doc2.unmarkCreationFlag()
+        portal.image1.unmarkCreationFlag()
+        portal.image2.unmarkCreationFlag()
+        portal.image3.unmarkCreationFlag()
+        portal.folder1.unmarkCreationFlag()
+        portal.folder1.doc3.unmarkCreationFlag()
+        portal.folder1.doc4.unmarkCreationFlag()
+        portal.folder1.doc5.unmarkCreationFlag()
+
         # starting with 2.10.4 product initialization gets delayed for
         # instance startup and is never called when running tests;  hence
         # we have to initialize the package method manually...
