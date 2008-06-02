@@ -29,6 +29,7 @@ class PloneLinkintegrity(PloneSite):
         portal.invokeFactory('Image', id='image1', title='Test Image 1', image=gif)
         portal.invokeFactory('Image', id='image2', title='Test Image 2', image=gif)
         portal.invokeFactory('Image', id='image3', title='Test Image 3', image=gif)
+        portal.invokeFactory('File', id='file1', title='Test File 1', file=gif)
         portal.invokeFactory('Folder', id='folder1', title='Test Folder 1')
         portal.folder1.invokeFactory('Document', id='doc3', title='Test Page 3',
             text='<html> <body> a test page in a subfolder </body> </html>')
@@ -45,6 +46,7 @@ class PloneLinkintegrity(PloneSite):
         portal.image1.unmarkCreationFlag()
         portal.image2.unmarkCreationFlag()
         portal.image3.unmarkCreationFlag()
+        portal.file1.unmarkCreationFlag()
         portal.folder1.unmarkCreationFlag()
         portal.folder1.doc3.unmarkCreationFlag()
         portal.folder1.doc4.unmarkCreationFlag()
@@ -72,7 +74,7 @@ class PloneLinkintegrity(PloneSite):
         newSecurityManager(None, user)
 
         # remove sample content
-        ids = 'doc1', 'doc2', 'image1', 'image2', 'image3', 'folder1'
+        ids = 'doc1', 'doc2', 'image1', 'image2', 'image3', 'folder1', 'file1'
         portal.manage_delObjects(ids=list(ids))
 
         # commit the cleanup...
