@@ -10,12 +10,15 @@ the required properties:
   >>> portal.portal_properties.site_properties.disable_folder_sections = True
   >>> topic = portal[portal.invokeFactory('Topic', id='topic', title='a topic',
   ...   text='<html> <body> a somewhat interesting topic </body> </html>')]
+  >>> portal.topic.unmarkCreationFlag()
   >>> topic.invokeFactory('Topic', id='subtopic1', title='a subtopic',
   ...   text='<html> <body> a boring subtopic </body> </html>')
   'subtopic1'
+  >>> portal.topic.subtopic1.unmarkCreationFlag()
   >>> topic.invokeFactory('Topic', id='subtopic2', title='another subtopic',
   ...   text='<html> <body> another boring subtopic </body> </html>')
   'subtopic2'
+  >>> portal.topic.subtopic2.unmarkCreationFlag()
 
 So we have a "collection" or "topic", which contains two subtopics.  Now we
 refer to these as well as an image outside of the "collection":
@@ -65,6 +68,7 @@ We should now get a link integrity confirmation page warning us about the
 two subtopics, but only about these two.  The referenced image shouldn't be
 listed:
 
+  >>> open('/tmp/test.html', 'w').write(browser.contents)
   >>> browser.contents
   '...<a href="http://nohost/plone/topic/subtopic1"...a subtopic...
    ...This...Topic...is referenced by the following items:...
