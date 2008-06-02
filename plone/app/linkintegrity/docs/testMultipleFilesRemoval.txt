@@ -1,7 +1,7 @@
-This tests the behaviour when removing multiple referenced files.  The
-resulting confirmation pages should contain lists of all link integrity
-breaches that would result from removing the respective file.  First we need
-to create the necessary links:
+This tests the behaviour when removing multiple referenced files (or
+actually images).  The resulting confirmation pages should contain
+lists of all link integrity breaches that would result from removing
+the respective file.  First we need to create the necessary links:
 
   >>> self.setRoles(('Manager',))
   >>> tmpl = '<html> <body> %s, %s </body> </html>'
