@@ -1,16 +1,27 @@
-This tests the behaviour when removing a referenced file.  Especially,
-this test may flush out a bug when using LinguaPlone.  First we need
-to create the necessary links:
+This tests the behaviour when removing a referenced file that has
+spaces in its id.  First we need to rename the existing file:
 
   >>> self.setRoles(('Manager',))
+  >>> file_with_spaces = portal.file1
+  >>> file_with_spaces.setId('some spaces.doc')
+  >>> file_with_spaces.getId()
+  'some spaces.doc'
+
+Check that the file is there with the id that we expect:
+
+  >>> portal['some spaces.doc']
+  <ATFile at /plone/some spaces.doc>
+
+Now we create the necessary links:
+
   >>> tmpl = '<html> <body> <a href="%s">%s</a> </body> </html>'
   >>> p = self.portal
-  >>> p.doc1.processForm(values={'text':tmpl % (p.file1.absolute_url(), p.file1.title_or_id())})
+  >>> p.doc1.processForm(values={'text':tmpl % (file_with_spaces.absolute_url(), file_with_spaces.title_or_id())})
 
 The document should now have a reference to the file:
 
   >>> p.doc1.getRefs()
-  [<ATFile at /plone/file1>]
+  [<ATFile at /plone/some spaces.doc>]
 
 Then we use a browser to try to delete the referenced file.  Before we
 can do this we need to prevent the test framework from choking on the
@@ -26,7 +37,7 @@ folder_contents), so that all tests written so far won't need modification:
   >>> browser.getControl('Delete').click()
   >>> open('/tmp/test.html', 'w').write(browser.contents)
   >>> browser.contents
-  '...<a href="http://nohost/plone/file1"...Test File 1...
+  '...<a href="http://nohost/plone/some%20spaces.doc"...Test File 1...
    ...This...File...is referenced by the following items:...
    ...<li>...<a href="http://nohost/plone/doc1"...Test Page 1...</li>...
    ...Would you like to delete it anyway?...'
@@ -35,7 +46,7 @@ folder_contents), so that all tests written so far won't need modification:
 After we acknowledge the breaches in link integrity the file should have
 been deleted::
 
-  >>> portal.file1
+  >>> portal['some spaces.doc']
   Traceback (most recent call last):
   ...
-  AttributeError: file1
+  KeyError: 'some spaces.doc'

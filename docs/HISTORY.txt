@@ -5,6 +5,10 @@ Changelog
 
 plone.app.linkintegrity - 1.0.10 Unreleased
 
+    - Fixed the recognizing of links to files (or any object) with a
+      space in the id.  Fixes #8167.
+      [maurits]
+
     - Updated tests to work with LinguaPlone by unmarking the creation
       flag on new objects.
       [maurits]
