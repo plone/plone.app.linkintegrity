@@ -68,7 +68,6 @@ We should now get a link integrity confirmation page warning us about the
 two subtopics, but only about these two.  The referenced image shouldn't be
 listed:
 
-  >>> open('/tmp/test.html', 'w').write(browser.contents)
   >>> browser.contents
   '...<a href="http://nohost/plone/topic/subtopic1"...a subtopic...
    ...This...Topic...is referenced by the following items:...

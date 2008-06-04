@@ -35,7 +35,6 @@ folder_contents), so that all tests written so far won't need modification:
   >>> browser.open('http://nohost/plone/folder_contents')
   >>> browser.getControl('Test File 1').selected = True
   >>> browser.getControl('Delete').click()
-  >>> open('/tmp/test.html', 'w').write(browser.contents)
   >>> browser.contents
   '...<a href="http://nohost/plone/some%20spaces.doc"...Test File 1...
    ...This...File...is referenced by the following items:...
