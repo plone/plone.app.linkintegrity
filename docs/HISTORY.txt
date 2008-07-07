@@ -3,7 +3,10 @@ Changelog
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 1.0.10 Unreleased
+plone.app.linkintegrity - 1.0.11 Unreleased
+
+
+plone.app.linkintegrity - 1.0.10 Released July 7, 2008
 
     - Fixed the recognizing of links to files (or any object) with a
       space in the id.  Fixes #8167.
