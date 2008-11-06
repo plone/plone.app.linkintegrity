@@ -8,7 +8,7 @@ from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
 from urlparse import urlsplit, urlunsplit
 from parser import extractLinks
-import urllib
+from urllib import unquote
 
 
 referencedRelationship = 'isReferencing'
@@ -19,7 +19,7 @@ def findObject(base, path):
     obj = base
     components = path.split('/')
     while components:
-        child_id = urllib.unquote(components[0])
+        child_id = unquote(components[0])
         try: child = obj.restrictedTraverse(child_id)
         except: return None, None
         if not IItem.providedBy(child):
