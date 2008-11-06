@@ -5,6 +5,10 @@ Changelog
 
 plone.app.linkintegrity - 1.0.11 Unreleased
 
+    - Fix issue with dangling references to already removed objects.
+      Fixes http://dev.plone.org/plone/ticket/8349 and
+      http://dev.plone.org/plone/ticket/8390.
+      [witsch]
 
 plone.app.linkintegrity - 1.0.10 Released July 7, 2008
 

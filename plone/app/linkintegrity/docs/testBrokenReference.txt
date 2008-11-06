@@ -1,0 +1,30 @@
+This tests against a bug that was triggered when a linked to object got
+removed without also removing the reference to it somehow.  See
+http://dev.plone.org/plone/ticket/8349 and http://dev.plone.org/plone/ticket/8390
+for additional information.
+
+As usual, we need to create the necessary links first:
+
+  >>> self.setRoles(('Manager',))
+  >>> portal.doc1.processForm(values={'text':'<a href="doc2">a document</a>'})
+
+Next we remove the linked-to object, but without removing the according
+reference to it.  To do that we need to suppress the normally fired events.
+Normally this should never happen, but as the tickets report there are some
+ways to get end up with dangling reference like this:
+
+  >>> portal._delObject('doc2', suppress_events=True)
+
+Now the reference should be broken:
+
+  >>> portal.doc1.getReferences()
+  [None]
+
+If we now try to update the linking document again in order to remove the
+link, things used to break raising a ``ReferenceException``.  This should
+be handled more gracefully now:
+
+  >>> portal.doc1.processForm(values={'text':'foo!'})
+  >>> portal.doc1.getReferences()
+  []
+

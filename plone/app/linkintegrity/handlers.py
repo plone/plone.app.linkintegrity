@@ -1,4 +1,5 @@
 from Acquisition import aq_parent
+from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.exceptions import ReferenceException
@@ -63,7 +64,18 @@ def modifiedArchetype(obj, event):
         except ReferenceException:
             pass
     for ref in existing.difference(refs):   # removed leftovers
-        obj.deleteReference(ref, relationship=referencedRelationship)
+        try:
+            obj.deleteReference(ref, relationship=referencedRelationship)
+        except ReferenceException:
+            try:        # try to get rid of the dangling reference...
+                refcat = getToolByName(obj, 'reference_catalog')
+                uid, dummy = refcat._uidFor(obj)
+                brains = refcat._queryFor(uid, None, relationship=referencedRelationship)
+                objs = refcat._resolveBrains(brains)
+                for obj in objs:
+                    refcat._deleteReference(obj)
+            except:
+                pass
 
 
 def referenceRemoved(obj, event):
