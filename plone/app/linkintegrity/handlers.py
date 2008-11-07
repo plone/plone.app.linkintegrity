@@ -4,6 +4,7 @@ from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.exceptions import ReferenceException
 from OFS.interfaces import IItem
+from ZODB.POSException import ConflictError
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
 from urlparse import urlsplit, urlunsplit
@@ -20,8 +21,12 @@ def findObject(base, path):
     components = path.split('/')
     while components:
         child_id = unquote(components[0])
-        try: child = obj.restrictedTraverse(child_id)
-        except: return None, None
+        try:
+            child = obj.restrictedTraverse(child_id)
+        except ConflictError:
+            raise
+        except:
+            return None, None
         if not IItem.providedBy(child):
             break
         obj = child
@@ -67,13 +72,21 @@ def modifiedArchetype(obj, event):
         try:
             obj.deleteReference(ref, relationship=referencedRelationship)
         except ReferenceException:
-            try:        # try to get rid of the dangling reference...
+            try:
+                # try to get rid of the dangling reference, but let's not
+                # have this attempt to clean up break things otherwise...
+                # iow, the `try..except` is there, because internal methods
+                # of the reference catalog are being used directly here.  any
+                # changes regarding these shouldn't break things over here,
+                # though...
                 refcat = getToolByName(obj, 'reference_catalog')
                 uid, dummy = refcat._uidFor(obj)
                 brains = refcat._queryFor(uid, None, relationship=referencedRelationship)
                 objs = refcat._resolveBrains(brains)
                 for obj in objs:
                     refcat._deleteReference(obj)
+            except ConflictError:
+                raise
             except:
                 pass
 
