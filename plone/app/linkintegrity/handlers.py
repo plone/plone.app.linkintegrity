@@ -1,3 +1,4 @@
+from logging import getLogger
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IReference
@@ -88,7 +89,8 @@ def modifiedArchetype(obj, event):
             except ConflictError:
                 raise
             except:
-                pass
+                getLogger(__name__).warning('dangling "linkintegrity" '
+                    'reference to %r could not be removed.', obj)
 
 
 def referenceRemoved(obj, event):
