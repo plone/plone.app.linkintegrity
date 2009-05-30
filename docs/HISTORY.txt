@@ -5,6 +5,10 @@ Changelog
 
 plone.app.linkintegrity - 1.0.12 Unreleased
 
+    - Using testing like "if source in sources" was very expensive.
+      I changed this to matching on getPhysicalPath, which is much less
+      expendive, but means that we can only match objects with a physical path.
+      [regebro]
 
 plone.app.linkintegrity - 1.0.11 Released November 15, 2008
 
