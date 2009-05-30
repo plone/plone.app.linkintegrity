@@ -6,8 +6,11 @@ This should result in no confirmation form whatsoever:
   >>> p.doc1.processForm(values={'text':'<a href="doc2">a document</a>, <a href="folder1/doc3">another</a>'})
   >>> p.doc2.processForm(values={'text':'<a href="doc1">a document</a>'})
   >>> p.folder1.doc3.processForm(values={'text':'<a href="../doc1">a document</a>'})
-  >>> p.doc1.getReferences()
-  [<ATDocument at /plone/doc2>, <ATDocument at /plone/folder1/doc3>]
+  >>> ref = repr(p.doc1.getReferences())
+  >>> '<ATDocument at /plone/doc2>' in ref
+  True
+  >>> '<ATDocument at /plone/folder1/doc3>' in ref
+  True
   >>> p.doc2.getReferences()
   [<ATDocument at /plone/doc1>]
   >>> p.folder1.doc3.getReferences()

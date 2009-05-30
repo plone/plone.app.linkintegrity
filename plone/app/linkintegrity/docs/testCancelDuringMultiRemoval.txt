@@ -70,8 +70,14 @@ This should result in all images and references still being existent:
   >>> portal.image3
   <ATImage at /plone/image3>
 
-  >>> portal.doc1.getReferences()
-  [<ATImage at /plone/image1>, <ATImage at /plone/image2>]
-  >>> portal.doc2.getReferences()
-  [<ATImage at /plone/image1>, <ATImage at /plone/image3>]
+  >>> ref = repr(portal.doc1.getReferences())
+  >>> '<ATImage at /plone/image1>' in ref
+  True
+  >>> '<ATImage at /plone/image2>' in ref
+  True
+  >>> ref = repr(portal.doc2.getReferences())
+  >>> '<ATImage at /plone/image1>' in ref
+  True
+  >>> '<ATImage at /plone/image3>' in ref
+  True
 
