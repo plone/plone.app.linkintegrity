@@ -38,14 +38,13 @@ class LinkIntegrityInfo(object):
     def getIntegrityBreaches(self):
         """ return stored information regarding link integrity breaches
             after removing circular references, confirmed items etc """
-        targets = self.getDeletedItems()
+        targets = set([x.UID() for x in self.getDeletedItems()])
         breaches = dict(self.getIntegrityInfo().get('breaches', {}))
-        targets.update(breaches.keys())
-        targetids = set([x.UID() for x in targets])
+        targets.update([x.UID() for x in breaches.keys()])
         
         for target, sources in breaches.items():    # first remove deleted sources
             for source in list(sources):
-                if source.UID() in targetids:
+                if source.UID() in targets:
                     sources.remove(source)
                     
         for target, sources in breaches.items():    # then remove "empty" targets
