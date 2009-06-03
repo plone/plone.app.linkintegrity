@@ -3,7 +3,10 @@ Changelog
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 1.0.12 Unreleased
+plone.app.linkintegrity - 1.0.13 Unreleased
+
+
+plone.app.linkintegrity - 1.0.12 Released June 3, 2009
 
     - Compare UIDs instead of objects during cleanup of breach information in
       order to avoid expensive hashing in "... in ..." expressions.  This
