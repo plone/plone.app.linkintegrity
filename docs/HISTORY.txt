@@ -5,9 +5,9 @@ Changelog
 
 plone.app.linkintegrity - 1.0.12 Unreleased
 
-    - Using testing like "if source in sources" was very expensive because it
-      used hashes to compare objects, and also in an innefektive way.
-      I changed this to matching on UID, which is much faster.
+    - Compare UIDs instead of objects during cleanup of breach information in
+      order to avoid expensive hashing in "... in ..." expressions.  This
+      makes removing linked objects much faster.
       [regebro]
 
 plone.app.linkintegrity - 1.0.11 Released November 15, 2008
