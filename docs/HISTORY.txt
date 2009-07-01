@@ -5,6 +5,9 @@ Changelog
 
 plone.app.linkintegrity - 1.0.13 Unreleased
 
+    - Don't install the exception hook in Zope 2.12 where it is no longer
+      needed and breaks exception handling.
+      [davisagli]
 
 plone.app.linkintegrity - 1.0.12 Released June 3, 2009
 
