@@ -1,9 +1,8 @@
-# test for Zope 2.12 -- the first eggified Zope
-import pkg_resources
 try:
-    dist=pkg_resources.get_distribution('Zope2')
+    # this import not used except as a test for Zope 2.12+
+    from Products.Five.bbb import AcquisitionBBB
     HAS_ZOPE_212 = True
-except pkg_resources.DistributionNotFound:
+except ImportError:
     HAS_ZOPE_212 = False
 
 def initialize(context):
