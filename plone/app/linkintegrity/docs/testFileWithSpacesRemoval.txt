@@ -16,7 +16,8 @@ Now we create the necessary links:
 
   >>> tmpl = '<html> <body> <a href="%s">%s</a> </body> </html>'
   >>> p = self.portal
-  >>> p.doc1.processForm(values={'text':tmpl % (file_with_spaces.absolute_url(), file_with_spaces.title_or_id())})
+  >>> p.doc1.processForm(values={'text':tmpl % (file_with_spaces.absolute_url(),
+  ...   file_with_spaces.title_or_id())})
 
 The document should now have a reference to the file:
 

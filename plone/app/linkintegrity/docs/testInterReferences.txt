@@ -3,9 +3,12 @@ This should result in no confirmation form whatsoever:
 
   >>> self.setRoles(('Manager',))
   >>> p = self.portal
-  >>> p.doc1.processForm(values={'text':'<a href="doc2">a document</a>, <a href="folder1/doc3">another</a>'})
-  >>> p.doc2.processForm(values={'text':'<a href="doc1">a document</a>'})
-  >>> p.folder1.doc3.processForm(values={'text':'<a href="../doc1">a document</a>'})
+  >>> p.doc1.processForm(values={'text':'<a href="doc2">a document</a>, <a href="folder1/doc3">another</a>',
+  ...   'text_text_format':'text/html'})
+  >>> p.doc2.processForm(values={'text':'<a href="doc1">a document</a>',
+  ...   'text_text_format':'text/html'})
+  >>> p.folder1.doc3.processForm(values={'text':'<a href="../doc1">a document</a>',
+  ...   'text_text_format':'text/html'})
   >>> ref = repr(p.doc1.getReferences())
   >>> '<ATDocument at /plone/doc2>' in ref
   True
