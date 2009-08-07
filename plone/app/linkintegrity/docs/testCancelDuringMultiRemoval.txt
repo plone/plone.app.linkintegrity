@@ -5,10 +5,9 @@ previously confirmed removals are performed, either.
 First we need to create the necessary links:
 
   >>> self.setRoles(('Manager',))
-  >>> tmpl = '<html> <body> %s, %s </body> </html>'
   >>> p = self.portal
-  >>> p.doc1.processForm(values={'text':tmpl % (p.image1.tag(), p.image2.tag())})
-  >>> p.doc2.processForm(values={'text':tmpl % (p.image1.tag(), p.image3.tag())})
+  >>> self.setText(p.doc1, p.image1.tag() + ', ' + p.image2.tag())
+  >>> self.setText(p.doc2, p.image1.tag() + ', ' + p.image3.tag())
 
 Then we use a browser to try to delete the referenced images.  Before we
 can do this we need to prevent the test framework from choking on the

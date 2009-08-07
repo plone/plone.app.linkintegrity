@@ -2,8 +2,7 @@ This tests makes sure items that are linked to can still be renamed (see the
 related bug report in #6608).  First we need to create the necessary links:
 
   >>> self.setRoles(('Manager',))
-  >>> markup = '<html> <body> <a href="doc2">doc2</a> </body> </html>'
-  >>> portal.doc1.processForm(values={'text': markup})
+  >>> self.setText(portal.doc1, '<a href="doc2">doc2</a>')
 
 Then we use a browser to rename the referenced image:
 

@@ -3,8 +3,7 @@ breaches.  Of course, every page linking to the to be removed item should only
 be listed once.  As usual, we need to create the necessary links first:
 
   >>> self.setRoles(('Manager',))
-  >>> tmpl = '<html> <body> %s </body> </html>'
-  >>> portal.doc1.processForm(values={'text':tmpl % portal.image1.tag()})
+  >>> self.setText(portal.doc1, portal.image1.tag())
 
 Then we use a browser to try to delete the referenced image.  Before we
 can do this we need to prevent the test framework from choking on the

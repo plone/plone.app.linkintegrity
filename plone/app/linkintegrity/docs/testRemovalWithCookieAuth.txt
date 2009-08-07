@@ -3,7 +3,7 @@ authentication (see the bug report in #6607).  First we need to set up the
 necessary links and create a testbrowser without passing an auth header:
 
   >>> self.setRoles(('Manager',))
-  >>> portal.doc1.processForm(values={'text':'<a href="doc2">doc2</a>'})
+  >>> self.setText(portal.doc1, '<a href="doc2">doc2</a>')
   >>> browser = self.getBrowser(loggedIn=False)
 
 At this point we shouldn't be able to look at the folder contents (as an

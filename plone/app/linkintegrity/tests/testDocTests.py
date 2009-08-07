@@ -48,6 +48,10 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
         from ZPublisher import HTTPResponse
         HTTPResponse.status_codes[key.lower()] = value
 
+    def setText(self, obj, text, **kw):
+        kw['text'] = '<html> <body> %s </body> </html>' % text
+        return obj.processForm(obj, values=kw)
+
     def disableEventCountHelper(self):
         # so here's yet another monkey patch ;), but only to avoid having
         # to change almost all the tests after introducing the setting of

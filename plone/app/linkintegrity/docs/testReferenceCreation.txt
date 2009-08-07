@@ -20,7 +20,7 @@ the `IObjectModifiedEvent` event either:
   >>> tag = img.tag()
   >>> str(tag)
   '<img src="http://nohost/plone/image1/image" ... title="Test Image 1" ... />'
-  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % tag})
+  >>> self.setText(doc, tag)
   >>> doc.getReferences()
   [<ATImage at /plone/image1>]
   >>> doc.getBackReferences()
@@ -32,7 +32,7 @@ the `IObjectModifiedEvent` event either:
 
 Next we change the document again and insert a link to another page:
 
-  >>> doc.processForm(values={'text':'<html> <body> <a href="news">news</a> </body> </html>'})
+  >>> self.setText(doc, '<a href="news">news</a>')
   >>> doc.getReferences()
   [<AT... at /plone/news>]
   >>> portal.news.getBackReferences()
@@ -40,7 +40,7 @@ Next we change the document again and insert a link to another page:
 
 Linking image scales should also work:
 
-  >>> doc.processForm(values={'text':'<html> <body> <a href="image1/image_thumb">an image</a> </body> </html>'})
+  >>> self.setText(doc, '<a href="image1/image_thumb">an image</a>')
   >>> doc.getReferences()
   [<ATImage at /plone/image1>]
   >>> img.getBackReferences()

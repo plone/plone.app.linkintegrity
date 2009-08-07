@@ -3,8 +3,8 @@ contained in a folder that is removed.  First we need to set up the necessary
 links:
 
   >>> self.setRoles(('Manager',))
-  >>> portal.doc1.processForm(values={'text':'<a href="folder1/doc3">a document</a>'})
-  >>> portal.doc2.processForm(values={'text':'<a href="folder1/doc3">a document</a>'})
+  >>> self.setText(portal.doc1, '<a href="folder1/doc3">a document</a>')
+  >>> self.setText(portal.doc2, '<a href="folder1/doc3">a document</a>')
 
 Then we try to delete the folder holding the referenced document.  Before we
 can do this we need to prevent the test framework from choking on the

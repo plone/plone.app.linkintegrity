@@ -14,9 +14,10 @@ Check that the file is there with the id that we expect:
 
 Now we create the necessary links:
 
-  >>> tmpl = '<html> <body> <a href="%s">%s</a> </body> </html>'
+  >>> tmpl = '<a href="%s">%s</a>'
   >>> p = self.portal
-  >>> p.doc1.processForm(values={'text':tmpl % (file_with_spaces.absolute_url(), file_with_spaces.title_or_id())})
+  >>> self.setText(p.doc1, tmpl % (file_with_spaces.absolute_url(),
+  ...   file_with_spaces.title_or_id()))
 
 The document should now have a reference to the file:
 

@@ -3,8 +3,8 @@ after migrating from a previous version.  First we create two sample links and
 remove the generated references afterwards:
 
   >>> self.setRoles(('Manager',))
-  >>> portal.doc1.processForm(values={'text':'<a href="doc2">a document</a>'})
-  >>> portal.doc2.processForm(values={'text':'<a href="folder1/doc3">a document</a>'})
+  >>> self.setText(portal.doc1, '<a href="doc2">a document</a>')
+  >>> self.setText(portal.doc2, '<a href="folder1/doc3">a document</a>')
   >>> portal.doc1.deleteReferences(relationship='isReferencing')
   >>> portal.doc2.deleteReferences(relationship='isReferencing')
 

@@ -21,7 +21,7 @@ Next edit the document body and insert a link to the image, which should
 trigger the creation of a link integrity reference:
 
   >>> tag = img.tag()
-  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % tag})
+  >>> self.setText(doc, tag)
 
   >>> from plone.app.linkintegrity.handlers import referencedRelationship
   >>> doc.getReferences(relationship=referencedRelationship)
@@ -35,7 +35,7 @@ And the related item reference remains in place:
 Now edit the document body again with some link to the image, which
 should leave both the references in place:
 
-  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % tag})
+  >>> self.setText(doc, tag)
   >>> doc.getReferences(relationship=referencedRelationship)
   [<ATImage at /plone/image1>]
 
@@ -45,7 +45,7 @@ should leave both the references in place:
 Finally, edit the document body again, this time removing the link to the
 image, which should trigger the removal of the link integrity reference:
 
-  >>> doc.processForm(values={'text':'<html> <body> </body> </html>'})
+  >>> self.setText(doc, 'where did my link go?')
   >>> doc.getReferences(relationship=referencedRelationship)
   []
 

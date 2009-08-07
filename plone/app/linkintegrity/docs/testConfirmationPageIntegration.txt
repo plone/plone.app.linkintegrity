@@ -19,8 +19,7 @@ should appear in this case:
 Then we create a link to the same image from a text document and try to delete
 it again:
 
-  >>> portal.doc1.processForm(values={'text':
-  ...   '<html> <body> %s </body> </html>' % portal.image1.tag()})
+  >>> self.setText(portal.doc1, portal.image1.tag())
   >>> browser.goBack()
 
 Before we can continue we need to prevent the test framework from choking on

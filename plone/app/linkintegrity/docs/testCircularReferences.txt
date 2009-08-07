@@ -6,9 +6,9 @@ are necessary:
 
   >>> self.setRoles(('Manager',))
   >>> p = self.portal
-  >>> p.doc1.processForm(values={'text':'<a href="doc2">documents...</a>'})
-  >>> p.doc2.processForm(values={'text':'<a href="folder1/doc3">linking...</a>'})
-  >>> p.folder1.doc3.processForm(values={'text':'<a href="../doc1">in circles.</a>'})
+  >>> self.setText(p.doc1, '<a href="doc2">documents...</a>')
+  >>> self.setText(p.doc2, '<a href="folder1/doc3">linking...</a>')
+  >>> self.setText(p.folder1.doc3, '<a href="../doc1">in circles.</a>')
   >>> p.doc1.getReferences()
   [<ATDocument at /plone/doc2>]
   >>> p.doc2.getReferences()

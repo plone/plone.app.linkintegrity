@@ -38,7 +38,7 @@ class PloneLinkintegrity(PloneSite):
         portal.folder1.invokeFactory('Document', id='doc5', title='Test Page 5',
             text='<html> <body> another test page </body> </html>')
 
-        # Unmark the creation flag so any calls processForm will not
+        # Unmark the creation flag so any calls processForm/setText will not
         # rename our content objects.  This is mainly for getting the
         # tests running in combination with LinguaPlone.
         portal.doc1.unmarkCreationFlag()

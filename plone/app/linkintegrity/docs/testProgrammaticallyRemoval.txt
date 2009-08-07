@@ -5,7 +5,7 @@ question:
   >>> self.setRoles(('Manager',))
   >>> doc = portal.doc1
   >>> img = portal.image1
-  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % img.tag()})
+  >>> self.setText(doc, img.tag())
   >>> self.assertEqual(doc.getReferences(), [img])
 
 Then we try to delete the image using ObjectManager's `manage_delObjects`,

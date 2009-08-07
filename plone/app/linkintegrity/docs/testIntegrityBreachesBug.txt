@@ -23,10 +23,10 @@ the required properties:
 So we have a "collection" or "topic", which contains two subtopics.  Now we
 refer to these as well as an image outside of the "collection":
 
-  >>> topic.processForm(values={'text': """<html> <body>
+  >>> self.setText(topic, """
   ...   <a href="../image1">an image</a>
   ...   <a href="subtopic1">a boring subtopic</a>
-  ...   <a href="subtopic2">another boring subtopic</a> """})
+  ...   <a href="subtopic2">another boring subtopic</a> """)
 
 Then we try to delete the subtopics which triggers a `IObjectModifiedEvent`
 on the topic and therefore causes it to recalculate its link integrity

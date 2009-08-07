@@ -6,7 +6,7 @@ link in question:
   >>> self.setRoles(('Manager',))
   >>> doc = portal.doc1
   >>> img = portal.image1
-  >>> doc.processForm(values={'text':'<html> <body> %s </body> </html>' % img.tag()})
+  >>> self.setText(doc, img.tag())
   >>> self.assertEqual(doc.getReferences(), [img])
 
 Then we use a browser to try to delete the image used in the document:

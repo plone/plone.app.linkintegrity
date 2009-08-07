@@ -2,7 +2,7 @@ This tests ensuring link integrity when removing an object via the ZMI.  First
 we need to set up the a link between two documents:
 
   >>> self.setRoles(('Manager',))
-  >>> portal.doc1.processForm(values={'text':'<a href="doc2">a document</a>'})
+  >>> self.setText(portal.doc1, '<a href="doc2">a document</a>')
 
 Then we use a browser to try to delete the referenced document.  Before we can
 do this we need to prevent the test framework from choking on the exception we

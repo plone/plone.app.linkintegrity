@@ -3,9 +3,9 @@ this test may flush out a bug when using LinguaPlone.  First we need
 to create the necessary links:
 
   >>> self.setRoles(('Manager',))
-  >>> tmpl = '<html> <body> <a href="%s">%s</a> </body> </html>'
   >>> p = self.portal
-  >>> p.doc1.processForm(values={'text':tmpl % (p.file1.absolute_url(), p.file1.title_or_id())})
+  >>> self.setText(p.doc1, '<a href="%s">%s</a>' % (p.file1.absolute_url(),
+  ...   p.file1.title_or_id()))
 
 The document should now have a reference to the file:
 

@@ -6,7 +6,7 @@ for additional information.
 As usual, we need to create the necessary links first:
 
   >>> self.setRoles(('Manager',))
-  >>> portal.doc1.processForm(values={'text':'<a href="doc2">a document</a>'})
+  >>> self.setText(portal.doc1, '<a href="doc2">a document</a>')
 
 Next we remove the linked-to object, but without removing the according
 reference to it.  To do that we need to suppress the normally fired events.
@@ -24,7 +24,7 @@ If we now try to update the linking document again in order to remove the
 link, things used to break raising a ``ReferenceException``.  This should
 be handled more gracefully now:
 
-  >>> portal.doc1.processForm(values={'text':'foo!'})
+  >>> self.setText(portal.doc1, 'foo!')
   >>> portal.doc1.getReferences()
   []
 

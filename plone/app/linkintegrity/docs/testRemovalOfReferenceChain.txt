@@ -4,8 +4,8 @@ should result in no confirmation form whatsoever, of course:
 
   >>> self.setRoles(('Manager',))
   >>> p = self.portal
-  >>> p.doc1.processForm(values={'text':'<a href="folder1/doc5">a document</a>'})
-  >>> p.folder1.doc4.processForm(values={'text':'<a href="doc3">a document</a>'})
+  >>> self.setText(p.doc1, '<a href="folder1/doc5">a document</a>')
+  >>> self.setText(p.folder1.doc4, '<a href="doc3">a document</a>')
   >>> p.doc1.getReferences()
   [<ATDocument at /plone/folder1/doc5>]
   >>> p.folder1.doc4.getReferences()
