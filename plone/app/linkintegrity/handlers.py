@@ -29,7 +29,7 @@ def findObject(base, path):
                 child = obj.REQUEST.traverseName(obj, child_id)
         except ConflictError:
             raise
-        except:
+        except (AttributeError, KeyError):
             return None, None
         if not IItem.providedBy(child):
             break
