@@ -1,6 +1,6 @@
 # setup tests with all doctests found in docs/
 
-from plone.app.linkintegrity import docs
+from plone.app.linkintegrity import docs, HAS_ZOPE_212
 from plone.app.linkintegrity.tests import layer
 from plone.app.linkintegrity.parser import extractLinks
 from Testing.ZopeTestCase import FunctionalDocFileSuite
@@ -38,7 +38,7 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
     def getBrowser(self, loggedIn=False):
         """ instantiate and return a testbrowser for convenience """
         browser = Browser()
-        browser.handleErrors = False
+        browser.handleErrors = not HAS_ZOPE_212
         if loggedIn:
             user = PloneTestCase.default_user
             pwd = PloneTestCase.default_password
