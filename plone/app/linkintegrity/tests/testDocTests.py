@@ -38,6 +38,7 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
     def getBrowser(self, loggedIn=False):
         """ instantiate and return a testbrowser for convenience """
         browser = Browser()
+        browser.handleErrors = False
         if loggedIn:
             user = PloneTestCase.default_user
             pwd = PloneTestCase.default_password

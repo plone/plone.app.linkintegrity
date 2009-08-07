@@ -7,6 +7,7 @@ related bug report in #6608).  First we need to create the necessary links:
 Then we use a browser to rename the referenced image:
 
   >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.handleErrors = True
   >>> browser.open('http://nohost/plone/folder_contents')
   >>> browser.getControl('Test Page 2').selected = True
   >>> browser.getControl('Rename').click()
