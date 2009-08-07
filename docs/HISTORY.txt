@@ -5,6 +5,10 @@ Changelog
 
 plone.app.linkintegrity - 1.0.13 Unreleased
 
+    - Also regard traversal adapters when trying to resolve links into their
+      corresponding objects.
+      [witsch]
+
     - Fix some tests to make sure that text values are treated as text/html
       in Zope 2.12, whose zope.contenttype is stricter when guessing the
       mimetype.

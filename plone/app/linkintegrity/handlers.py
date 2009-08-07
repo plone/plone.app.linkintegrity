@@ -23,7 +23,10 @@ def findObject(base, path):
     while components:
         child_id = unquote(components[0])
         try:
-            child = obj.restrictedTraverse(child_id)
+            try:
+                child = obj.restrictedTraverse(child_id)
+            except AttributeError:
+                child = obj.REQUEST.traverseName(obj, child_id)
         except ConflictError:
             raise
         except:
