@@ -3,7 +3,7 @@ Changelog
 
     (name of developer listed in brackets)
 
-plone.app.linkintegrity - 1.0.13 Unreleased
+plone.app.linkintegrity - 1.1 Released August 31, 2009
 
     - Make compatible with repoze.zope2. See README.txt for notes on how to
       deploy.
