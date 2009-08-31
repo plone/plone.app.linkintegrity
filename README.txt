@@ -31,3 +31,55 @@ items, is implemented by `plone.app.redirector`__.
 
   .. __: http://pypi.python.org/pypi/plone.app.redirector/
 
+Using plone.app.linkintegrity in a WSGI application using repoze.zope2
+----------------------------------------------------------------------
+
+If you are deploying Plone using repoze.zope2 in a WSGI pipeline, then
+the stock LinkIntegrity won't work. To make it work, you need the following:
+
+ - repoze.zope2 1.0.2 or later
+ - ZODB 3.8.2 or later
+
+These two will ensure that the "views on exceptions" functionality, which
+plone.app.linkintegrity uses, is available.
+
+Next, make sure that the repoze.retry#retry middleware is used, and that
+it will handle stock Retry exceptions. With repoze.retry 0.9.3 or later,
+that is the default. With earlier versions, you can configure it explicitly.
+For example::
+
+    [app:zope2]
+    paste.app_factory = repoze.obob.publisher:make_obob
+    repoze.obob.get_root = repoze.zope2.z2bob:get_root
+    repoze.obob.initializer = repoze.zope2.z2bob:initialize
+    repoze.obob.helper_factory = repoze.zope2.z2bob:Zope2ObobHelper
+    zope.conf = /Users/optilude/Development/Plone/Code/Build/uber/plone3.x-repoze/parts/instance-debug/etc/zope.conf
+
+    [filter:retry]
+    use = egg:repoze.retry#retry
+    retryable = ZODB.POSException:ConflictError ZPublisher.Publish:Retry
+
+    [filter:errorlog]
+    use = egg:repoze.errorlog#errorlog
+    path = /__error_log__
+    keep = 50
+    ignore = 
+        paste.httpexceptions:HTTPUnauthorized
+        paste.httpexceptions:HTTPNotFound
+        paste.httpexceptions:HTTPFound
+    
+    [pipeline:main]
+    pipeline =
+        retry
+        egg:repoze.tm#tm
+        egg:repoze.vhm#vhm_xheaders
+        errorlog
+        zope2
+
+    [server:main]
+    use = egg:Paste#http
+    host = 127.0.0.1
+    port = 8080
+    threadpool_workers = 1
+    threadpool_spawn_if_under = 1
+

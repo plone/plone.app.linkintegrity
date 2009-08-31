@@ -26,7 +26,7 @@ class RemoveConfirmationView(BrowserView):
         # the original request to be able to possibly continue it later on,
         # so we pickle and encode its body and environment...
         self.request.stdin.seek(0)
-        body = self.request.stdin.getvalue()    # zope2 request body...
+        body = self.request.stdin.read()
         env = dict(self.request._orig_env)
         for key in 'HTTP_AUTHORIZATION', 'HTTP_COOKIE':
             if env.has_key(key):

@@ -5,6 +5,14 @@ Changelog
 
 plone.app.linkintegrity - 1.0.13 Unreleased
 
+    - Make compatible with repoze.zope2. See README.txt for notes on how to
+      deploy.
+      [optilude]
+
+    - Don't use id() to record confirmed items. It can change on request
+      boundaries. Use an encoded _p_oid instead.
+      [optilude]
+
     - Also regard traversal adapters when trying to resolve links into their
       corresponding objects.
       [witsch]

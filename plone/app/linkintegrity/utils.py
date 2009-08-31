@@ -25,8 +25,9 @@ def encodeRequestData((body, env)):
     def _iterdata():
         yield body
         for key, val in env.iteritems():
-            yield str(key)
-            yield str(val)
+            if isinstance(key, basestring) and isinstance(val, basestring):
+                yield str(key)
+                yield str(val)
     return encodeStrings(_iterdata())
 
 
@@ -37,14 +38,3 @@ def decodeRequestData(data):
             yield data.next(), data.next()
     data = decodeStrings(data)
     return data.next(), dict(_pertwo())
-
-
-def encodeInts(ints):
-    """ encode a list of integers into a string """
-    return ':'.join(map(str, ints))
-
-
-def decodeInts(data):
-    """ decode a string to a list of integers """
-    return map(int, data.split(':'))
-

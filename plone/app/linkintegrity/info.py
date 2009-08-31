@@ -1,9 +1,6 @@
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from plone.app.linkintegrity.utils import encodeInts
-from plone.app.linkintegrity.utils import decodeInts
 from zope.interface import implements
 from zope.component import queryUtility
-from Acquisition import aq_base
 from Products.CMFCore.interfaces import IPropertiesTool
 
 
@@ -77,21 +74,21 @@ class LinkIntegrityInfo(object):
         if confirmed == 'all':
             confirmed = ['all']
         elif confirmed:
-            confirmed = decodeInts(confirmed)
+            confirmed = confirmed.decode('base64').split(":")
         return confirmed
 
     def isConfirmedItem(self, obj):
         """ indicate if the removal of the given object was confirmed """
         confirmed = self.confirmedItems()
-        return id(aq_base(obj)) in confirmed or 'all' in confirmed
+        return obj._p_oid in confirmed or 'all' in confirmed
 
     def encodeConfirmedItems(self, additions):
         """ return the list of previously confirmed (for removeal) items,
             optionally adding the given items, encoded for usage in a form """
         confirmed = self.confirmedItems()
         for obj in additions:
-            confirmed.append(id(aq_base(obj)))
-        return encodeInts(confirmed)
+            confirmed.append(obj._p_oid)
+        return ":".join(confirmed).encode('base64')
 
     def moreEventsToExpect(self):
         attr = 'link_integrity_events_counter'
