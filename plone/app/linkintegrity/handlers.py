@@ -6,6 +6,7 @@ from Products.Archetypes.Field import TextField
 from Products.Archetypes.exceptions import ReferenceException
 from OFS.interfaces import IItem
 from ZODB.POSException import ConflictError
+from zExceptions import NotFound
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
 from urlparse import urlsplit, urlunsplit
@@ -29,7 +30,7 @@ def findObject(base, path):
                 child = obj.REQUEST.traverseName(obj, child_id)
         except ConflictError:
             raise
-        except (AttributeError, KeyError):
+        except (AttributeError, KeyError, NotFound):
             return None, None
         if not IItem.providedBy(child):
             break
