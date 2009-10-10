@@ -5,6 +5,8 @@ Changelog
 
 plone.app.linkintegrity - 1.2 Unreleased
 
+    - Also catch `NotFound` exceptions when trying to resolve linked objects.
+      [optilude]
 
 plone.app.linkintegrity - 1.1 Released August 31, 2009
 
