@@ -47,8 +47,7 @@ the ids of the selected items:
 
   >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
   >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.open('http://nohost/plone/topic/')
-  >>> browser.getLink('Subfolders').click()
+  >>> browser.open('http://nohost/plone/topic/atct_topic_subtopics')
   >>> browser.getControl('a subtopic').selected = True
   >>> browser.getControl('another subtopic').selected = True
 
