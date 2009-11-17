@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.3a1 - Unreleased
+1.3a1 - 2009-11-17
 ------------------
 
 - Access the subtopics page directly since the tab is now hidden by default.
