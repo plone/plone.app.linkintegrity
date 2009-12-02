@@ -4,7 +4,7 @@
 from zope.component import queryMultiAdapter
 from Zope2.App.startup import zpublisher_exception_hook
 from ZPublisher.Publish import Retry
-
+from plone.app.linkintegrity import HAS_ZOPE_212
 
 def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
     """ wrapper around the zope2 zpublisher's error hook """
@@ -13,20 +13,27 @@ def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
         # trying to log it (like FiveException does)
         if t is Retry:
             v.reraise()
-        # first we try to find a view/adapter for the current exception and
-        # let the original function try to handle the exception if we can't
-        # find one...
-        view = queryMultiAdapter((v, REQUEST), name='index.html', default=None)
-        if view is None:
-            zpublisher_exception_hook(published, REQUEST, t, v, traceback)
+        
+        if HAS_ZOPE_212:
+            # In Zope 2.12 we defer to the normal publisher exception hook,
+            # which already knows how to render a view of an exception.
+            return zpublisher_exception_hook(published, REQUEST, t, v, traceback)
         else:
-            # otherwise render the view and raise the rendered string like
-            # raise_standardErrorMessage does...
-            view = view.__of__(published)
-            message = view()
-            if isinstance(message, unicode):
-                message = message.encode('utf-8')
-            raise t, message, traceback
+            # In Zope 2.10 we have to handle exception views ourselves.
+            # First we try to find a view/adapter for the current exception and
+            # let the original function try to handle the exception if we can't
+            # find one...
+            view = queryMultiAdapter((v, REQUEST), name='index.html', default=None)
+            if view is None:
+                zpublisher_exception_hook(published, REQUEST, t, v, traceback)
+            else:
+                # otherwise render the view and raise the rendered string like
+                # raise_standardErrorMessage does...
+                view = view.__of__(published)
+                message = view()
+                if isinstance(message, unicode):
+                    message = message.encode('utf-8')
+                raise t, message, traceback
     finally:
         traceback = None
 
