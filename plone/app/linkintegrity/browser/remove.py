@@ -21,7 +21,6 @@ class RemoveReferencedObjectView(BrowserView):
         # this view is intended to provide an action called by the
         # confirmation form;  all it does is prepare the request for
         # the retry exception and raise it...
-        context = aq_inner(self.context)
         request = aq_inner(self.request)
         clicked = request.form.has_key
         if clicked('delete') or clicked('delete_all'):

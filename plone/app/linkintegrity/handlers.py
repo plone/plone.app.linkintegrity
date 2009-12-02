@@ -9,7 +9,7 @@ from ZODB.POSException import ConflictError
 from zExceptions import NotFound
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
-from urlparse import urlsplit, urlunsplit
+from urlparse import urlsplit
 from parser import extractLinks
 from urllib import unquote
 
@@ -44,7 +44,6 @@ def getObjectsFromLinks(base, links):
     objects = set()
     url = base.absolute_url()
     scheme, host, path, query, frag = urlsplit(url)
-    site = urlunsplit((scheme, host, '', '', ''))
     for link in links:
         s, h, path, q, f = urlsplit(link)
         if (not s and not h) or (s == scheme and h == host):    # relative or local url
