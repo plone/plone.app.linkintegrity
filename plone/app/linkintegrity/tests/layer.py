@@ -80,5 +80,3 @@ class PloneLinkintegrity(PloneSite):
         # commit the cleanup...
         commit()
         ZopeTestCase.close(app)
-
-

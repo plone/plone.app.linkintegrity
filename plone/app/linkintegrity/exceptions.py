@@ -6,5 +6,3 @@ from OFS.ObjectManager import BeforeDeleteException
 class LinkIntegrityNotificationException(BeforeDeleteException):
     """ an exception indicating a prevented link integrity breach """
     implements(ILinkIntegrityNotificationException)
-
-

@@ -6,6 +6,7 @@ try:
 except ImportError:
     HAS_ZOPE_212 = False
 
+
 def initialize(context):
 
     # side effect import to patch the response's retry method

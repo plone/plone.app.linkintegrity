@@ -23,6 +23,7 @@ OPTIONFLAGS = (doctest.REPORT_ONLY_FIRST_FAILURE |
                doctest.ELLIPSIS |
                doctest.NORMALIZE_WHITESPACE)
 
+
 class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
     layer = layer.PloneLinkintegrity
@@ -80,6 +81,7 @@ if '-t' in argv:
 else:
     pattern = compile('^test.*\.(txt|rst)$')
 
+
 def test_suite():
     suite = TestSuite([
         makeSuite(LinkIntegrityTestCase),
@@ -94,4 +96,3 @@ def test_suite():
                     package=docs.__name__,
                     test_class=LinkIntegrityFunctionalTestCase))
     return suite
-

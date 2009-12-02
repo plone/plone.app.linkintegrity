@@ -29,13 +29,13 @@ class RemoveConfirmationView(BrowserView):
         body = self.request.stdin.read()
         env = dict(self.request._orig_env)
         for key in 'HTTP_AUTHORIZATION', 'HTTP_COOKIE':
-            if env.has_key(key):
+            if key in env:
                 del env[key]
         return encodeRequestData((body, env))
 
     def integrityBreaches(self):
         info = ILinkIntegrityInfo(self.request).getIntegrityBreaches()
-        byTitle = lambda a,b: cmp(a.Title(), b.Title())
+        byTitle = lambda a, b: cmp(a.Title(), b.Title())
         breaches = []
         for target, sources in info.items():
             breaches.append({
@@ -44,7 +44,7 @@ class RemoveConfirmationView(BrowserView):
                 'url': target.absolute_url(),
                 'sources': sorted(sources, byTitle),
             })
-        return sorted(breaches, lambda a,b: cmp(a['title'], b['title']))
+        return sorted(breaches, lambda a, b: cmp(a['title'], b['title']))
 
     def isAccessible(self, obj):
         return _checkPermission(AccessContentsInformation, obj)
@@ -63,4 +63,3 @@ class RemoveConfirmationView(BrowserView):
         if url is None:
             url = getToolByName(aq_inner(self.context), "portal_url")()
         return url
-

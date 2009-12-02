@@ -39,4 +39,3 @@ class ILinkIntegrityInfo(Interface):
 
 class IOFSImage(Interface):
     """ interface for OFS.Image.Image """
-

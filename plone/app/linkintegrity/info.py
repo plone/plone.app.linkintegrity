@@ -96,4 +96,3 @@ class LinkIntegrityInfo(object):
         setattr(self.context, attr, counter)            # save for next time
         expected = self.context.get('link_integrity_events_to_expect', 0)
         return counter < expected
-

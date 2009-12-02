@@ -149,7 +149,7 @@ def referencedObjectRemoved(obj, event):
         return
 
     # if the user has confirmed to remove the currently handled item in a
-    # previous confirmation form we won't need it anymore this time around...    
+    # previous confirmation form we won't need it anymore this time around...
     if info.isConfirmedItem(obj):
         return
 
@@ -158,5 +158,4 @@ def referencedObjectRemoved(obj, event):
     # for the view triggered by the exception;  this is needed since the
     # view is an adapter for the exception and a request, so it gets the
     # exception object as the context, which is not very useful...
-    raise LinkIntegrityNotificationException, obj
-
+    raise LinkIntegrityNotificationException(obj)

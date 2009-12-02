@@ -36,4 +36,3 @@ class UpdateView(BrowserView):
                 modifiedArchetype(obj, 'dummy event parameter')
                 count += 1
         return count
-

@@ -28,7 +28,7 @@ class RemoveReferencedObjectView(BrowserView):
             # so we reconstruct the original request which we interrupted
             # before, store the so far confirmed items and retry it...
             body, env = decodeRequestData(request.get('original_request'))
-            
+
             marker = ILinkIntegrityInfo(request).getEnvMarker()
             if clicked('delete_all'):
                 env[marker] = 'all'
@@ -39,19 +39,19 @@ class RemoveReferencedObjectView(BrowserView):
                 authtoken = b64encode('%s:%s' % auth)
                 env['HTTP_AUTHORIZATION'] = 'Basic %s' % authtoken
             env['HTTP_COOKIE'] = request.get('HTTP_COOKIE', '')
-            
+
             # Update the original environment with the new one. In a WSGI
             # context, we want to update the dict, not overwrite it, because
             # we actually want to modify the WSGI environ. We also need to
             # make sure we don't touch keys that are not strings
             request._orig_env.update(env)
-            
+
             # Set the stdin for the request
             new_stdin = StringIO(body)
             if 'wsgi.input' in request._orig_env:
                 request._orig_env['wsgi.input'] = new_stdin
             setattr(request, 'stdin', new_stdin)
-            
+
             raise Retry
         else:
             # the user choose to cancel the removal, in which case we
@@ -59,4 +59,3 @@ class RemoveReferencedObjectView(BrowserView):
             msg = _(u'Removal cancelled.')
             IStatusMessage(request).addStatusMessage(msg, type='info')
             request.RESPONSE.redirect(request.get('cancel_url'))
-

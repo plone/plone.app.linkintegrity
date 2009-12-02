@@ -4,6 +4,7 @@
 from zope.component import queryMultiAdapter
 from Zope2.App.startup import zpublisher_exception_hook
 from ZPublisher.Publish import Retry
+from ZPublisher.Publish import get_module_info
 from plone.app.linkintegrity import HAS_ZOPE_212
 
 
@@ -38,7 +39,6 @@ def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
         traceback = None
 
 
-from ZPublisher.Publish import get_module_info
 def proxy_get_module_info(*args, **kwargs):
     results = list(get_module_info(*args, **kwargs))
     if results[5] is zpublisher_exception_hook:

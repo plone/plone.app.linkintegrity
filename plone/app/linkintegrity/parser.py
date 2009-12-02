@@ -37,4 +37,3 @@ def extractLinks(data):
     except HTMLParseError:
         pass
     return parser.getLinks()
-
