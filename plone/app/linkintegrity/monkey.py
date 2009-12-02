@@ -6,6 +6,7 @@ from Zope2.App.startup import zpublisher_exception_hook
 from ZPublisher.Publish import Retry
 from plone.app.linkintegrity import HAS_ZOPE_212
 
+
 def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
     """ wrapper around the zope2 zpublisher's error hook """
     try:
@@ -13,7 +14,6 @@ def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
         # trying to log it (like FiveException does)
         if t is Retry:
             v.reraise()
-        
         if HAS_ZOPE_212:
             # In Zope 2.12 we defer to the normal publisher exception hook,
             # which already knows how to render a view of an exception.
@@ -70,4 +70,3 @@ def retry(self):
 
 from ZPublisher.HTTPResponse import HTTPResponse
 HTTPResponse.retry = retry
-
