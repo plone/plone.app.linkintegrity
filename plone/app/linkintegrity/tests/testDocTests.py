@@ -26,7 +26,7 @@ OPTIONFLAGS = (doctest.REPORT_ONLY_FIRST_FAILURE |
 
 class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
-    layer = layer.PloneLinkintegrity
+    layer = layer.integrity
 
     def afterSetUp(self):
         """ create some sample content to test with """

@@ -1,27 +1,26 @@
-from AccessControl.SecurityManagement import newSecurityManager
-from Testing import ZopeTestCase
-from Products.PloneTestCase import PloneTestCase
-from Products.PloneTestCase.layer import PloneSite
+from Testing.ZopeTestCase import installPackage
+from Products.Five import zcml, fiveconfigure
+from collective.testcaselayer.ptc import BasePTCLayer, ptc_layer
 from StringIO import StringIO
 from base64 import decodestring
-from transaction import commit
 
 
-class PloneLinkintegrity(PloneSite):
+class PloneLinkintegrity(BasePTCLayer):
 
-    @classmethod
-    def setUp(cls):
-        app = ZopeTestCase.app()
-        portal = app.plone
-
-        # login as admin (copied from `loginAsPortalOwner`)
-        uf = app.acl_users
-        user = uf.getUserById(PloneTestCase.portal_owner).__of__(uf)
-        newSecurityManager(None, user)
+    def afterSetUp(self):
+        # load zcml for this package...
+        fiveconfigure.debug_mode = True
+        from plone.app import linkintegrity
+        zcml.load_config('configure.zcml', package=linkintegrity)
+        fiveconfigure.debug_mode = False
+        # after which it can be initialized...
+        installPackage('plone.app.linkintegrity', quiet=True)
 
         # create sample content
+        self.loginAsPortalOwner()
         gif = 'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
         gif = StringIO(decodestring(gif))
+        portal = self.portal
         portal.invokeFactory('Document', id='doc1', title='Test Page 1',
             text='<html> <body> a test page </body> </html>')
         portal.invokeFactory('Document', id='doc2', title='Test Page 2',
@@ -51,32 +50,7 @@ class PloneLinkintegrity(PloneSite):
         portal.folder1.doc3.unmarkCreationFlag()
         portal.folder1.doc4.unmarkCreationFlag()
         portal.folder1.doc5.unmarkCreationFlag()
+        self.login()
 
-        # starting with 2.10.4 product initialization gets delayed for
-        # instance startup and is never called when running tests;  hence
-        # we have to initialize the package method manually...
-        from OFS.Application import install_package
-        import plone.app.linkintegrity
-        install_package(app, plone.app.linkintegrity, plone.app.linkintegrity.initialize)
 
-        # create a starting point for the tests...
-        commit()
-        ZopeTestCase.close(app)
-
-    @classmethod
-    def tearDown(cls):
-        app = ZopeTestCase.app()
-        portal = app.plone
-
-        # login as admin (copied from `loginAsPortalOwner`)
-        uf = app.acl_users
-        user = uf.getUserById(PloneTestCase.portal_owner).__of__(uf)
-        newSecurityManager(None, user)
-
-        # remove sample content
-        ids = 'doc1', 'doc2', 'image1', 'image2', 'image3', 'folder1', 'file1'
-        portal.manage_delObjects(ids=list(ids))
-
-        # commit the cleanup...
-        commit()
-        ZopeTestCase.close(app)
+integrity = PloneLinkintegrity(bases=[ptc_layer])
