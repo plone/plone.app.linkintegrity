@@ -4,6 +4,9 @@ Changelog
 1.3a3 - Unreleased
 ------------------
 
+- Updated tests to use id="content" instead of .documentContent.
+  Refs http://dev.plone.org/plone/ticket/10231
+  [limi]
 
 1.3a2 - 2009-12-02
 ------------------
