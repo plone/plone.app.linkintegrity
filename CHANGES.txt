@@ -7,9 +7,9 @@ Changelog
 - Convert test setup to `collective.testcaselayer`.
   [witsch]
 
-- Updated tests to use id="content" instead of .documentContent.
+- Updated tests to not rely on specific CSS classes or ids.
   Refs http://dev.plone.org/plone/ticket/10231
-  [limi]
+  [limi, witsch]
 
 1.3a2 - 2009-12-02
 ------------------
