@@ -24,16 +24,13 @@ Changelog
 - Access the subtopics page directly since the tab is now hidden by default.
   [davisagli]
 
-- The [changeset:30835 test] for #7784 was borked after all. While the
-  transaction is properly recorded when testing through-the-web, both with and
-  without ZEO, the test either shows a different transaction (for Plone 3.x) or
-  nothing at all (for Plone 4.0). This might have to do with the way
-  `DemoStorage` handles undos/aborts, but for now the test simply gets disabled
-  again... :(
+- Partially disable the test regarding the undo log as the outcome differs
+  between Plone 3 and 4, probably due to changes in the test setup.
+  Refs http://dev.plone.org/plone/ticket/7784
   [witsch]
 
-- Add test to verify the [changeset:30810 fix] for the [ticket:7784 missing
-  undo log entries] after removing items via the "delete" action (refs #7784)
+- Add test to verify undo log entries are not longer missing after removing
+  items via the "delete" action.  Refs http://dev.plone.org/plone/ticket/7784
   [witsch]
 
 1.2 - 2009-10-10
