@@ -42,7 +42,7 @@
                     <dt><a tal:attributes="href breach/url" tal:content="breach/title" /></dt>
                     <dd>
                         <span i18n:translate="linkintegrity_is_referenced">
-                            This <span i18n:name="portal_type" tal:content="breach/type" /> 
+                            This <span i18n:name="portal_type" tal:content="breach/type" />
                             is referenced by the following items:
                         </span>
 
