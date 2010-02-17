@@ -4,6 +4,10 @@ Changelog
 1.3a3 - Unreleased
 ------------------
 
+- Updated confirmation.pt and update.pt to recent markup conventions.
+  References http://dev.plone.org/old/plone/ticket/9981
+  [spliter]
+
 - Convert test setup to `collective.testcaselayer`.
   [witsch]
 

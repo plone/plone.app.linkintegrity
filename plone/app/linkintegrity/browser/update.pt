@@ -12,22 +12,24 @@
 
 <metal:main fill-slot="main">
 
-<h1 class="documentFirstHeading"
-    i18n:translate="linkintegrity_update_title">Update link integrity information</h1>
+    <h1 class="documentFirstHeading"
+        i18n:translate="linkintegrity_update_title">Update link integrity information</h1>
 
-<p i18n:translate="linkintegrity_update_instructions">
-    Clicking the below button will cause link integrity information to be
-    updated.  This might take a while, especially for bigger sites...
-</p>
+    <div id="content-core">
+        <p i18n:translate="linkintegrity_update_instructions">
+            Clicking the below button will cause link integrity information to be
+            updated.  This might take a while, especially for bigger sites...
+        </p>
 
-<form method="post" action="updateLinkIntegrityInformation"
-      tal:attributes="action request/URL">
+        <form method="post" action="updateLinkIntegrityInformation"
+              tal:attributes="action request/URL">
 
-  <input class="destructive" type="submit" name="update" value="Update" />
+          <input class="destructive" type="submit" name="update" value="Update" />
 
-  <input class="standalone" type="submit" name="cancel" value="Cancel" />
+          <input class="standalone" type="submit" name="cancel" value="Cancel" />
 
-</form>
+        </form>
+    </div>
 
 </metal:main>
 
