@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.3a3 - Unreleased
+1.3a3 - 2010-02-18
 ------------------
 
 - Updated templates to match recent markup conventions.
