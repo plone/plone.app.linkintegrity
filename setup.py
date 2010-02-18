@@ -17,8 +17,10 @@ setup(name = 'plone.app.linkintegrity',
       include_package_data = True,
       install_requires = [
         'setuptools',
-        'collective.testcaselayer',
       ],
+      extras_require = { 'test': [
+        'collective.testcaselayer',
+      ]},
       platforms = 'Any',
       zip_safe = False,
       classifiers = [
