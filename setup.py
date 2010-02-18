@@ -35,4 +35,8 @@ setup(name = 'plone.app.linkintegrity',
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking',
       ],
+      entry_points = '''
+        [z3c.autoinclude.plugin]
+        target = plone
+      ''',
 )
