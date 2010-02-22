@@ -30,10 +30,13 @@ def search_attr(name, attrs):
 
 def extractLinks(data):
     """ parse the given html and return all links """
+    if not data:
+        return []
+
     parser = LinkParser()
     try:
         parser.feed(data)
         parser.close()
-    except HTMLParseError:
+    except (HTMLParseError, TypeError):
         pass
     return parser.getLinks()

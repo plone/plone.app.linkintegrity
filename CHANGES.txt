@@ -4,6 +4,9 @@ Changelog
 1.3a4 - Unreleased
 ------------------
 
+- Do not abort if a text field is None. In that case the HTML parses
+  raises a TypeError instead of a HTMLParseError.
+  [wichert]
 
 1.3a3 - 2010-02-18
 ------------------
