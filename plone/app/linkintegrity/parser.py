@@ -32,7 +32,6 @@ def extractLinks(data):
     """ parse the given html and return all links """
     if not data:
         return []
-
     parser = LinkParser()
     try:
         parser.feed(data)
