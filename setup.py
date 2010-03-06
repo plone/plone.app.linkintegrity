@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.3a4'
+version = '1.3a5'
 
 setup(name = 'plone.app.linkintegrity',
       version = version,
