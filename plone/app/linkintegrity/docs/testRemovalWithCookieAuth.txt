@@ -9,7 +9,6 @@ necessary links and create a testbrowser without passing an auth header:
 At this point we shouldn't be able to look at the folder contents (as an
 anonymous user):
 
-  >>> browser.handleErrors = True
   >>> browser.open('http://nohost/plone/folder_contents')
   >>> browser.url
   'http://nohost/plone/.../require_login?came_from=...'
