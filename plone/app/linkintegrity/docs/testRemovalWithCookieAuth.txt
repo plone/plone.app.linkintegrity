@@ -42,7 +42,6 @@ test framework from choking on the exception we intentionally throw (see
 After we have acknowledged the breach in link integrity the document should
 have been deleted:
 
-  >>> browser.handleErrors = False
   >>> browser.getControl(name='delete').click()
   >>> portal.doc2
   Traceback (most recent call last):
