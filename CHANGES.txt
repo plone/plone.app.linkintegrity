@@ -1,9 +1,12 @@
 Changelog
 =========
 
-1.3a5 - Unreleased
+1.3a5 - 2010-05-01
 ------------------
 
+- Properly handle retry exception instead of getting the special-casing of
+  exception handling when publishing with debug=1
+  [davisagli]
 
 1.3a4 - 2010-03-06
 ------------------
@@ -42,7 +45,7 @@ Changelog
 - Partially disable the test regarding the undo log as the outcome differs
   between Plone 3 and 4, probably due to changes in the test setup.
   Refs http://dev.plone.org/plone/ticket/7784
-  [witsch]
+  [witsch]e
 
 - Add test to verify undo log entries are not longer missing after removing
   items via the "delete" action.  Refs http://dev.plone.org/plone/ticket/7784
