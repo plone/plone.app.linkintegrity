@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.3b1 - unreleased
+------------------
+
+- Fix findObject to also catch the ZTK NotFound exception which may be
+  raised by request.traverseName. Fixes
+  http://dev.plone.org/plone/ticket/10549
+  [davisagli]
+
 1.3a5 - 2010-05-01
 ------------------
 

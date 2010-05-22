@@ -7,6 +7,7 @@ from Products.Archetypes.exceptions import ReferenceException
 from OFS.interfaces import IItem
 from ZODB.POSException import ConflictError
 from zExceptions import NotFound
+from zope.publisher.interfaces import NotFound as ztkNotFound
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
 from urlparse import urlsplit
@@ -30,7 +31,7 @@ def findObject(base, path):
                 child = obj.REQUEST.traverseName(obj, child_id)
         except ConflictError:
             raise
-        except (AttributeError, KeyError, NotFound):
+        except (AttributeError, KeyError, NotFound, ztkNotFound):
             return None, None
         if not IItem.providedBy(child):
             break
