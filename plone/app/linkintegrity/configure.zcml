@@ -10,9 +10,9 @@
       provides=".interfaces.ILinkIntegrityInfo"
       factory=".info.LinkIntegrityInfo" />
 
-  <five:implements
-    class="OFS.Image.Image"
-    interface=".interfaces.IOFSImage" />
+  <class class="OFS.Image.Image">
+    <implements interface=".interfaces.IOFSImage" />
+  </class>
 
   <!-- views used to perform link integrity checks and actually remove an object -->
 

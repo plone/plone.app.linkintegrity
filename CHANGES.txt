@@ -4,6 +4,9 @@ Changelog
 1.3b2 - Unreleased
 ------------------
 
+- Avoid using the deprecated five:implements directive.
+  [hannosch]
+
 1.3b1 - 2010-06-03
 ------------------
 
