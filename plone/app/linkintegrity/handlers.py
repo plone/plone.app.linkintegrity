@@ -1,4 +1,5 @@
 from logging import getLogger
+from Acquisition import aq_get
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IReference
@@ -28,7 +29,8 @@ def findObject(base, path):
             try:
                 child = obj.restrictedTraverse(child_id)
             except AttributeError:
-                child = obj.REQUEST.traverseName(obj, child_id)
+                request = aq_get(obj, 'REQUEST')
+                child = request.traverseName(obj, child_id)
         except ConflictError:
             raise
         except (AttributeError, KeyError, NotFound, ztkNotFound):
@@ -106,9 +108,10 @@ def referenceRemoved(obj, event):
     # if the object the event was fired on doesn't have a `REQUEST` attribute
     # we can safely assume no direct user action was involved and therefore
     # never raise a link integrity exception...
-    if not hasattr(obj, 'REQUEST'):
+    request = aq_get(obj, 'REQUEST', None)
+    if not request:
         return
-    storage = ILinkIntegrityInfo(obj.REQUEST)
+    storage = ILinkIntegrityInfo(request)
     breaches = storage.getIntegrityBreaches()
     breaches.setdefault(obj.getTargetObject(), set()).add(obj.getSourceObject())
     storage.setIntegrityBreaches(breaches)
@@ -119,11 +122,10 @@ def referencedObjectRemoved(obj, event):
     # if the object the event was fired on doesn't have a `REQUEST` attribute
     # we can safely assume no direct user action was involved and therefore
     # never raise a link integrity exception...
-    # (this should also fix http://plone.org/products/cachefu/issues/86)
-    if not hasattr(obj, 'REQUEST'):
+    request = aq_get(obj, 'REQUEST', None)
+    if not request:
         return
-    info = ILinkIntegrityInfo(obj.REQUEST)
-
+    info = ILinkIntegrityInfo(request)
     # first we check if link integrity checking was enabled
     if not info.integrityCheckingEnabled():
         return
