@@ -2,6 +2,7 @@ from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from zope.interface import implements
 from zope.component import queryUtility
 from Products.CMFCore.interfaces import IPropertiesTool
+from plone.uuid.interfaces import IUUID
 
 
 class LinkIntegrityInfo(object):
@@ -35,12 +36,12 @@ class LinkIntegrityInfo(object):
     def getIntegrityBreaches(self):
         """ return stored information regarding link integrity breaches
             after removing circular references, confirmed items etc """
-        deleted = set([obj.UID() for obj in self.getDeletedItems()])
+        deleted = set([IUUID(obj) for obj in self.getDeletedItems()])
         breaches = dict(self.getIntegrityInfo().get('breaches', {}))
-        deleted.update([obj.UID() for obj in breaches])
+        deleted.update([IUUID(obj) for obj in breaches])
         for target, sources in breaches.items():    # first remove deleted sources
             for source in list(sources):
-                if source.UID() in deleted:
+                if IUUID(source) in deleted:
                     sources.remove(source)
         for target, sources in breaches.items():    # then remove "empty" targets
             if not sources or self.isConfirmedItem(target):
