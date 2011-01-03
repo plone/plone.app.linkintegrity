@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.0 - unreleased
+1.4.0 - 2011-01-03
 ------------------
 
 - Use plone.uuid to look up content UUIDs.
