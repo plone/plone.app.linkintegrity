@@ -1,14 +1,20 @@
 Changelog
 =========
 
+
 1.4.1 - Unreleased
 ------------------
+
+- Add MANIFEST.in.
+  [WouterVH]
+
 
 1.4.0 - 2011-01-03
 ------------------
 
 - Use plone.uuid to look up content UUIDs.
   [toutpt, davisagli]
+
 
 1.3.1 - 2010-08-08
 ------------------
@@ -19,17 +25,20 @@ Changelog
 - Use the official ``aq_get`` API to acquire the request from a context.
   [hannosch]
 
+
 1.3.0 - 2010-07-18
 ------------------
 
 - Update license to GPL version 2 only.
   [hannosch]
 
+
 1.3b2 - 2010-06-13
 ------------------
 
 - Avoid using the deprecated five:implements directive.
   [hannosch]
+
 
 1.3b1 - 2010-06-03
 ------------------
@@ -39,6 +48,7 @@ Changelog
   http://dev.plone.org/plone/ticket/10549
   [davisagli]
 
+
 1.3a5 - 2010-05-01
 ------------------
 
@@ -46,12 +56,14 @@ Changelog
   exception handling when publishing with debug=1
   [davisagli]
 
+
 1.3a4 - 2010-03-06
 ------------------
 
 - Do not abort if a text field is `None`. In that case the HTML parser
   raises a `TypeError` instead of an `HTMLParseError`.
   [wichert]
+
 
 1.3a3 - 2010-02-18
 ------------------
@@ -67,12 +79,14 @@ Changelog
   Refs http://dev.plone.org/plone/ticket/10231
   [limi, witsch]
 
+
 1.3a2 - 2009-12-02
 ------------------
 
 - Fix issue with the final submission of the delete confirmation page in 
   Zope 2.12. This closes http://dev.plone.org/plone/ticket/9699.
   [davisagli]
+
 
 1.3a1 - 2009-11-17
 ------------------
@@ -89,11 +103,13 @@ Changelog
   items via the "delete" action.  Refs http://dev.plone.org/plone/ticket/7784
   [witsch]
 
+
 1.2 - 2009-10-10
 ----------------
 
 - Also catch `NotFound` exceptions when trying to resolve linked objects.
   [optilude]
+
 
 1.1 - 2009-08-31
 ----------------
@@ -119,6 +135,7 @@ Changelog
   needed and breaks exception handling.
   [davisagli]
 
+
 1.0.12 - 2009-06-03
 -------------------
 
@@ -126,6 +143,7 @@ Changelog
   order to avoid expensive hashing in "... in ..." expressions.  This
   makes removing linked objects much faster.
   [regebro]
+
 
 1.0.11 - 2008-11-15
 -------------------
@@ -138,16 +156,18 @@ Changelog
   http://dev.plone.org/plone/ticket/8390.
   [witsch]
 
+
 1.0.10 - 2008-07-07
 -------------------
 
 - Fixed the recognizing of links to files (or any object) with a
-  space in the id.  Fixes #8167.
+  space in the id.  Fixes http://dev.plone.org/plone/ticket/8167.
   [maurits]
 
 - Updated tests to work with LinguaPlone by unmarking the creation
   flag on new objects.
   [maurits]
+
 
 1.0.9 - 2008-05-08
 ------------------
@@ -159,6 +179,7 @@ Changelog
   request which trying to delete multiple other objects.
   [witsch]
 
+
 1.0.8 - 2008-04-21
 ------------------
 
@@ -166,11 +187,13 @@ Changelog
   http://dev.plone.org/plone/ticket/7995.
   [witsch]
 
+
 1.0.7 - 2008-03-27
 ------------------
 
 - Fixed accidental removal of references not related to link integrity.
   [dunny]
+
 
 1.0.6 - 2008-03-08
 ------------------
@@ -178,12 +201,14 @@ Changelog
 - Added missing namespace declaration to avoid the warning about it.
   [wiggy]
 
+
 1.0.5 - 2008-02-13
 ------------------
 
 - Added missing i18n markup to confirmation.pt. This closes
   http://dev.plone.org/plone/ticket/7688.
   [hannosch]
+
 
 1.0.4 - 2008-01-03
 ------------------
@@ -197,11 +222,13 @@ Changelog
 - Referencing items are now listed in alphabetical order
   [witsch]
 
+
 1.0.3 - 2007-12-05
 ------------------
 
 - Fixed setting up the test layer after GenericSetup update
   [witsch]
+
 
 1.0.2 - 2007-11-07
 ------------------
@@ -211,6 +238,7 @@ Changelog
 
 - Fixed security issue due to using pickles (see CVE-2007-5741)
   [witsch]
+
 
 1.0.1 - 2007-09-10
 ------------------
@@ -222,11 +250,13 @@ Changelog
   sheets.
   [hannosch]
 
+
 1.0 - 2007-08-16
 ----------------
 
 - Minor bug fixes and enhancements
   [witsch]
+
 
 1.0rc1.1 - 2007-07-12
 ---------------------
@@ -234,20 +264,25 @@ Changelog
 - Bug and test fixes after upgrade to Zope 2.10.4
   [witsch]
 
+
 1.0rc1 - 2007-07-08
 -------------------
 
 - Bugfixes & additional tests
   [witsch]
 
+
 1.0b3 - 2007-05-04
 ------------------
+
+- No changes.
 
 1.0b2 - 2007-04-30
 ------------------
 
 - Integration of Plone's "delete confirmation" page
   [witsch]
+
 
 1.0b1 - 2007-03-03
 ------------------
@@ -257,6 +292,7 @@ Changelog
 
 - Updates to the monkey patch needed for five exceptions
   [wiggy]
+
 
 1.0a2 - 2007-02-07
 ------------------
@@ -272,4 +308,3 @@ Changelog
 
 - Initial package structure.
   [zopeskel]
-
