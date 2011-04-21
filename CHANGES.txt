@@ -5,6 +5,10 @@ Changelog
 1.4.1 - Unreleased
 ------------------
 
+- Fix decoding of colon-delimited list of confirmed oids in the request
+  when one of the oids contains a colon.
+  [davisagli]
+
 - Add MANIFEST.in.
   [WouterVH]
 
