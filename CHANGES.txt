@@ -1,8 +1,7 @@
 Changelog
 =========
 
-
-1.4.1 - Unreleased
+1.4.1 - 2011-05-12
 ------------------
 
 - Fix decoding of colon-delimited list of confirmed oids in the request
