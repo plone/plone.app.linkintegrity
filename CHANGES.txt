@@ -4,6 +4,9 @@ Changelog
 1.3.3 - Unreleased
 ------------------
 
+- Add new tests to prove isLinked can now be used safely.
+  [gotcha]
+
 1.3.2 - 2011-05-12
 ------------------
 
