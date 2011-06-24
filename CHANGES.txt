@@ -4,6 +4,9 @@ Changelog
 1.4.2 - unreleased
 ------------------
 
+- Fix tests broken by r50608.
+  [gotcha]
+
 - Add new tests to prove isLinked can now be used safely.
   [gotcha]
 

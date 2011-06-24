@@ -27,7 +27,7 @@ Now the image should have a new id and title, which we check for:
 It should also be available under that name via the browser, of course:
 
   >>> browser.url
-  'http://nohost/plone/@@folder_contents'
+  'http://nohost/plone/folder_contents'
   >>> browser.getLink('NuName').click()
   >>> browser.url
   'http://nohost/plone/nuname'
