@@ -1,8 +1,13 @@
 Changelog
 =========
 
+
 1.4.2 - unreleased
 ------------------
+
+- Objects that don't have a UUID cannot cause linkintegrity-breaches.
+  This fixes http://dev.plone.org/plone/ticket/11904.
+  [WouterVH]
 
 - Fix tests broken by r50608.
   [gotcha]

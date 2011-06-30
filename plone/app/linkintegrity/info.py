@@ -36,12 +36,12 @@ class LinkIntegrityInfo(object):
     def getIntegrityBreaches(self):
         """ return stored information regarding link integrity breaches
             after removing circular references, confirmed items etc """
-        deleted = set([IUUID(obj) for obj in self.getDeletedItems()])
+        uuids_to_delete = set([IUUID(obj,None) for obj in self.getDeletedItems() if IUUID(obj, None)])
         breaches = dict(self.getIntegrityInfo().get('breaches', {}))
-        deleted.update([IUUID(obj) for obj in breaches])
+        uuids_to_delete.update([IUUID(obj) for obj in breaches])
         for target, sources in breaches.items():    # first remove deleted sources
             for source in list(sources):
-                if IUUID(source) in deleted:
+                if IUUID(source) in uuids_to_delete:
                     sources.remove(source)
         for target, sources in breaches.items():    # then remove "empty" targets
             if not sources or self.isConfirmedItem(target):
