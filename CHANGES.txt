@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.4.2 - unreleased
+1.4.2 - 2011-07-04
 ------------------
 
 - Objects that don't have a UUID cannot cause linkintegrity-breaches.
