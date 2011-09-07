@@ -4,6 +4,9 @@ Changelog
 1.4.3 - unreleased
 ------------------
 
+- Fix handling of relative links instead of relying on Acquisition.
+  [witsch]
+
 
 1.4.2 - 2011-07-04
 ------------------
