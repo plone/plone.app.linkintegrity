@@ -1,11 +1,10 @@
 # setup tests with all doctests found in docs/
 
 from plone.app.linkintegrity import docs
-from plone.app.linkintegrity.tests import layer
+from plone.app.linkintegrity.tests import layer, utils
 from plone.app.linkintegrity.parser import extractLinks
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase import PloneTestCase
-from Products.Five.testbrowser import Browser
 from unittest import TestSuite, TestCase, makeSuite
 from os.path import join, split, abspath, dirname
 from os import walk
@@ -38,13 +37,7 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
     def getBrowser(self, loggedIn=False):
         """ instantiate and return a testbrowser for convenience """
-        browser = Browser()
-        browser.handleErrors = True
-        if loggedIn:
-            user = PloneTestCase.default_user
-            pwd = PloneTestCase.default_password
-            browser.addHeader('Authorization', 'Basic %s:%s' % (user, pwd))
-        return browser
+        return utils.getBrowser(loggedIn)
 
     def setStatusCode(self, key, value):
         from ZPublisher import HTTPResponse
