@@ -19,7 +19,8 @@ Changelog
   This refs http://dev.plone.org/plone/ticket/10122.
   [gotcha]
 
-- Add new tests to prove isLinked can now be used safely.
+- Add new tests to prove `isLinked` can now be used safely.
+  This refs http://dev.plone.org/plone/ticket/7784.
   [gotcha]
 
 
