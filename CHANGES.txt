@@ -15,7 +15,8 @@ Changelog
   This fixes http://dev.plone.org/plone/ticket/11904.
   [WouterVH]
 
-- Fix tests broken by r50608.
+- Adjust tests to the changed URL used for the `folder_contents` view.
+  This refs http://dev.plone.org/plone/ticket/10122.
   [gotcha]
 
 - Add new tests to prove isLinked can now be used safely.
