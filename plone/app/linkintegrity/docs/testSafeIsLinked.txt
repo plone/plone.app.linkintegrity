@@ -2,14 +2,13 @@ This tests checks that isLinked can now be used safely as it eventually plays
 well with transaction machinery.
 
   >>> self.setRoles(('Manager',))
-  >>> p = self.portal
 
 Let's add an image.
 
   >>> import transaction
   >>> transaction.begin()
   <transaction...>
-  >>> p.invokeFactory('Image', 'new_image')
+  >>> portal.invokeFactory('Image', 'new_image')
   'new_image'
   >>> transaction.commit()
 
@@ -24,14 +23,13 @@ Let's add a second image.
 
   >>> transaction.begin()
   <transaction...>
-  >>> p = self.portal
-  >>> p.invokeFactory('Image', 'another_image')
+  >>> portal.invokeFactory('Image', 'another_image')
   'another_image'
   
 Even though we use isLinked, 
 
   >>> from Products.CMFPlone.utils import isLinked
-  >>> isLinked(p.another_image)
+  >>> isLinked(portal.another_image)
   False
   >>> transaction.commit()
 
@@ -47,17 +45,16 @@ Let's add a third image.
 
   >>> transaction.begin()
   <transaction...>
-  >>> p = self.portal
-  >>> p.invokeFactory('Image', 'another_new_image')
+  >>> portal.invokeFactory('Image', 'another_new_image')
   'another_new_image'
 
 Let's link it into a document.
 
-  >>> self.setText(p.doc1, p.another_new_image.tag())
+  >>> self.setText(portal.doc1, portal.another_new_image.tag())
 
 Even though we use isLinked, 
 
-  >>> isLinked(p.another_new_image)
+  >>> isLinked(portal.another_new_image)
   True
 
 the third image is also persisted.
