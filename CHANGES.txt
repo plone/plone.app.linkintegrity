@@ -4,6 +4,9 @@ Changelog
 1.4.3 - unreleased
 ------------------
 
+- Fix integrity reference generation for content not accessible by the editor.
+  [witsch]
+
 - Fix handling of relative links instead of relying on Acquisition.
   [witsch]
 

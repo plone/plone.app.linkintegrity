@@ -39,3 +39,17 @@ class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
         self.assertTrue('dox rule' in browser.contents)
         # the internal reference should do the same...
         self.assertEqual(doc.getReferences(), [portal.main.foo.doc])
+
+    def testReferencesToNonAccessibleContentAreGenerated(self):
+        self.loginAsPortalOwner()
+        secret = self.portal[self.portal.invokeFactory('Document', id='secret')]
+        self.login()
+        # somebody created a document to which the user has no access...
+        checkPermission = self.portal.portal_membership.checkPermission
+        self.failIf(checkPermission('View', secret))
+        self.failIf(checkPermission('Access contents information', secret))
+        # nevertheless it should be possible to set a link to it...
+        self.folder.invokeFactory('Document', id='doc',
+            text='<html> <body> <a href="%s">go!</a> </body> </html>' %
+            secret.absolute_url())
+        self.assertEqual(self.folder.doc.getReferences(), [secret])

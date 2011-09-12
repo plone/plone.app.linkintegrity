@@ -34,7 +34,7 @@ def findObject(base, path):
         child_id = unquote(components[0])
         try:
             try:
-                child = obj.restrictedTraverse(child_id)
+                child = obj.unrestrictedTraverse(child_id)
             except AttributeError:
                 request = aq_get(obj, 'REQUEST')
                 child = request.traverseName(obj, child_id)
