@@ -8,9 +8,11 @@ from Products.Archetypes.exceptions import ReferenceException
 from OFS.interfaces import IItem
 from ZODB.POSException import ConflictError
 from zExceptions import NotFound
+from zope.component import subscribers
 from zope.publisher.interfaces import NotFound as ztkNotFound
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
+from interfaces import IReferencesUpdater
 from urlparse import urlsplit
 from parser import extractLinks
 from urllib import unquote
@@ -65,17 +67,33 @@ def getObjectsFromLinks(base, links):
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
-    existing = set(obj.getReferences(relationship=referencedRelationship))
-    refs = set()
-    for field in obj.Schema().fields():
-        if isinstance(field, TextField):
-            accessor = field.getAccessor(obj)
-            links = extractLinks(accessor())
-            refs = refs.union(getObjectsFromLinks(obj, links))
-    updateReferences(obj, referencedRelationship, refs, existing)
+    refs_to_update = {}
+    for subscriber in subscribers((obj,), IReferencesUpdater):
+        subscriber.update(refs_to_update)
+    for relationship, refs in refs_to_update.items():
+        updateReferences(obj, relationship, refs)
 
 
-def updateReferences(obj, relationship, newrefs, existing):
+class LinksReferences(object):
+    """ extract html links used in the given Archetypes content object
+        and use them to update the given integrity references """
+
+    def __init__(self, context):
+        self.context = context
+
+    def update(self, refs_to_update):
+        refs = refs_to_update.setdefault(referencedRelationship, set())
+        for field in self.context.Schema().fields():
+            if isinstance(field, TextField):
+                accessor = field.getAccessor(self.context)
+                links = extractLinks(accessor())
+                refs |= getObjectsFromLinks(self.context, links)
+
+
+def updateReferences(obj, relationship, newrefs):
+    """ update references set on object using the given set in a 'gentle'
+        way, i.e. avoiding to re-add already existing ones """
+    existing = set(obj.getReferences(relationship=relationship))
     for ref in newrefs.difference(existing):   # add new references and...
         try:
             obj.addReference(ref, relationship=relationship)
