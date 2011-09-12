@@ -1,10 +1,8 @@
-from logging import getLogger
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
-from Products.Archetypes.exceptions import ReferenceException
 from OFS.interfaces import IItem
 from ZODB.POSException import ConflictError
 from zExceptions import NotFound
@@ -14,6 +12,7 @@ from interfaces import ILinkIntegrityInfo, IOFSImage
 from urlparse import urlsplit
 from parser import extractLinks
 from urllib import unquote
+from plone.app.linkintegrity.references import updateReferences
 
 
 referencedRelationship = 'isReferencing'
@@ -72,43 +71,6 @@ def modifiedArchetype(obj, event):
             links = extractLinks(accessor())
             refs |= getObjectsFromLinks(obj, links)
     updateReferences(obj, referencedRelationship, refs)
-
-
-def updateReferences(obj, relationship, newrefs):
-    """ update references set on object using the given set in a 'gentle'
-        way, i.e. avoiding to re-add already existing ones """
-    existing = set(obj.getReferences(relationship=relationship))
-    for ref in newrefs.difference(existing):   # add new references and...
-        try:
-            obj.addReference(ref, relationship=relationship)
-        except ReferenceException:
-            pass
-    for ref in existing.difference(newrefs):   # removed leftovers
-        try:
-            obj.deleteReference(ref, relationship=relationship)
-        except ReferenceException:
-            removeDanglingReference(obj, relationship)
-
-
-def removeDanglingReference(obj, relationship):
-    # try to get rid of the dangling reference, but let's not
-    # have this attempt to clean up break things otherwise...
-    # iow, the `try..except` is there, because internal methods
-    # of the reference catalog are being used directly here.  any
-    # changes regarding these shouldn't break things over here,
-    # though...
-    try:
-        refcat = getToolByName(obj, 'reference_catalog')
-        uid, dummy = refcat._uidFor(obj)
-        brains = refcat._queryFor(uid, None, relationship=relationship)
-        objs = refcat._resolveBrains(brains)
-        for obj in objs:
-            refcat._deleteReference(obj)
-    except ConflictError:
-        raise
-    except:
-        getLogger(__name__).warning('dangling "linkintegrity" '
-            'reference to %r could not be removed.', obj)
 
 
 def referenceRemoved(obj, event):
