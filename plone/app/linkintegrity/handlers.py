@@ -75,33 +75,41 @@ def modifiedArchetype(obj, event):
             accessor = field.getAccessor(obj)
             links = extractLinks(accessor())
             refs = refs.union(getObjectsFromLinks(obj, links))
-    for ref in refs.difference(existing):   # add new references and...
+    updateReferences(obj, referencedRelationship, refs, existing)
+
+
+def updateReferences(obj, relationship, newrefs, existing):
+    for ref in newrefs.difference(existing):   # add new references and...
         try:
-            obj.addReference(ref, relationship=referencedRelationship)
+            obj.addReference(ref, relationship=relationship)
         except ReferenceException:
             pass
-    for ref in existing.difference(refs):   # removed leftovers
+    for ref in existing.difference(newrefs):   # removed leftovers
         try:
-            obj.deleteReference(ref, relationship=referencedRelationship)
+            obj.deleteReference(ref, relationship=relationship)
         except ReferenceException:
-            try:
-                # try to get rid of the dangling reference, but let's not
-                # have this attempt to clean up break things otherwise...
-                # iow, the `try..except` is there, because internal methods
-                # of the reference catalog are being used directly here.  any
-                # changes regarding these shouldn't break things over here,
-                # though...
-                refcat = getToolByName(obj, 'reference_catalog')
-                uid, dummy = refcat._uidFor(obj)
-                brains = refcat._queryFor(uid, None, relationship=referencedRelationship)
-                objs = refcat._resolveBrains(brains)
-                for obj in objs:
-                    refcat._deleteReference(obj)
-            except ConflictError:
-                raise
-            except:
-                getLogger(__name__).warning('dangling "linkintegrity" '
-                    'reference to %r could not be removed.', obj)
+            removeDanglingReference(obj, relationship)
+
+
+def removeDanglingReference(obj, relationship):
+    # try to get rid of the dangling reference, but let's not
+    # have this attempt to clean up break things otherwise...
+    # iow, the `try..except` is there, because internal methods
+    # of the reference catalog are being used directly here.  any
+    # changes regarding these shouldn't break things over here,
+    # though...
+    try:
+        refcat = getToolByName(obj, 'reference_catalog')
+        uid, dummy = refcat._uidFor(obj)
+        brains = refcat._queryFor(uid, None, relationship=relationship)
+        objs = refcat._resolveBrains(brains)
+        for obj in objs:
+            refcat._deleteReference(obj)
+    except ConflictError:
+        raise
+    except:
+        getLogger(__name__).warning('dangling "linkintegrity" '
+            'reference to %r could not be removed.', obj)
 
 
 def referenceRemoved(obj, event):
@@ -117,9 +125,10 @@ def referenceRemoved(obj, event):
     if not request:
         return
     storage = ILinkIntegrityInfo(request)
-    breaches = storage.getIntegrityBreaches()
-    breaches.setdefault(obj.getTargetObject(), set()).add(obj.getSourceObject())
-    storage.setIntegrityBreaches(breaches)
+    all_breaches = storage.getIntegrityBreaches()
+    obj_breaches = all_breaches.setdefault(obj.getTargetObject(), set())
+    obj_breaches.add(obj.getSourceObject())
+    storage.setIntegrityBreaches(all_breaches)
 
 
 def referencedObjectRemoved(obj, event):
