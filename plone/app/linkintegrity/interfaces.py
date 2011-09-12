@@ -39,13 +39,3 @@ class ILinkIntegrityInfo(Interface):
 
 class IOFSImage(Interface):
     """ interface for OFS.Image.Image """
-
-
-class IReferencesUpdater(Interface):
-    """ subscription adapter to extract and update the set of integrity
-        references with regard to the given content object """
-
-    def update(refs_to_update):
-        """ updates `refs_to_update` dictionary;
-            keys are relationship;
-            values are set() of referenced objects """

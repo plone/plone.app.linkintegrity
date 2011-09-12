@@ -8,11 +8,9 @@ from Products.Archetypes.exceptions import ReferenceException
 from OFS.interfaces import IItem
 from ZODB.POSException import ConflictError
 from zExceptions import NotFound
-from zope.component import subscribers
 from zope.publisher.interfaces import NotFound as ztkNotFound
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
-from interfaces import IReferencesUpdater
 from urlparse import urlsplit
 from parser import extractLinks
 from urllib import unquote
@@ -67,27 +65,13 @@ def getObjectsFromLinks(base, links):
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
-    refs_to_update = {}
-    for subscriber in subscribers((obj,), IReferencesUpdater):
-        subscriber.update(refs_to_update)
-    for relationship, refs in refs_to_update.items():
-        updateReferences(obj, relationship, refs)
-
-
-class LinksReferences(object):
-    """ extract html links used in the given Archetypes content object
-        and use them to update the given integrity references """
-
-    def __init__(self, context):
-        self.context = context
-
-    def update(self, refs_to_update):
-        refs = refs_to_update.setdefault(referencedRelationship, set())
-        for field in self.context.Schema().fields():
-            if isinstance(field, TextField):
-                accessor = field.getAccessor(self.context)
-                links = extractLinks(accessor())
-                refs |= getObjectsFromLinks(self.context, links)
+    refs = set()
+    for field in obj.Schema().fields():
+        if isinstance(field, TextField):
+            accessor = field.getAccessor(obj)
+            links = extractLinks(accessor())
+            refs |= getObjectsFromLinks(obj, links)
+    updateReferences(obj, referencedRelationship, refs)
 
 
 def updateReferences(obj, relationship, newrefs):
