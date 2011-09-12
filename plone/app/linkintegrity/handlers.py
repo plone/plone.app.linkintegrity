@@ -65,10 +65,7 @@ def getObjectsFromLinks(base, links):
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
-    try:    # TODO: is this a bug or a needed workaround?
-        existing = set(obj.getReferences(relationship=referencedRelationship))
-    except AttributeError:
-        return
+    existing = set(obj.getReferences(relationship=referencedRelationship))
     refs = set()
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
