@@ -45,7 +45,7 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
 
     def setText(self, obj, text, **kw):
         kw['text'] = '<html> <body> %s </body> </html>' % text
-        return obj.processForm(obj, values=kw)
+        return obj.processForm(values=kw)
 
     def disableEventCountHelper(self):
         # so here's yet another monkey patch ;), but only to avoid having
