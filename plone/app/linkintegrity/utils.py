@@ -16,7 +16,7 @@ def decodeStrings(data):
     while data:
         pos = data.find(':')
         end = pos + int(data[:pos]) + 1
-        yield data[pos+1:end]
+        yield data[pos + 1:end]
         data = data[end:]
 
 

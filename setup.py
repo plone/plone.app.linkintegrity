@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 
 version = '1.4.3dev'
 
-setup(name = 'plone.app.linkintegrity',
-      version = version,
-      description = 'Manage link integrity in Plone.',
-      long_description = open("README.txt").read() + '\n' +
-                         open('CHANGES.txt').read(),
+setup(name='plone.app.linkintegrity',
+      version=version,
+      description='Manage link integrity in Plone.',
+      long_description=open("README.txt").read() + '\n' +
+                       open('CHANGES.txt').read(),
       classifiers=[
           "Development Status :: 5 - Production/Stable",
           "Environment :: Web Environment",
@@ -22,21 +22,21 @@ setup(name = 'plone.app.linkintegrity',
       keywords='link integrity plone',
       author='Plone Foundation',
       author_email='plone-developers@lists.sourceforge.net',
-      url = 'http://pypi.python.org/pypi/plone.app.linkintegrity',
+      url='http://pypi.python.org/pypi/plone.app.linkintegrity',
       license='GPL version 2',
-      packages = find_packages(),
-      namespace_packages = ['plone', 'plone.app'],
-      include_package_data = True,
-      install_requires = [
+      packages=find_packages(),
+      namespace_packages=['plone', 'plone.app'],
+      include_package_data=True,
+      install_requires=[
         'setuptools',
-        'plone.uuid'
+        'plone.uuid',
       ],
-      extras_require = { 'test': [
+      extras_require={'test': [
         'collective.testcaselayer',
       ]},
-      platforms = 'Any',
-      zip_safe = False,
-      entry_points = '''
+      platforms='Any',
+      zip_safe=False,
+      entry_points='''
         [z3c.autoinclude.plugin]
         target = plone
       ''',

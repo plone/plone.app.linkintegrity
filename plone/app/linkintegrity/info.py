@@ -84,7 +84,7 @@ class LinkIntegrityInfo(object):
         elif confirmed:
             s = confirmed.decode('base64')
             # split colon-delimited list of 8-byte oids
-            confirmed = [s[i*9:i*9+8] for i in range(len(s)/9+1)]
+            confirmed = [s[i * 9:i * 9 + 8] for i in range(len(s) / 9 + 1)]
         return confirmed
 
     def isConfirmedItem(self, obj):
