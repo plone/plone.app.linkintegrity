@@ -33,6 +33,12 @@ class LinkIntegrityInfo(object):
         """ store information regarding link integrity """
         setattr(self.context, self.attribute, info)
 
+    def addBreach(self, source, target):
+        """ convenience helper; see interface """
+        breaches = self.getIntegrityInfo().get('breaches', {})
+        breaches.setdefault(target, set()).add(source)
+        self.setIntegrityBreaches(breaches)
+
     def getIntegrityBreaches(self):
         """ return stored information regarding link integrity breaches
             after removing circular references, confirmed items etc """

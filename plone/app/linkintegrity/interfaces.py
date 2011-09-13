@@ -13,6 +13,10 @@ class ILinkIntegrityInfo(Interface):
     """ a place to store information about link integrity, i.e. breaches;
         the storage is assumed to be unique per browser request """
 
+    def addBreach(source, target):
+        """ add information about an integrity breach, i.e. an indicator
+            that `source` object somehow references `target` """
+
     def getIntegrityBreaches():
         """ return stored information regarding link integrity breaches """
 

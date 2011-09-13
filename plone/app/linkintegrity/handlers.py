@@ -86,10 +86,7 @@ def referenceRemoved(obj, event):
     if not request:
         return
     storage = ILinkIntegrityInfo(request)
-    all_breaches = storage.getIntegrityBreaches()
-    obj_breaches = all_breaches.setdefault(obj.getTargetObject(), set())
-    obj_breaches.add(obj.getSourceObject())
-    storage.setIntegrityBreaches(all_breaches)
+    storage.addBreach(obj.getSourceObject(), obj.getTargetObject())
 
 
 def referencedObjectRemoved(obj, event):
