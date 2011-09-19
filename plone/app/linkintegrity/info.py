@@ -1,8 +1,19 @@
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from zope.interface import implements
 from zope.component import queryUtility
+from Acquisition import aq_base
 from Products.CMFCore.interfaces import IPropertiesTool
-from plone.uuid.interfaces import IUUID
+
+try:
+    from plone.uuid.interfaces import IUUID
+    IUUID       # make pyflakes happy
+except ImportError:
+    # Archetypes-only fallback for Plone < 4.1
+    def IUUID(obj, default=None):
+        if hasattr(aq_base(obj), 'UID'):
+            return obj.UID()
+        else:
+            return default
 
 
 class LinkIntegrityInfo(object):

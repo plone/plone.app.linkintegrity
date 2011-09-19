@@ -4,6 +4,10 @@ Changelog
 1.4.4 - unreleased
 ------------------
 
+- Provide Archetypes-only fallback if `plone.uuid` is not available,
+  restoring compatibility with Plone 4.0.x.
+  [witsch]
+
 
 1.4.3 - 2011-09-14
 ------------------
@@ -45,7 +49,7 @@ Changelog
 1.4.0 - 2011-01-03
 ------------------
 
-- Use plone.uuid to look up content UUIDs.
+- Use `plone.uuid` to look up content UUIDs.
   [toutpt, davisagli]
 
 

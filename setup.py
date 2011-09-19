@@ -29,7 +29,6 @@ setup(name='plone.app.linkintegrity',
       include_package_data=True,
       install_requires=[
         'setuptools',
-        'plone.uuid',
       ],
       extras_require={'test': [
         'collective.testcaselayer',
