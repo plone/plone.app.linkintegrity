@@ -40,6 +40,11 @@
 
   <subscriber
     for="Products.Archetypes.interfaces.IBaseObject
+         OFS.interfaces.IObjectClonedEvent"
+    handler=".handlers.modifiedArchetype" />
+
+  <subscriber
+    for="Products.Archetypes.interfaces.IBaseObject
          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
     handler=".handlers.modifiedArchetype" />
 

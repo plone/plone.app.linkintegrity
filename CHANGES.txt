@@ -4,6 +4,14 @@ Changelog
 1.4.4 - unreleased
 ------------------
 
+- Cloned objects had no integrity references.
+  This fixes http://dev.plone.org/plone/ticket/12254.
+  [gotcha]
+
+- Link integrity broke copy&paste of content items.
+  This fixes http://dev.plone.org/plone/ticket/12206.
+  [gotcha]
+
 - Provide Archetypes-only fallback if `plone.uuid` is not available,
   restoring compatibility with Plone 4.0.x.
   [witsch]

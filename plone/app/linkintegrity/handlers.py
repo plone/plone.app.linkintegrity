@@ -64,6 +64,16 @@ def getObjectsFromLinks(base, links):
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
+    pu = getToolByName(obj, 'portal_url', None)
+    if pu is None:
+        # `getObjectFromLinks` is not possible without access
+        # to `portal_url`
+        return
+    rc = getToolByName(obj, 'reference_catalog', None)
+    if rc is None:
+        # `updateReferences` is not possible without access
+        # to `reference_catalog`
+        return
     refs = set()
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
