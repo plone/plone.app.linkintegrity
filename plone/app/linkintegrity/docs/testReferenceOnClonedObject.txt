@@ -5,8 +5,6 @@ First we need to set up a link:
 
   >>> self.setRoles(('Manager',))
   >>> self.setText(portal.doc1, '<a href="doc2">a document</a>')
-  >>> import transaction
-  >>> transaction.commit()
 
 Next we clone the document:
 
