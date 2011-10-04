@@ -8,7 +8,7 @@ First we need to set up a link:
   >>> import transaction
   >>> transaction.commit()
 
-The we need to clone the document:
+Next we clone the document:
 
   >>> portal.doc1.object_copy()
   'http://nohost/plone/doc1/'
@@ -23,11 +23,15 @@ The we need to clone the document:
    ...<tr...href="http://nohost/plone/copy_of_doc1"...Test Page 1...</tr>...'
 
 Then we try to delete the document linked by the original document and its
-clone. Before we can do this we need to prevent the test framework from choking 
-on the exception we intentionally throw 
-(see docs/testRemovalTriggersConfirmation.txt for more info):
+clone.  Before we can do this we need to prevent the test framework from
+choking on the exception we intentionally throw (see
+docs/testRemovalTriggersConfirmation.txt for more info):
 
   >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
+
+Now we can continue and "click" the "delete" action.  The confirmation
+page should list both documents:
+
   >>> browser.getControl('Test Page 2').selected = True
   >>> browser.getControl('Delete').click()
   >>> browser.contents

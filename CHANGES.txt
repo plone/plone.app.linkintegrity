@@ -4,11 +4,11 @@ Changelog
 1.4.4 - unreleased
 ------------------
 
-- Cloned objects had no integrity references.
+- Add integrity references for cloned content items.
   This fixes http://dev.plone.org/plone/ticket/12254.
   [gotcha]
 
-- Link integrity broke copy&paste of content items.
+- Skip events subscribers during copy&paste of content items.
   This fixes http://dev.plone.org/plone/ticket/12206.
   [gotcha]
 
