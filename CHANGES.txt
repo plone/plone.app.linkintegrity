@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.4 - unreleased
+1.4.4 - 2011-10-04
 ------------------
 
 - Add integrity references for cloned content items.
