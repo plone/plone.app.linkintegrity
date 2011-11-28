@@ -1,6 +1,12 @@
 Changelog
 =========
 
+In next release ...
+
+- Use the `get` method to retrieve the field value if the instance
+  does not provide an accessor method. This is the case for instance
+  for fields which have been added via schema extension.
+
 1.4.4 - 2011-10-04
 ------------------
 

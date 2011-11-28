@@ -78,7 +78,13 @@ def modifiedArchetype(obj, event):
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
-            links = extractLinks(accessor())
+            if accessor is not None:
+                value = accessor()
+            else:
+                # Fields that have been added via schema extension do
+                # not have an accessor method.
+                value = field.get(obj)
+            links = extractLinks(value)
             refs |= getObjectsFromLinks(obj, links)
     updateReferences(obj, referencedRelationship, refs)
 
