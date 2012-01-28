@@ -1,7 +1,12 @@
 Changelog
 =========
 
-In next release ...
+1.4.5 - unreleased
+------------------
+
+- Stabilize the sort order of breach sources returned for the
+  confirmation view.
+  [davisagli]
 
 - Use the `get` method to retrieve the field value if the instance
   does not provide an accessor method. This is the case for instance

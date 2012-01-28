@@ -35,7 +35,7 @@ class RemoveConfirmationView(BrowserView):
 
     def integrityBreaches(self):
         info = ILinkIntegrityInfo(self.request).getIntegrityBreaches()
-        byTitle = lambda a, b: cmp(a.Title(), b.Title())
+        byTitle = lambda a, b: cmp((a.Title(), a.getId()), (b.Title(), b.getId()))
         breaches = []
         for target, sources in info.items():
             breaches.append({
