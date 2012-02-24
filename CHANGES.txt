@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.5 - unreleased
+1.4.5 - 2012-02-24
 ------------------
 
 - Fix an error in handling absolute links to objects within the portal,
