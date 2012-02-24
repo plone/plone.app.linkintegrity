@@ -6,6 +6,8 @@ Changelog
 
 - Fix an error in handling absolute links to objects within the portal,
   which prevented references from being created based on those links.
+  This fixes linkintegrity for sites with link-by-uid turned on.
+  This closes https://dev.plone.org/ticket/12402
   [davisagli]
 
 - Stabilize the sort order of breach sources returned for the
