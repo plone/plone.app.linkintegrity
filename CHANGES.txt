@@ -4,6 +4,10 @@ Changelog
 1.4.5 - unreleased
 ------------------
 
+- Fix an error in handling absolute links to objects within the portal,
+  which prevented references from being created based on those links.
+  [davisagli]
+
 - Stabilize the sort order of breach sources returned for the
   confirmation view.
   [davisagli]

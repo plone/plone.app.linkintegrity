@@ -23,7 +23,7 @@ def findObject(base, path):
     if path.startswith('/'):
         obj = getToolByName(base, 'portal_url').getPortalObject()
         portal_path = '/'.join(obj.getPhysicalPath())
-        components = path.lstrip(portal_path + '/').split('/')
+        components = path[len(portal_path) + 1:].split('/')
     else:
         obj = aq_parent(base)   # relative urls start at the parent...
         components = path.split('/')
