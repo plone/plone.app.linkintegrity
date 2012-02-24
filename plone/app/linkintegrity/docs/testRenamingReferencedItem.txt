@@ -40,7 +40,7 @@ thanks to `plone.app.redirector`:
   >>> browser.url
   'http://nohost/plone/doc1'
   >>> browser.contents
-  '...<a href="http://nohost/plone/doc2">doc2</a>...'
+  '...<a href="...doc2">doc2</a>...'
   >>> browser.getLink('doc2').click()
   >>> browser.url
   'http://nohost/plone/nuname'
