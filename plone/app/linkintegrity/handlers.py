@@ -21,12 +21,16 @@ referencedRelationship = 'isReferencing'
 def findObject(base, path):
     """ traverse to given path and find the upmost object """
     if path.startswith('/'):
+        # Make an absolute path relative to the portal root
         obj = getToolByName(base, 'portal_url').getPortalObject()
-        portal_path = '/'.join(obj.getPhysicalPath())
-        components = path[len(portal_path) + 1:].split('/')
+        portal_path = '/'.join(obj.getPhysicalPath()) + '/'
+        if path.startswith(portal_path):
+            path = path[len(portal_path):]
     else:
         obj = aq_parent(base)   # relative urls start at the parent...
-        components = path.split('/')
+
+    components = path.split('/')
+
     while components:
         child_id = unquote(components[0])
         try:
