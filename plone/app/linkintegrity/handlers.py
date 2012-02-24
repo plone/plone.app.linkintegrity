@@ -14,6 +14,31 @@ from parser import extractLinks
 from urllib import unquote
 from plone.app.linkintegrity.references import updateReferences
 
+# To support various Plone versions, we need to support various UUID resolvers
+# This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
+# plone.outputfilters.browser.resolveuid
+try:
+    from zope.component.hooks import getSite
+except ImportError:
+    from zope.app.component.hooks import getSite
+try:
+    from plone.app.uuid.utils import uuidToObject
+except ImportError:
+    def uuidToObject(uuid):
+        catalog = getToolByName(getSite(), 'portal_catalog', None)
+        res = catalog and catalog.unrestrictedSearchResults(UID=uuid)
+        if res and len(res) == 1:
+            return res[0].getObject()
+
+def _resolveUID(uid):
+    res = uuidToObject(uid)
+    if res is not None:
+        return res
+    kupu_hook = getattr(getSite(), 'kupu_resolveuid_hook', None)
+    if kupu_hook is not None:
+        return kupu_hook(uid)
+    return None
+
 
 referencedRelationship = 'isReferencing'
 
@@ -30,6 +55,13 @@ def findObject(base, path):
         obj = aq_parent(base)   # relative urls start at the parent...
 
     components = path.split('/')
+
+    # Support resolveuid/UID paths explicitely, without relying
+    # on a view or skinscript to do this for us.
+    if len(components) == 2 and components[0] == 'resolveuid':
+        obj = _resolveUID(components[1])
+        if obj:
+            return obj, path
 
     while components:
         child_id = unquote(components[0])
