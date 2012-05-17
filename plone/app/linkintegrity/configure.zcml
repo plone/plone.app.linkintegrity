@@ -5,6 +5,8 @@
 
   <five:registerPackage package="." initialize=".initialize" />
 
+  <include file="dexterity.zcml" />
+
   <adapter
       for="zope.publisher.interfaces.browser.IBrowserRequest"
       provides=".interfaces.ILinkIntegrityInfo"
@@ -16,25 +18,25 @@
 
   <!-- views used to perform link integrity checks and actually remove an object -->
 
-  <browser:page 
-    name="index.html" 
+  <browser:page
+    name="index.html"
     for=".interfaces.ILinkIntegrityNotificationException"
     template="browser/confirmation.pt"
     class=".browser.confirmation.RemoveConfirmationView"
     permission="zope2.Public" />
 
-  <browser:page 
+  <browser:page
     name="removeConfirmationAction"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     class=".browser.remove.RemoveReferencedObjectView"
-    permission="zope2.Public" /> 
+    permission="zope2.Public" />
 
-  <browser:page 
+  <browser:page
     name="updateLinkIntegrityInformation"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     template="browser/update.pt"
     class=".browser.update.UpdateView"
-    permission="cmf.ManagePortal" /> 
+    permission="cmf.ManagePortal" />
 
   <!-- event handlers for updating link integrity references -->
 
@@ -55,12 +57,12 @@
 
   <subscriber
     for="Products.Archetypes.interfaces.IBaseObject
-         zope.app.container.interfaces.IObjectRemovedEvent" 
+         zope.app.container.interfaces.IObjectRemovedEvent"
     handler=".handlers.referencedObjectRemoved" />
 
   <subscriber
     for="Products.Archetypes.interfaces.IReference
-         zope.app.container.interfaces.IObjectRemovedEvent" 
+         zope.app.container.interfaces.IObjectRemovedEvent"
     handler=".handlers.referenceRemoved" />
 
 </configure>

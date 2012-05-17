@@ -15,6 +15,17 @@ from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.exceptions import ReferenceException
 from ZODB.POSException import ConflictError
 
+try:
+    # Imports related to the dexterity support
+    from Acquisition import aq_inner
+    from z3c.relationfield import RelationValue
+    from zc.relation.interfaces import ICatalog
+    from zope.component import getUtility
+    from zope.intid.interfaces import IIntIds
+    HAS_DEXTERITY = True
+except:
+    HAS_DEXTERITY = False
+
 
 def updateReferences(obj, relationship, newrefs):
     existing = set(obj.getReferences(relationship=relationship))
@@ -28,6 +39,45 @@ def updateReferences(obj, relationship, newrefs):
             obj.deleteReference(ref, relationship=relationship)
         except ReferenceException:
             removeDanglingReference(obj, relationship)
+
+
+def updateDexterityReferences(obj, relationship, newrefs):
+    # We use the relation catalog
+    catalog = getUtility(ICatalog)
+    intids = getUtility(IIntIds)
+
+    # When a relatable dexterity gets modified, an event gets fired in
+    # z3c.relationfield.event.updateRelations
+    # There, all relations are removed before updating, so if we get here
+    # when editing some content, the following line will return empty.
+    # However, we leave it, just in case
+    relations = catalog.findRelations({'from_id':intids.getId(aq_inner(obj)),
+                                       'from_attribute': 'linkintegrity',})
+
+    existing = set([i.to_object for i in relations])
+
+    for ref in newrefs.difference(existing):   # add new references and...
+        to_id = intids.register(ref)
+        value = RelationValue(to_id)
+        # Taken from z3c.relationfield.event._setRelation
+        # make sure relation has a __parent__ so we can make an intid for it
+        value.__parent__ = obj
+        # also set from_object to parent object
+        value.from_object = obj
+        # and the attribute to the attribute name
+        value.from_attribute = 'linkintegrity'
+        # now we can create an intid for the relation
+        id = intids.register(value)
+        # and index the relation with the catalog
+        catalog.index_doc(id, value)
+
+    # Same comment as before, when editing a dexterity type, following lines
+    # shouldn't do anything, since all relations are removed before
+    for ref in existing.difference(newrefs):   # removed leftovers
+        for i in relations:
+            if i.to_object is ref:
+                id = intids.getId(i)
+                catalog.unindex_doc(id)
 
 
 def removeDanglingReference(obj, relationship):
