@@ -29,6 +29,19 @@ except ImportError:
         if res and len(res) == 1:
             return res[0].getObject()
 
+# We try to import dexterity related modules, or modules used just if
+# dexterity is around
+try:
+    from plone.app.textfield import RichText
+    from plone.dexterity.interfaces import IDexterityFTI
+    from plone.dexterity.utils import getAdditionalSchemata
+    from plone.directives.form import Schema
+    from zope.component import getUtility
+    from zope.schema import getFieldsInOrder
+    HAS_DEXTERITY = True
+except:
+    HAS_DEXTERITY = False
+
 
 def _resolveUID(uid):
     res = uuidToObject(uid)
@@ -97,6 +110,20 @@ def getObjectsFromLinks(base, links):
                 objects.add(obj)
     return objects
 
+def getObjectsFromLinksNG(obj, links):
+    objects = set()
+    portal = obj.portal_url.getPortalObject()
+    for link in links:
+        try:
+            content = portal.unrestrictedTraverse(str(link))
+            if IOFSImage.providedBy(content):
+                content = aq_parent(content)    # use atimage object for scaled images
+            objects.add(content)
+        except:
+            #NotFound
+            pass
+
+    return objects
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
@@ -123,6 +150,48 @@ def modifiedArchetype(obj, event):
             links = extractLinks(value)
             refs |= getObjectsFromLinks(obj, links)
     updateReferences(obj, referencedRelationship, refs)
+
+
+def modifiedDexterity(obj, event):
+    """ a dexterity based object was modified """
+    pu = getToolByName(obj, 'portal_url', None)
+    if pu is None:
+        # `getObjectFromLinks` is not possible without access
+        # to `portal_url`
+        return
+    rc = getToolByName(obj, 'reference_catalog', None)
+    if rc is None:
+        # `updateReferences` is not possible without access
+        # to `reference_catalog`
+        return
+
+
+    fti = getUtility(IDexterityFTI, name=obj.portal_type)
+    fields = []
+
+    schema = fti.lookupSchema()
+    additional_schema = getAdditionalSchemata(context=obj,
+                                              portal_type=obj.portal_type)
+
+    schemas = [i for i in additional_schema] + [schema]
+
+    refs = set()
+
+    for schema in schemas:
+        for name,field in getFieldsInOrder(schema):
+            if isinstance(field, RichText):
+                # Only check for "RichText" ?
+                value = getattr(schema(obj), name).raw
+                links = extractLinks(value)
+                refs |= getObjectsFromLinksNG(obj, links)
+
+    updateDexterityReferences(obj, referencedRelationship, refs)
+
+
+#def referencedDexterityObjectRemoved(obj, event):
+    #rels = list(catalog.findRelations({'from_id': obj_id}))
+    #for rel in rels:
+        #catalog.unindex(rel)
 
 
 def referenceRemoved(obj, event):
