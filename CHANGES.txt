@@ -4,6 +4,9 @@ Changelog
 1.4.6 - unreleased
 ------------------
 
+- Remove hard dependency on Archetypes.
+  [davisagli]
+
 1.4.5 - 2012-02-24
 ------------------
 
@@ -14,9 +17,6 @@ Changelog
 
 - Stabilize the sort order of breach sources returned for the
   confirmation view.
-  [davisagli]
-
-- Remove hard dependency on Archetypes.
   [davisagli]
 
 - Use the `get` method to retrieve the field value if the instance
