@@ -16,9 +16,13 @@ Changelog
   confirmation view.
   [davisagli]
 
+- Remove hard dependency on Archetypes.
+  [davisagli]
+
 - Use the `get` method to retrieve the field value if the instance
   does not provide an accessor method. This is the case for instance
   for fields which have been added via schema extension.
+  [malthe]
 
 - Support resolveuid/UID references explicitely, by parsing and resolving
   these ourselves instead of relying on a view or script (which doesn't work).

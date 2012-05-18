@@ -1,7 +1,8 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:five="http://namespaces.zope.org/five">
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
 
   <five:registerPackage package="." initialize=".initialize" />
 
@@ -29,38 +30,42 @@
     class=".browser.remove.RemoveReferencedObjectView"
     permission="zope2.Public" /> 
 
-  <browser:page 
-    name="updateLinkIntegrityInformation"
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    template="browser/update.pt"
-    class=".browser.update.UpdateView"
-    permission="cmf.ManagePortal" /> 
+  <configure zcml:condition="installed Products.Archetypes">
 
-  <!-- event handlers for updating link integrity references -->
+    <browser:page 
+      name="updateLinkIntegrityInformation"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      template="browser/update.pt"
+      class=".browser.update.UpdateView"
+      permission="cmf.ManagePortal" /> 
 
-  <subscriber
-    for="Products.Archetypes.interfaces.IBaseObject
-         OFS.interfaces.IObjectClonedEvent"
-    handler=".handlers.modifiedArchetype" />
+    <!-- event handlers for updating link integrity references -->
 
-  <subscriber
-    for="Products.Archetypes.interfaces.IBaseObject
-         zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-    handler=".handlers.modifiedArchetype" />
+    <subscriber
+      for="Products.Archetypes.interfaces.IBaseObject
+           OFS.interfaces.IObjectClonedEvent"
+      handler=".handlers.modifiedArchetype" />
 
-  <subscriber
-    for="Products.Archetypes.interfaces.IBaseObject
-         zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-    handler=".handlers.modifiedArchetype" />
+    <subscriber
+      for="Products.Archetypes.interfaces.IBaseObject
+           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+      handler=".handlers.modifiedArchetype" />
 
-  <subscriber
-    for="Products.Archetypes.interfaces.IBaseObject
-         zope.app.container.interfaces.IObjectRemovedEvent" 
-    handler=".handlers.referencedObjectRemoved" />
+    <subscriber
+      for="Products.Archetypes.interfaces.IBaseObject
+           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".handlers.modifiedArchetype" />
 
-  <subscriber
-    for="Products.Archetypes.interfaces.IReference
-         zope.app.container.interfaces.IObjectRemovedEvent" 
-    handler=".handlers.referenceRemoved" />
+    <subscriber
+      for="Products.Archetypes.interfaces.IBaseObject
+           zope.app.container.interfaces.IObjectRemovedEvent" 
+      handler=".handlers.referencedObjectRemoved" />
+
+    <subscriber
+      for="Products.Archetypes.interfaces.IReference
+           zope.app.container.interfaces.IObjectRemovedEvent" 
+      handler=".handlers.referenceRemoved" />
+
+  </configure>
 
 </configure>
