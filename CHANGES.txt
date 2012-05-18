@@ -4,6 +4,9 @@ Changelog
 1.4.6 - unreleased
 ------------------
 
+- No more zope.app dependencies.
+  [hannosch]
+
 - Remove hard dependency on Archetypes.
   [davisagli]
 

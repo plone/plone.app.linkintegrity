@@ -6,6 +6,7 @@ from Products.Archetypes.Field import TextField
 from OFS.interfaces import IItem
 from ZODB.POSException import ConflictError
 from zExceptions import NotFound
+from zope.component.hooks import getSite
 from zope.publisher.interfaces import NotFound as ztkNotFound
 from exceptions import LinkIntegrityNotificationException
 from interfaces import ILinkIntegrityInfo, IOFSImage
@@ -18,10 +19,6 @@ from plone.app.linkintegrity.references import updateReferences
 # This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
 # plone.outputfilters.browser.resolveuid
 try:
-    from zope.component.hooks import getSite
-except ImportError:
-    from zope.app.component.hooks import getSite
-try:
     from plone.app.uuid.utils import uuidToObject
 except ImportError:
     def uuidToObject(uuid):
@@ -29,6 +26,7 @@ except ImportError:
         res = catalog and catalog.unrestrictedSearchResults(UID=uuid)
         if res and len(res) == 1:
             return res[0].getObject()
+
 
 def _resolveUID(uid):
     res = uuidToObject(uid)

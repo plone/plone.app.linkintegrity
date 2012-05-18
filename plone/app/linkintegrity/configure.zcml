@@ -58,12 +58,12 @@
 
     <subscriber
       for="Products.Archetypes.interfaces.IBaseObject
-           zope.app.container.interfaces.IObjectRemovedEvent" 
+           zope.lifecycleevent.interfaces.IObjectRemovedEvent" 
       handler=".handlers.referencedObjectRemoved" />
 
     <subscriber
       for="Products.Archetypes.interfaces.IReference
-           zope.app.container.interfaces.IObjectRemovedEvent" 
+           zope.lifecycleevent.interfaces.IObjectRemovedEvent" 
       handler=".handlers.referenceRemoved" />
 
   </configure>
