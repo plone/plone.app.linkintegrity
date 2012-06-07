@@ -1,18 +1,20 @@
+from urlparse import urlsplit
+from urllib import unquote
+
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
 from OFS.interfaces import IItem
-from ZODB.POSException import ConflictError
 from zExceptions import NotFound
+from ZODB.POSException import ConflictError
 from zope.component.hooks import getSite
 from zope.publisher.interfaces import NotFound as ztkNotFound
-from exceptions import LinkIntegrityNotificationException
-from interfaces import ILinkIntegrityInfo, IOFSImage
-from urlparse import urlsplit
-from parser import extractLinks
-from urllib import unquote
+
+from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
+from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
+from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.references import updateReferences
 
 # To support various Plone versions, we need to support various UUID resolvers
