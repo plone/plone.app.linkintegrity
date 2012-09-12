@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 # setup tests with all doctests found in docs/
 
 from plone.app.linkintegrity import docs
@@ -21,6 +22,13 @@ from zope.testing import doctest
 OPTIONFLAGS = (doctest.REPORT_ONLY_FIRST_FAILURE |
                doctest.ELLIPSIS |
                doctest.NORMALIZE_WHITESPACE)
+
+
+DATA = '''<a
+        href="http://foo.com/@@v?Title=S\xc3\xa3o&amp;section=text">
+        Foo</a>'''
+
+EXPECTED = 'http://foo.com/@@v?Title=S\xc3\xa3o&section=text'.decode('utf-8')
 
 
 class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
@@ -65,7 +73,12 @@ class LinkIntegrityTestCase(TestCase):
 
     def testHandleParserException(self):
         self.assertEqual(extractLinks('<foo\'d>'), ())
-        self.assertEqual(extractLinks('<a href="http://foo.com">foo</a><bar\'d>'), ('http://foo.com',))
+        data = '<a href="http://foo.com">foo</a><bar\'d>'
+        self.assertEqual(extractLinks(data), ('http://foo.com',))
+
+    def testHandleStringEncodingException(self):
+        expected = (EXPECTED,)
+        self.assertEqual(extractLinks(DATA), expected)
 
 
 # we check argv to enable testing of explicitely named doctests
