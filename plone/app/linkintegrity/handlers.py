@@ -114,6 +114,7 @@ def modifiedArchetype(obj, event):
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
+            encoding = field.getRaw(obj, raw=1).original_encoding
             if accessor is not None:
                 value = accessor()
             else:
