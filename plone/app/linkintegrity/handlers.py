@@ -121,7 +121,7 @@ def modifiedArchetype(obj, event):
                 # Fields that have been added via schema extension do
                 # not have an accessor method.
                 value = field.get(obj)
-            links = extractLinks(value)
+            links = extractLinks(value, encoding)
             refs |= getObjectsFromLinks(obj, links)
     updateReferences(obj, referencedRelationship, refs)
 
