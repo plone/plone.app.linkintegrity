@@ -3,6 +3,8 @@ from urllib import unquote
 
 from Acquisition import aq_get
 from Acquisition import aq_parent
+from zope.component import getUtility
+from zope.schema import getFieldsInOrder
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
@@ -16,6 +18,8 @@ from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationExceptio
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.references import updateReferences
+from Products.Archetypes.interfaces import IReferenceable
+from Products.Archetypes.interfaces import IBaseObject
 
 # To support various Plone versions, we need to support various UUID resolvers
 # This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
@@ -36,8 +40,6 @@ try:
     from plone.dexterity.interfaces import IDexterityFTI
     from plone.dexterity.utils import getAdditionalSchemata
     from plone.directives.form import Schema
-    from zope.component import getUtility
-    from zope.schema import getFieldsInOrder
     HAS_DEXTERITY = True
 except:
     HAS_DEXTERITY = False
@@ -107,6 +109,11 @@ def getObjectsFromLinks(base, links):
             if obj:
                 if IOFSImage.providedBy(obj):
                     obj = aq_parent(obj)    # use atimage object for scaled images
+                if not IReferenceable.providedBy(obj):
+                    try:
+                        obj = IReferenceable(obj)
+                    except:
+                        continue
                 objects.add(obj)
     return objects
 
@@ -125,6 +132,21 @@ def getObjectsFromLinksNG(obj, links):
 
     return objects
 
+def getUIDsFromLinks(base, links):
+    """ determine actual objects refered to by given links """
+    uids = set()
+    url = base.absolute_url()
+    scheme, host, path, query, frag = urlsplit(url)
+    for link in links:
+        s, h, path, q, f = urlsplit(link)
+        if (not s and not h) or (s == scheme and h == host):    # relative or local url
+            obj, extra = findObject(base, path)
+            if obj:
+                if IOFSImage.providedBy(obj):
+                    obj = aq_parent(obj)    # use atimage object for scaled images
+                uids.add(obj.UID())
+    return uids
+
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
     pu = getToolByName(obj, 'portal_url', None)
@@ -138,6 +160,7 @@ def modifiedArchetype(obj, event):
         # to `reference_catalog`
         return
     refs = set()
+    
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
@@ -148,7 +171,7 @@ def modifiedArchetype(obj, event):
                 # not have an accessor method.
                 value = field.get(obj)
             links = extractLinks(value)
-            refs |= getObjectsFromLinks(obj, links)
+            refs |= getUIDsFromLinks(obj, links)
     updateReferences(obj, referencedRelationship, refs)
 
 
@@ -183,9 +206,9 @@ def modifiedDexterity(obj, event):
                 # Only check for "RichText" ?
                 value = getattr(schema(obj), name).raw
                 links = extractLinks(value)
-                refs |= getObjectsFromLinksNG(obj, links)
+                refs |= getObjectsFromLinks(obj, links)
 
-    updateDexterityReferences(obj, referencedRelationship, refs)
+    updateReferences(IReferenceable(obj), referencedRelationship, refs)
 
 
 #def referencedDexterityObjectRemoved(obj, event):
@@ -207,7 +230,13 @@ def referenceRemoved(obj, event):
     if not request:
         return
     storage = ILinkIntegrityInfo(request)
-    storage.addBreach(obj.getSourceObject(), obj.getTargetObject())
+    source = obj.getSourceObject()
+    if not IBaseObject.providedBy(source) and hasattr(source, 'context'):
+        source = source.context
+    target = obj.getTargetObject()
+    if not IBaseObject.providedBy(target) and hasattr(target, 'context'):
+        target = target.context
+    storage.addBreach(source, target)
 
 
 def referencedObjectRemoved(obj, event):
