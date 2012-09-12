@@ -132,6 +132,7 @@ def getObjectsFromLinksNG(obj, links):
 
     return objects
 
+
 def getUIDsFromLinks(base, links):
     """ determine actual objects refered to by given links """
     uids = set()
@@ -146,6 +147,7 @@ def getUIDsFromLinks(base, links):
                     obj = aq_parent(obj)    # use atimage object for scaled images
                 uids.add(obj.UID())
     return uids
+
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """

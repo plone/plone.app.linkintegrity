@@ -17,6 +17,7 @@ from ZODB.POSException import ConflictError
 from Products.Archetypes import config
 from Products.Archetypes.interfaces import IReferenceable
 
+
 def updateReferences(obj, relationship, newrefs):
     existing = set(obj.getReferences(relationship=relationship))
     for ref in newrefs.difference(existing):   # add new references and...

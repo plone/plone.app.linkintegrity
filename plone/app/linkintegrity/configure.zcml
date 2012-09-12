@@ -68,4 +68,6 @@
            zope.lifecycleevent.interfaces.IObjectRemovedEvent" 
       handler=".handlers.referenceRemoved" />
 
+  </configure>
+
 </configure>
