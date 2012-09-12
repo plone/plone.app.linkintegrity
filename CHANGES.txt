@@ -4,7 +4,9 @@ Changelog
 1.4.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixes UnicodeDecodeError on extractLinks
+  This closes https://dev.plone.org/ticket/13168
+  [ericof]
 
 
 1.4.6 (2012-07-02)
