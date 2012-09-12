@@ -28,7 +28,7 @@ def search_attr(name, attrs):
     return []
 
 
-def extractLinks(data):
+def extractLinks(data, encoding='utf-8'):
     """ parse the given html and return all links """
     if not data:
         return []
@@ -36,6 +36,11 @@ def extractLinks(data):
     try:
         parser.feed(data)
         parser.close()
+    except UnicodeDecodeError:
+        parser = LinkParser()
+        parser.feed(data.decode(encoding))
+        parser.close()
     except (HTMLParseError, TypeError):
         pass
+
     return parser.getLinks()
