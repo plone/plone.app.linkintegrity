@@ -6,7 +6,8 @@
 
   <five:registerPackage package="." initialize=".initialize" />
 
-  <include file="dexterity.zcml" />
+  <include file="dexterity.zcml" 
+           zcml:condition="installed plone.dexterity"/>
 
   <adapter
       for="zope.publisher.interfaces.browser.IBrowserRequest"

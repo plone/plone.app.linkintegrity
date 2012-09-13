@@ -117,37 +117,6 @@ def getObjectsFromLinks(base, links):
                 objects.add(obj)
     return objects
 
-def getObjectsFromLinksNG(obj, links):
-    objects = set()
-    portal = obj.portal_url.getPortalObject()
-    for link in links:
-        try:
-            content = portal.unrestrictedTraverse(str(link))
-            if IOFSImage.providedBy(content):
-                content = aq_parent(content)    # use atimage object for scaled images
-            objects.add(content)
-        except:
-            #NotFound
-            pass
-
-    return objects
-
-
-def getUIDsFromLinks(base, links):
-    """ determine actual objects refered to by given links """
-    uids = set()
-    url = base.absolute_url()
-    scheme, host, path, query, frag = urlsplit(url)
-    for link in links:
-        s, h, path, q, f = urlsplit(link)
-        if (not s and not h) or (s == scheme and h == host):    # relative or local url
-            obj, extra = findObject(base, path)
-            if obj:
-                if IOFSImage.providedBy(obj):
-                    obj = aq_parent(obj)    # use atimage object for scaled images
-                uids.add(obj.UID())
-    return uids
-
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
@@ -173,7 +142,7 @@ def modifiedArchetype(obj, event):
                 # not have an accessor method.
                 value = field.get(obj)
             links = extractLinks(value)
-            refs |= getUIDsFromLinks(obj, links)
+            refs |= getObjectsFromLinks(obj, links)
     updateReferences(obj, referencedRelationship, refs)
 
 
@@ -189,7 +158,6 @@ def modifiedDexterity(obj, event):
         # `updateReferences` is not possible without access
         # to `reference_catalog`
         return
-
 
     fti = getUtility(IDexterityFTI, name=obj.portal_type)
     fields = []
@@ -211,12 +179,6 @@ def modifiedDexterity(obj, event):
                 refs |= getObjectsFromLinks(obj, links)
 
     updateReferences(IReferenceable(obj), referencedRelationship, refs)
-
-
-#def referencedDexterityObjectRemoved(obj, event):
-    #rels = list(catalog.findRelations({'from_id': obj_id}))
-    #for rel in rels:
-        #catalog.unindex(rel)
 
 
 def referenceRemoved(obj, event):
