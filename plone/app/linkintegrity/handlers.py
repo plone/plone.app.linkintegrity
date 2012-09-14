@@ -175,8 +175,10 @@ def modifiedDexterity(obj, event):
         for name,field in getFieldsInOrder(schema):
             if isinstance(field, RichText):
                 # Only check for "RichText" ?
-                value = getattr(schema(obj), name).raw
-                links = extractLinks(value)
+                value = getattr(schema(obj), name)
+                if not value:
+                    continue
+                links = extractLinks(value.raw)
                 refs |= getObjectsFromLinks(obj, links)
 
     updateReferences(IReferenceable(obj), referencedRelationship, refs)
