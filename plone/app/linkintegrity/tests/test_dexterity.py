@@ -46,8 +46,12 @@ class TestDexterityContent(PloneTestCase.PloneTestCase):
         fti.klass = 'plone.dexterity.content.Item'
         fti.schema = 'plone.app.linkintegrity.tests.test_dexterity.IMyDexterityItem'
         fti.behaviors = ('plone.app.referenceablebehavior.referenceable.IReferenceable',)
+        fti = DexterityFTI('Non referenciable Dexterity Item')
+        self.portal.portal_types._setObject('Non referenciable Dexterity Item', fti)
+        fti.klass = 'plone.dexterity.content.Item'
+        fti.schema = 'plone.app.linkintegrity.tests.test_dexterity.IMyDexterityItem'
         
-    def test_dexterity(self):
+    def test_referenciable_dexterity(self):
         """ Test Dexterity linkintegrity """
         if not HAS_DEXTERITY:
             return
@@ -65,3 +69,18 @@ class TestDexterityContent(PloneTestCase.PloneTestCase):
         portal.doc1.setText('<html> <body> <a href="/plone/dexterity_item2" /> </body> </html>')
         zope.event.notify(ObjectModifiedEvent(portal.doc1))
         self.assertEqual(portal.reference_catalog(sourceUID=portal.doc1.UID())[0].targetUID, portal.dexterity_item2.UID())
+
+    def test_nonreferenciable_dexterity(self):
+        """ Test Non referenciable Dexterity content """
+        if not HAS_DEXTERITY:
+            return
+
+        portal = self.portal
+        self.setRoles(('Manager',))
+        portal.invokeFactory('Non referenciable Dexterity Item',
+                             id='nonreferenciable_dexterity_item1')
+
+        portal.nonreferenciable_dexterity_item1.text = RichTextValue(raw='<html> <body> <a href="doc1" /> </body> </html>',
+                                                                     mimeType='text/html')
+        zope.event.notify(ObjectModifiedEvent(portal.nonreferenciable_dexterity_item1))
+        self.assertFalse(portal.reference_catalog(sourceUID=portal.nonreferenciable_dexterity_item1.UID()))

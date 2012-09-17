@@ -3,27 +3,27 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:five="http://namespaces.zope.org/five"
-    zcml:condition="installed plone.dexterity" >
+    zcml:condition="installed plone.app.referenceablebehavior" >
 
   <!-- event handlers for updating link integrity references -->
 
   <subscriber
-    for="plone.dexterity.interfaces.IDexterityContent
+    for="plone.app.referenceablebehavior.referenceable.IReferenceable
          OFS.interfaces.IObjectClonedEvent"
     handler=".handlers.modifiedDexterity" />
 
   <subscriber
-    for="plone.dexterity.interfaces.IDexterityContent
+    for="plone.app.referenceablebehavior.referenceable.IReferenceable
          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
     handler=".handlers.modifiedDexterity" />
 
   <subscriber
-    for="plone.dexterity.interfaces.IDexterityContent
+    for="plone.app.referenceablebehavior.referenceable.IReferenceable
          zope.lifecycleevent.interfaces.IObjectModifiedEvent"
     handler=".handlers.modifiedDexterity" />
 
   <subscriber
-    for="plone.dexterity.interfaces.IDexterityContent
+    for="plone.app.referenceablebehavior.referenceable.IReferenceable
          zope.app.container.interfaces.IObjectRemovedEvent"
     handler=".handlers.referencedObjectRemoved" />
 
