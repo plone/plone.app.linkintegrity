@@ -73,8 +73,7 @@ def findObject(base, path):
 
     # Support resolveuid/UID paths explicitely, without relying
     # on a view or skinscript to do this for us.
-    if len(components) == 2 and components[0] == 'resolveuid' or \
-       len(components) > 2 and components[-2] == 'resolveuid':
+    if len(components) >= 2 and components[-2] == 'resolveuid':
         obj = _resolveUID(components[-1])
         if obj:
             return obj, path
