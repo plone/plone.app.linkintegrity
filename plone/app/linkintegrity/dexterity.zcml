@@ -14,7 +14,7 @@
 
   <subscriber
     for="plone.app.referenceablebehavior.referenceable.IReferenceable
-         zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+         zope.lifecycleevent.interfaces.IObjectAddedEvent"
     handler=".handlers.modifiedDexterity" />
 
   <subscriber
