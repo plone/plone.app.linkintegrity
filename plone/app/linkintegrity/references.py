@@ -14,6 +14,9 @@ from logging import getLogger
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.exceptions import ReferenceException
 from ZODB.POSException import ConflictError
+from Products.Archetypes import config
+from Products.Archetypes.interfaces import IReferenceable
+from Products.Archetypes.interfaces import IBaseObject
 
 
 def updateReferences(obj, relationship, newrefs):
@@ -38,7 +41,10 @@ def removeDanglingReference(obj, relationship):
     # changes regarding these shouldn't break things over here,
     # though...
     try:
-        refcat = getToolByName(obj, 'reference_catalog')
+        if not IBaseObject.providedBy(obj) and hasattr(obj, 'context'):
+            refcat = getToolByName(obj.context, 'reference_catalog')
+        else:
+            refcat = getToolByName(obj, 'reference_catalog')
         uid, dummy = refcat._uidFor(obj)
         brains = refcat._queryFor(uid, None, relationship=relationship)
         objs = refcat._resolveBrains(brains)
