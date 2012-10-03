@@ -4,7 +4,11 @@ Changelog
 1.4.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added support for Dexterity content types.  Link integrity
+  support for Dexterity requires the plone.app.referenceablebehavior
+  behavior to be enabled so that the Dexterity item can be used
+  with Archetypes references.
+  [jpgimenez]
 
 
 1.4.7 (2012-10-03)

@@ -3,6 +3,8 @@ from urllib import unquote
 
 from Acquisition import aq_get
 from Acquisition import aq_parent
+from zope.component import getUtility
+from zope.schema import getFieldsInOrder
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
@@ -16,6 +18,7 @@ from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationExceptio
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.references import updateReferences
+from Products.Archetypes.interfaces import IReferenceable
 
 # To support various Plone versions, we need to support various UUID resolvers
 # This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
@@ -28,6 +31,17 @@ except ImportError:
         res = catalog and catalog.unrestrictedSearchResults(UID=uuid)
         if res and len(res) == 1:
             return res[0].getObject()
+
+# We try to import dexterity related modules, or modules used just if
+# dexterity is around
+try:
+    from plone.app.textfield import RichText
+    from plone.dexterity.interfaces import IDexterityFTI
+    from plone.dexterity.utils import getAdditionalSchemata
+    from plone.directives.form import Schema
+    HAS_DEXTERITY = True
+except:
+    HAS_DEXTERITY = False
 
 
 def _resolveUID(uid):
@@ -58,8 +72,8 @@ def findObject(base, path):
 
     # Support resolveuid/UID paths explicitely, without relying
     # on a view or skinscript to do this for us.
-    if len(components) == 2 and components[0] == 'resolveuid':
-        obj = _resolveUID(components[1])
+    if len(components) >= 2 and components[-2] == 'resolveuid':
+        obj = _resolveUID(components[-1])
         if obj:
             return obj, path
 
@@ -94,6 +108,11 @@ def getObjectsFromLinks(base, links):
             if obj:
                 if IOFSImage.providedBy(obj):
                     obj = aq_parent(obj)    # use atimage object for scaled images
+                if not IReferenceable.providedBy(obj):
+                    try:
+                        obj = IReferenceable(obj)
+                    except:
+                        continue
                 objects.add(obj)
     return objects
 
@@ -111,6 +130,7 @@ def modifiedArchetype(obj, event):
         # to `reference_catalog`
         return
     refs = set()
+    
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
@@ -126,6 +146,43 @@ def modifiedArchetype(obj, event):
     updateReferences(obj, referencedRelationship, refs)
 
 
+def modifiedDexterity(obj, event):
+    """ a dexterity based object was modified """
+    pu = getToolByName(obj, 'portal_url', None)
+    if pu is None:
+        # `getObjectFromLinks` is not possible without access
+        # to `portal_url`
+        return
+    rc = getToolByName(obj, 'reference_catalog', None)
+    if rc is None:
+        # `updateReferences` is not possible without access
+        # to `reference_catalog`
+        return
+
+    fti = getUtility(IDexterityFTI, name=obj.portal_type)
+    fields = []
+
+    schema = fti.lookupSchema()
+    additional_schema = getAdditionalSchemata(context=obj,
+                                              portal_type=obj.portal_type)
+
+    schemas = [i for i in additional_schema] + [schema]
+
+    refs = set()
+
+    for schema in schemas:
+        for name,field in getFieldsInOrder(schema):
+            if isinstance(field, RichText):
+                # Only check for "RichText" ?
+                value = getattr(schema(obj), name)
+                if not value:
+                    continue
+                links = extractLinks(value.raw)
+                refs |= getObjectsFromLinks(obj, links)
+
+    updateReferences(IReferenceable(obj), referencedRelationship, refs)
+
+
 def referenceRemoved(obj, event):
     """ store information about the removed link integrity reference """
     assert IReference.providedBy(obj)
@@ -139,7 +196,9 @@ def referenceRemoved(obj, event):
     if not request:
         return
     storage = ILinkIntegrityInfo(request)
-    storage.addBreach(obj.getSourceObject(), obj.getTargetObject())
+    source = obj.getSourceObject()
+    target = obj.getTargetObject()
+    storage.addBreach(source, target)
 
 
 def referencedObjectRemoved(obj, event):
