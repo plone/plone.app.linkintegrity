@@ -19,7 +19,6 @@ from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.references import updateReferences
 from Products.Archetypes.interfaces import IReferenceable
-from Products.Archetypes.interfaces import IBaseObject
 
 # To support various Plone versions, we need to support various UUID resolvers
 # This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
@@ -197,11 +196,7 @@ def referenceRemoved(obj, event):
         return
     storage = ILinkIntegrityInfo(request)
     source = obj.getSourceObject()
-    if not IBaseObject.providedBy(source) and hasattr(source, 'context'):
-        source = source.context
     target = obj.getTargetObject()
-    if not IBaseObject.providedBy(target) and hasattr(target, 'context'):
-        target = target.context
     storage.addBreach(source, target)
 
 
