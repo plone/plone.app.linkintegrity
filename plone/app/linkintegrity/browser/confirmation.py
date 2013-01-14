@@ -1,3 +1,5 @@
+from zope.i18n import translate
+
 from Acquisition import aq_inner
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName, _checkPermission
@@ -33,6 +35,18 @@ class RemoveConfirmationView(BrowserView):
                 del env[key]
         return encodeRequestData((body, env))
 
+    def getPortalTypeTitle(self, obj):
+        # Get the portal type title of the object.
+        context = aq_inner(self.context)
+        portal_types = getToolByName(context, 'portal_types')
+        fti = portal_types.get(obj.portal_type)
+        if fti is not None:
+            type_title_msgid = fti.Title()
+        else:
+            type_title_msgid = obj.portal_type
+        type_title = translate(type_title_msgid, context=self.request)
+        return type_title
+
     def integrityBreaches(self):
         info = ILinkIntegrityInfo(self.request).getIntegrityBreaches()
         byTitle = lambda a, b: cmp((a.Title(), a.getId()), (b.Title(), b.getId()))
@@ -41,6 +55,7 @@ class RemoveConfirmationView(BrowserView):
             breaches.append({
                 'title': target.Title(),
                 'type': target.getPortalTypeName(),
+                'type_title': self.getPortalTypeTitle(target),
                 'url': target.absolute_url(),
                 'sources': sorted(sources, byTitle),
             })
