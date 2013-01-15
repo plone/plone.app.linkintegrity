@@ -16,7 +16,7 @@ from Products.PloneTestCase import PloneTestCase
 
 
 try:
-    pkg_resources.get_distribution('plone.dexterity')
+    pkg_resources.get_distribution('plone.app.referenceablebehavior')
 except pkg_resources.DistributionNotFound:
     HAS_DEXTERITY = False
     pass
