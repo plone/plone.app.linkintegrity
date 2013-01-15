@@ -3,6 +3,11 @@ Changelog
 
 1.5.0 (unreleased)
 ------------------
+- Fix a remove confirmation view bug. 
+  Displays the portal type title rather than the portal type name.
+  This change also broke some tests that were checking for the name 
+  rather than the title, but I just fixed those.
+  [jianaijun]
 
 - Added support for Dexterity content types.  Link integrity
   support for Dexterity requires the plone.app.referenceablebehavior
