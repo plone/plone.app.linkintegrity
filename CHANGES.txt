@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.0 (unreleased)
+1.5.0 (2013-01-17)
 ------------------
 - Fix a remove confirmation view bug. 
   Displays the portal type title rather than the portal type name.
