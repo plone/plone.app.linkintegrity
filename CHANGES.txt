@@ -4,7 +4,10 @@ Changelog
 1.5.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Avoid a bug during link integrity check when a source or target of the
+  reference has been already removed during the deletion process.
+  This can happen during large delete processes.
+  [thomasdesvenain]
 
 
 1.5.0 (2013-01-17)

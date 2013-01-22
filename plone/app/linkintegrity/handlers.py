@@ -198,7 +198,8 @@ def referenceRemoved(obj, event):
     storage = ILinkIntegrityInfo(request)
     source = obj.getSourceObject()
     target = obj.getTargetObject()
-    storage.addBreach(source, target)
+    if source is not None and target is not None:
+        storage.addBreach(source, target)
 
 
 def referencedObjectRemoved(obj, event):
