@@ -14,3 +14,6 @@ def initialize(context):
 
     # Install the wrapper around zpublisher_exception_hook.
     monkey.installExceptionHook()
+
+    # Install the status code for linkintegritynotificationexception
+    monkey.installStatusCode()

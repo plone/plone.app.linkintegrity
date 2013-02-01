@@ -8,7 +8,9 @@ Changelog
   reference has been already removed during the deletion process.
   This can happen during large delete processes.
   [thomasdesvenain]
-
+- Monkey patch the Zope HTTPResponse status_code to include a mapping for 
+  linkintegritynotificationexception, to return a 200 code. 
+  [thepjot]
 
 1.5.0 (2013-01-17)
 ------------------

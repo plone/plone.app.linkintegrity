@@ -50,6 +50,10 @@ def installExceptionHook():
     import ZPublisher.Publish
     ZPublisher.Publish.get_module_info = proxy_get_module_info
 
+def installStatusCode():
+    from ZPublisher import HTTPResponse
+    HTTPResponse.status_codes['linkintegritynotificationexception'] = 200
+
 
 def retry(self):
     """ re-initialize a response object to be used in a retry attempt """
