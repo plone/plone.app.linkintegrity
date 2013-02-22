@@ -24,7 +24,7 @@
 
   <subscriber
     for="plone.app.referenceablebehavior.referenceable.IReferenceable
-         zope.app.container.interfaces.IObjectRemovedEvent"
+         zope.lifecycleevent.interfaces.IObjectRemovedEvent"
     handler=".handlers.referencedObjectRemoved" />
 
 </configure>

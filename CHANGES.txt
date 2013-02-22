@@ -4,6 +4,10 @@ Changelog
 1.5.1 (unreleased)
 ------------------
 
+- Dexterity: use zope.lifecycleevent instead of zope.app.container
+  interfaces for Plone 4.3 support.
+  [jone]
+
 - Avoid a bug during link integrity check when a source or target of the
   reference has been already removed during the deletion process.
   This can happen during large delete processes.
