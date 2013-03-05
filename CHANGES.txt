@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.1 (unreleased)
+1.5.1 (2013-03-05)
 ------------------
 
 - unicode links should not raise errors. Fixes https://dev.plone.org/ticket/13468
