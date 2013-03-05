@@ -1,0 +1,12 @@
+This tests checks that isLinked can now be used safely as it eventually plays
+well with transaction machinery.
+
+  >>> self.setRoles(('Manager',))
+
+Add bad link, should not raise exception and there should not be any
+references added.
+
+  >>> self.setText(portal.doc1, '<a href="ö?foo=bar&baz=bam">bug</a>')
+  >>> portal.doc1.getReferences()
+  []
+

@@ -4,6 +4,9 @@ Changelog
 1.5.1 (unreleased)
 ------------------
 
+- unicode links should not raise errors. Fixes https://dev.plone.org/ticket/13468
+  [vangheem]
+
 - Dexterity: use zope.lifecycleevent instead of zope.app.container
   interfaces for Plone 4.3 support.
   [jone]

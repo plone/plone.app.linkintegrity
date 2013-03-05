@@ -87,7 +87,7 @@ def findObject(base, path):
                 child = request.traverseName(obj, child_id)
         except ConflictError:
             raise
-        except (AttributeError, KeyError, NotFound, ztkNotFound):
+        except (AttributeError, KeyError, NotFound, ztkNotFound, UnicodeEncodeError):
             return None, None
         if not IItem.providedBy(child):
             break
