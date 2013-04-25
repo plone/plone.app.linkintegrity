@@ -1,0 +1,24 @@
+This tests the programmatically removal of a referred to item or rather its
+prevention because of link integrity. First we need to create the link in
+question:
+
+  >>> self.setRoles(('Manager',))
+  >>> p = self.portal
+  >>> self.setText(p.doc1, '<a href="%s">%s</a>' % (p.file1.absolute_url(),
+  ...   p.file1.title_or_id()))
+
+The document should now have a reference to the file:
+
+  >>> p.doc1.getRefs()
+  [<ATFile at /plone/file1>]
+
+Then we try to delete the file using ObjectManager's `manage_delObjects`,
+which should raise an exception:
+
+  >>> portal.manage_delObjects(ids=['file1'])
+  Traceback (most recent call last):
+  ...
+  LinkIntegrityNotificationException: <ATFile at /plone/file1>
+
+This exception should return the repr() not the str() of the object as File
+content items will load **all** content data in to memory.

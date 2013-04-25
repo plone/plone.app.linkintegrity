@@ -4,7 +4,10 @@ Changelog
 1.5.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Exceptions now return the repr() and not the str() of the object. This way
+  we avoid, for File content types, loading the whole object data into memory.
+  This closes https://dev.plone.org/ticket/13519
+  [ericof]
 
 
 1.5.1 (2013-03-05)
