@@ -14,7 +14,7 @@ which should raise an exception:
   >>> portal.manage_delObjects(ids=['image1'])
   Traceback (most recent call last):
   ...
-  LinkIntegrityNotificationException: <img src="http://nohost/plone/image1/image" ... />
+  LinkIntegrityNotificationException: <ATImage at /plone/image1>
 
 Since the implementation is based on `IObjectRemovedEvent` on the real objects
 now (as opposed to on the special references used before), the above exception
