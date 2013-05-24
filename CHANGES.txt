@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.2 (unreleased)
+1.5.2 (2013-05-23)
 ------------------
 
 - Exceptions now return the repr() and not the str() of the object. This way
