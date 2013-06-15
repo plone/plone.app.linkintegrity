@@ -4,7 +4,8 @@ Changelog
 1.5.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed dexterity referenceablebehavior integration.
+  [maurits]
 
 
 1.5.2 (2013-05-23)
