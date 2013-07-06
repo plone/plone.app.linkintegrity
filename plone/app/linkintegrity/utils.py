@@ -1,5 +1,17 @@
+from zExceptions import BadRequest
 from base64 import b64encode, b64decode
-from zlib import compress, decompress
+from zlib import compress, decompressobj
+
+
+def decompress(data, maxsize=262144):
+
+    dec = decompressobj()
+    data = dec.decompress(data, maxsize)
+    if dec.unconsumed_tail:
+        raise BadRequest
+    del dec
+
+    return data
 
 
 def encodeStrings(strings):

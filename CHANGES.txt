@@ -4,6 +4,9 @@ Changelog
 1.5.3 (unreleased)
 ------------------
 
+- Set a maxsize when decompressing request data.
+  [davisagli]
+
 - Fixed dexterity referenceablebehavior integration.
   [maurits]
 
