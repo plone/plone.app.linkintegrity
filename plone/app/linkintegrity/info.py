@@ -51,17 +51,25 @@ class LinkIntegrityInfo(object):
         self.setIntegrityBreaches(breaches)
 
     def getIntegrityBreaches(self):
-        """ return stored information regarding link integrity breaches
-            after removing circular references, confirmed items etc """
+        """
+        return stored information regarding link integrity breaches.
+        The information are in the form of a dictionary, they keys are the
+        target objects relations that will be broken after a delete, the value
+        is a list of source objects pointing to the target.
+        """
         uuids_to_delete = [IUUID(obj, None) for obj in self.getDeletedItems()]
         uuids_to_delete = set(filter(None, uuids_to_delete))    # filter `None`
         breaches = dict(self.getIntegrityInfo().get('breaches', {}))
-        uuids_to_delete.update([IUUID(obj) for obj in breaches])
-        for target, sources in breaches.items():    # first remove deleted sources
+        # Do an in-place filtering of breaches, any source of a breach that
+        # is to be removed anyway does not constitute a breach
+        for target, sources in breaches.items():
             for source in list(sources):
                 if IUUID(source) in uuids_to_delete:
                     sources.remove(source)
-        for target, sources in breaches.items():    # then remove "empty" targets
+        # After the cleanup, there can be breaches to targets that have no
+        # sources left. Also, targets where we confirm the link break are not
+        # breaches any more, so we remove them too.
+        for target, sources in breaches.items():
             if not sources or self.isConfirmedItem(target):
                 del breaches[target]
         return breaches
