@@ -1,5 +1,5 @@
-This tests the behaviour when removing three objects referencing each other
-in a circle.  This situation cannot be resolved completely, since the removal
+This tests the behaviour when removing two objects referencing each other.
+This situation cannot be resolved completely, since the removal
 events are fired separately.  However, the circle gets "broken up" when
 confirming the removal of the first object, and no further confirmation form
 are necessary:
@@ -13,7 +13,7 @@ are necessary:
   >>> p.doc2.getReferences()
   [<ATDocument at /plone/doc1>]
 
-We use a browser to try to delete all three documents.  Before we
+We use a browser to try to delete all two documents.  Before we
 can do this we need to prevent the test framework from choking on the
 exception we intentionally throw (see docs/testRemovalTriggersConfirmation.txt
 for more info).  Also, we disable the event count helper (as set in
