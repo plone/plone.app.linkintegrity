@@ -5,8 +5,8 @@ version = '1.5.3.dev0'
 setup(name='plone.app.linkintegrity',
       version=version,
       description='Manage link integrity in Plone.',
-      long_description=open("README.txt").read() + '\n' +
-                       open('CHANGES.txt').read(),
+      long_description=open("README.rst").read() + '\n' +
+                       open('CHANGES.rst').read(),
       classifiers=[
           "Development Status :: 5 - Production/Stable",
           "Environment :: Web Environment",
