@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.3 (unreleased)
+1.5.3 (2013-08-13)
 ------------------
 
 - Set a maxsize when decompressing request data.
