@@ -103,7 +103,10 @@ def getObjectsFromLinks(base, links):
     url = base.absolute_url()
     scheme, host, path, query, frag = urlsplit(url)
     for link in links:
-        s, h, path, q, f = urlsplit(link)
+        try:
+            s, h, path, q, f = urlsplit(link)
+        except ValueError:
+            continue
         if (not s and not h) or (s == scheme and h == host):    # relative or local url
             obj, extra = findObject(base, path)
             if obj:
@@ -131,7 +134,7 @@ def modifiedArchetype(obj, event):
         # to `reference_catalog`
         return
     refs = set()
-    
+
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
