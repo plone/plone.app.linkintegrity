@@ -73,8 +73,9 @@ def findObject(base, path):
 
     # Support resolveuid/UID paths explicitely, without relying
     # on a view or skinscript to do this for us.
-    if len(components) >= 2 and components[-2] == 'resolveuid':
-        obj = _resolveUID(components[-1])
+    if 'resolveuid' in components:
+        uid=components[components.index('resolveuid')+1]
+        obj = _resolveUID(uid)
         if obj:
             return obj, path
 
@@ -131,7 +132,7 @@ def modifiedArchetype(obj, event):
         # to `reference_catalog`
         return
     refs = set()
-    
+
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
