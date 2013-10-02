@@ -4,8 +4,8 @@ Changelog
 1.5.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Added support for sub path after uid of resolveuid
+  [hoka]
 
 1.5.3 (2013-08-13)
 ------------------
