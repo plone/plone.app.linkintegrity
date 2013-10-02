@@ -14,7 +14,9 @@ from ZODB.POSException import ConflictError
 from zope.component.hooks import getSite
 from zope.publisher.interfaces import NotFound as ztkNotFound
 
-from plone.app.linkintegrity.exceptions import LinkIntegrityNotificationException
+from plone.app.linkintegrity.exceptions \
+    import LinkIntegrityNotificationException
+
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.references import updateReferences
@@ -73,8 +75,9 @@ def findObject(base, path):
 
     # Support resolveuid/UID paths explicitely, without relying
     # on a view or skinscript to do this for us.
-    if len(components) >= 2 and components[-2] == 'resolveuid':
-        obj = _resolveUID(components[-1])
+    if 'resolveuid' in components:
+        uid = components[components.index('resolveuid') + 1]
+        obj = _resolveUID(uid)
         if obj:
             return obj, path
 
@@ -88,7 +91,8 @@ def findObject(base, path):
                 child = request.traverseName(obj, child_id)
         except ConflictError:
             raise
-        except (AttributeError, KeyError, NotFound, ztkNotFound, UnicodeEncodeError):
+        except (AttributeError, KeyError,
+                NotFound, ztkNotFound, UnicodeEncodeError):
             return None, None
         if not IItem.providedBy(child):
             break
@@ -104,11 +108,13 @@ def getObjectsFromLinks(base, links):
     scheme, host, path, query, frag = urlsplit(url)
     for link in links:
         s, h, path, q, f = urlsplit(link)
-        if (not s and not h) or (s == scheme and h == host):    # relative or local url
+        # relative or local url
+        if (not s and not h) or (s == scheme and h == host):
             obj, extra = findObject(base, path)
             if obj:
                 if IOFSImage.providedBy(obj):
-                    obj = aq_parent(obj)    # use atimage object for scaled images
+                    # use atimage object for scaled images
+                    obj = aq_parent(obj)
                 if not IReferenceable.providedBy(obj):
                     try:
                         obj = IReferenceable(obj)
@@ -131,7 +137,7 @@ def modifiedArchetype(obj, event):
         # to `reference_catalog`
         return
     refs = set()
-    
+
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
@@ -172,7 +178,7 @@ def modifiedDexterity(obj, event):
     refs = set()
 
     for schema in schemas:
-        for name,field in getFieldsInOrder(schema):
+        for name, field in getFieldsInOrder(schema):
             if isinstance(field, RichText):
                 # Only check for "RichText" ?
                 value = getattr(schema(obj), name)

@@ -24,7 +24,7 @@ def updateReferences(obj, relationship, newrefs):
     for ref in newrefs.difference(existing):   # add new references and...
         try:
             obj.addReference(ref, relationship=relationship)
-        except ReferenceException:
+        except (ReferenceException,AttributeError):
             pass
     for ref in existing.difference(newrefs):   # removed leftovers
         try:
