@@ -46,8 +46,8 @@ class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
         self.login()
         # somebody created a document to which the user has no access...
         checkPermission = self.portal.portal_membership.checkPermission
-        self.failIf(checkPermission('View', secret))
-        self.failIf(checkPermission('Access contents information', secret))
+        self.assertFalse(checkPermission('View', secret))
+        self.assertFalse(checkPermission('Access contents information', secret))
         # nevertheless it should be possible to set a link to it...
         self.folder.invokeFactory('Document', id='doc',
             text='<html> <body> <a href="%s">go!</a> </body> </html>' %

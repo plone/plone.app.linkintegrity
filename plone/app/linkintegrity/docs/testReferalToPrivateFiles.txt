@@ -14,10 +14,10 @@ the link in question and set up the permissions accordingly:
   >>> doc.manage_permission('View', roles=('Manager',), acquire=0)
   >>> doc.manage_permission('Access contents information', roles=('Manager',), acquire=0)
   >>> checkPermission = portal.portal_membership.checkPermission
-  >>> self.failIf(checkPermission('View', doc))
-  >>> self.failIf(checkPermission('Access contents information', doc))
-  >>> self.failUnless(checkPermission('View', img))
-  >>> self.failUnless(checkPermission('Access contents information', img))
+  >>> self.assertFalse(checkPermission('View', doc))
+  >>> self.assertFalse(checkPermission('Access contents information', doc))
+  >>> self.assertTrue(checkPermission('View', img))
+  >>> self.assertTrue(checkPermission('Access contents information', img))
 
 Next we use a browser to try to delete the image used in the document.  Before
 we can do this we need to prevent the test framework from choking on the
