@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.6.0 (unreleased)
+------------------
+
+- Read the enable_link_integrity_checks setting from plone.app.controlpanel
+  for Plone 5.
+  [timo]
+
+
 1.5.4 (unreleased)
 ------------------
 

@@ -23,8 +23,14 @@ throw (see docs/testRemovalTriggersConfirmation.txt for more info):
 Now we turn the switch for link integrity checking off via the site
 properties and try again:
 
-  >>> props = portal.portal_properties.site_properties
-  >>> props.manage_changeProperties(enable_link_integrity_checks=False)
+  >>> from plone.registry.interfaces import IRegistry
+  >>> from zope.component import getUtility
+  >>> from plone.app.controlpanel.interfaces import IEditingSchema
+  >>> registry = getUtility(IRegistry)
+  >>> settings = registry.forInterface(IEditingSchema)
+  >>> if settings:
+  ...     settings.enable_link_integrity_checks = False
+
   >>> browser.reload()
   >>> browser.url
   'http://nohost/plone/...folder_contents'

@@ -1,8 +1,13 @@
-from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
-from zope.interface import implements
-from zope.component import queryUtility
 from Acquisition import aq_base
 from Products.CMFCore.interfaces import IPropertiesTool
+from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
+from plone.app.controlpanel.interfaces import IEditingSchema
+from plone.registry.interfaces import IRegistry
+from zope.interface import implements
+from zope.component import queryUtility
+from zope.component import getUtility
+
+import pkg_resources
 
 try:
     from plone.uuid.interfaces import IUUID
@@ -14,6 +19,15 @@ except ImportError:
             return obj.UID()
         else:
             return default
+
+try:
+    pkg_resources.get_distribution('plone.dexterity')
+except pkg_resources.DistributionNotFound:
+    HAS_DEXTERITY = False
+else:
+    HAS_DEXTERITY = True
+
+
 
 
 class LinkIntegrityInfo(object):
@@ -28,13 +42,9 @@ class LinkIntegrityInfo(object):
 
     def integrityCheckingEnabled(self):
         """ determine if link integrity checking for the site is enabled """
-        ptool = queryUtility(IPropertiesTool)
-        enabled = False
-        if ptool is not None:
-            props = getattr(ptool, 'site_properties', None)
-            if props is not None:
-                enabled = props.getProperty('enable_link_integrity_checks', False)
-        return enabled
+        registry = getUtility(IRegistry)
+        self.settings = registry.forInterface(IEditingSchema)
+        return self.settings.enable_link_integrity_checks
 
     def getIntegrityInfo(self):
         """ return stored information regarding link integrity """
