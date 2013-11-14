@@ -68,6 +68,8 @@ def findObject(base, path):
         portal_path = '/'.join(obj.getPhysicalPath()) + '/'
         if path.startswith(portal_path):
             path = path[len(portal_path):]
+        else:
+            return None, None
     else:
         obj = aq_parent(base)   # relative urls start at the parent...
 

@@ -1,3 +1,4 @@
+from mechanize import HTTPError
 from Products.PloneTestCase import PloneTestCase
 from plone.app.linkintegrity.tests.utils import getBrowser
 
@@ -53,3 +54,15 @@ class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
             text='<html> <body> <a href="%s">go!</a> </body> </html>' %
             secret.absolute_url())
         self.assertEqual(self.folder.doc.getReferences(), [secret])
+
+    def testAbsoluteLinkDoesNotGenerateReference(self):
+        self.setRoles(['Manager'])
+        portal = self.portal
+        portal.invokeFactory('Document', id='foo', text='foo!')
+        doc = portal[portal.invokeFactory('Document', id='doc',
+            text='<html> <body> <a href="/foo">go!</a> </body> </html>')]
+        # /foo is not our earlier document, that would be /plone/foo
+        browser = getBrowser(loggedIn=True)
+        browser.open(doc.absolute_url())
+        self.assertRaises(HTTPError, browser.getLink('go!').click)
+        self.assertEqual(doc.getReferences(), [])
