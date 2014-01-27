@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.4 (unreleased)
+1.5.4 (2014-01-27)
 ------------------
 
 - Added support for sub path after uid of resolveuid
