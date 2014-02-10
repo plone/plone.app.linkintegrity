@@ -58,7 +58,7 @@ whole operation:
   >>> browser.url
   'http://nohost/plone/folder_contents'
   >>> browser.contents
-  '...<dl class="portalMessage...Removal cancelled...</dl>...'
+  '...class="portalMessage...Removal cancelled...'
 
 This should result in all images and references still being existent:
 

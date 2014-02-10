@@ -35,7 +35,7 @@ here we choose to skip any further questions:
   >>> browser.url
   'http://nohost/plone/...folder_contents'
   >>> browser.contents
-  '...<dl class="portalMessage...Item(s) deleted...</dl>...'
+  '...class="portalMessage...Item(s) deleted...'
 
 All previously selected images should still have been deleted:
 
