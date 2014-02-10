@@ -4,7 +4,9 @@ Changelog
 1.5.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Adapt tests for removal of DT, DD and DL elements.
+  https://github.com/plone/Products.CMFPlone/issues/153
+  [khink, mrtango]
 
 
 1.5.4 (2014-01-27)
