@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 - Adapt tests for removal of DT, DD and DL elements.
+  Remove DL's from portal message in templates.
   https://github.com/plone/Products.CMFPlone/issues/153
   [khink, mrtango]
 
