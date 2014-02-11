@@ -23,9 +23,7 @@ folder_contents), so that all tests written so far won't need modification:
   >>> self.disableEventCountHelper()
   >>> browser = self.getBrowser(loggedIn=True)
   >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.getControl('Test Page 1').selected = True
-  >>> browser.getControl('Test Page 2').selected = True
-  >>> browser.getControl('Delete').click()
+  >>> browser.post('http://nohost/plone/folder_delete?paths:list=doc1&paths:list=image2&paths:list=doc2&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<a href="http://nohost/plone/doc1"...Test Page 1...
    ...This...Page...is referenced by the following items:...

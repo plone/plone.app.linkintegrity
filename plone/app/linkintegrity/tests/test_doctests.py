@@ -1,9 +1,11 @@
 # -*- coding:utf-8 -*-
 # setup tests with all doctests found in docs/
 
+from hashlib import sha1
 from plone.app.linkintegrity import docs
 from plone.app.linkintegrity.tests import layer, utils
 from plone.app.linkintegrity.parser import extractLinks
+from plone.keyring.interfaces import IKeyManager
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase import PloneTestCase
 from unittest import TestSuite, TestCase, makeSuite
@@ -11,6 +13,8 @@ from os.path import join, split, abspath, dirname
 from os import walk
 from re import compile
 from sys import argv
+from zope.component import getUtility
+import hmac
 
 
 PloneTestCase.setupPloneSite()
@@ -67,6 +71,12 @@ class LinkIntegrityFunctionalTestCase(PloneTestCase.FunctionalTestCase):
                 value = 0
             set_orig(self, key, value)
         HTTPRequest.set = set
+
+    def getAuthenticator(self):
+        manager = getUtility(IKeyManager)
+        secret = manager.secret()
+        user = 'test_user_1_'
+        return hmac.new(secret, user, sha1).hexdigest()
 
 
 class LinkIntegrityTestCase(TestCase):

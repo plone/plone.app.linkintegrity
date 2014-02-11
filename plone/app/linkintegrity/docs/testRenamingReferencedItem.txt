@@ -8,12 +8,7 @@ Then we use a browser to rename the referenced image:
 
   >>> browser = self.getBrowser(loggedIn=True)
   >>> browser.handleErrors = True
-  >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.getControl('Test Page 2').selected = True
-  >>> browser.getControl('Rename').click()
-  >>> browser.getControl('New Short Name').value = 'nuname'
-  >>> browser.getControl('New Title').value = 'NuName'
-  >>> browser.getControl('Rename All').click()
+  >>> browser.post('http://nohost/plone/folder_rename?paths:list=doc2&new_ids:list=nuname&new_titles:list=NuName&_authenticator=' + self.getAuthenticator(), '')
 
 Now the image should have a new id and title, which we check for:
 
@@ -35,8 +30,7 @@ It should also be available under that name via the browser, of course:
 Even clicking the original link should still lead us to the new location,
 thanks to `plone.app.redirector`:
 
-  >>> browser.goBack()
-  >>> browser.getLink('Test Page 1').click()
+  >>> browser.open('http://nohost/plone/doc1')
   >>> browser.url
   'http://nohost/plone/doc1'
   >>> browser.contents
