@@ -14,13 +14,13 @@
 
 <metal:main fill-slot="content">
 
-    <dl class="portalMessage warning">
-        <dt i18n:translate="">Warning</dt>
-        <dd i18n:translate="linkintegrity_warning">
+    <div class="portalMessage warning">
+        <strong i18n:translate="">Warning</strong>
+        <span tal:omit-tag="" i18n:translate="linkintegrity_warning">
             One or more of the items you are attempting to delete may cause links
             in your site to break.
-        </dd>
-    </dl>
+        </span>
+    </div>
 
     <div id="content">
         <h1 class="documentFirstHeading"
