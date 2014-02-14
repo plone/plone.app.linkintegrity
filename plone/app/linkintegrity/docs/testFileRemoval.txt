@@ -21,9 +21,7 @@ folder_contents), so that all tests written so far won't need modification:
   >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
   >>> self.disableEventCountHelper()
   >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.getControl('Test File 1').selected = True
-  >>> browser.getControl('Delete').click()
+  >>> browser.post('http://nohost/plone/folder_delete?paths:list=file1&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<a href="http://nohost/plone/file1"...Test File 1...
    ...This...File...is referenced by the following items:...

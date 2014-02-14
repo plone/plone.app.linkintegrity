@@ -9,13 +9,8 @@ link in question:
   >>> self.setText(doc, img.tag())
   >>> self.assertEqual(doc.getReferences(), [img])
 
-Then we use a browser to try to delete the image used in the document:
-
-  >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.getControl('Test Image 1').selected = True
-
-Now before we try to go ahead and "click" the "delete" button, we need to
+Then we use a browser to try to delete the image used in the document.
+But before we try to go ahead and "click" the "delete" button, we need to
 prevent the test framework from choking on the exception we intentionally
 throw. Normally the zope publisher would handle the exception by returning the
 exception value which is nothing else but a html page responding to the error,
@@ -32,11 +27,12 @@ confirmation page) is returned and we can continue the test:
 Also, the handling of the 'Referer' header doesn't seem to work properly,
 unless we set it explicitely, so we do that:
 
-  >>> browser.addHeader('Referer', browser.url)
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.addHeader('Referer', 'http://nohost/plone/folder_contents')
 
 Now we can continue and finally "click" the "delete" button:
 
-  >>> browser.getControl('Delete').click()
+  >>> browser.post('http://nohost/plone/folder_delete?paths:list=image1&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<form ... action="http://nohost/plone/removeConfirmationAction">...
    ...<a href="http://nohost/plone/image1"...Test Image 1...

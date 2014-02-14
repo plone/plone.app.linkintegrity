@@ -10,9 +10,7 @@ throw (see docs/testRemovalTriggersConfirmation.txt for more info):
 
   >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
   >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.getControl('Test Page 2').selected = True
-  >>> browser.getControl('Delete').click()
+  >>> browser.post('http://nohost/plone/folder_delete?paths:list=doc2&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<form ... action="http://nohost/plone/removeConfirmationAction">...
    ...<a href="http://nohost/plone/doc2"...Test Page 2...

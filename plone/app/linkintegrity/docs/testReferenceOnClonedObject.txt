@@ -12,13 +12,8 @@ Next we clone the document:
   'http://nohost/plone/doc1/'
   >>> portal.object_paste()
   'http://nohost/plone/'
-
-  >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.contents
-  '...<tr...href="http://nohost/plone/doc1"...Test Page 1...</tr>...
-   ...<tr...href="http://nohost/plone/doc2"...Test Page 2...</tr>...
-   ...<tr...href="http://nohost/plone/copy_of_doc1"...Test Page 1...</tr>...'
+  >>> 'copy_of_doc1' in portal
+  True
 
 Then we try to delete the document linked by the original document and its
 clone.  Before we can do this we need to prevent the test framework from
@@ -30,8 +25,8 @@ docs/testRemovalTriggersConfirmation.txt for more info):
 Now we can continue and "click" the "delete" action.  The confirmation
 page should list both documents:
 
-  >>> browser.getControl('Test Page 2').selected = True
-  >>> browser.getControl('Delete').click()
+  >>> browser = self.getBrowser(loggedIn=True)
+  >>> browser.post('http://nohost/plone/folder_delete?paths:list=doc2&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<form ... action="http://nohost/plone/removeConfirmationAction">...
    ...<a href="http://nohost/plone/doc2"...Test Page 2...

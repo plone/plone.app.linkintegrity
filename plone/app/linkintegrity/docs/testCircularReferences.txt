@@ -25,11 +25,7 @@ folder_contents), so that all tests written so far won't need modification:
   >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
   >>> self.disableEventCountHelper()
   >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.getControl('Test Page 1').selected = True
-  >>> browser.getControl('Test Page 2').selected = True
-  >>> browser.getControl('Test Folder 1').selected = True
-  >>> browser.getControl('Delete').click()
+  >>> browser.post('http://nohost/plone/folder_delete?paths:list=doc1&paths:list=doc2&paths:list=folder1&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<a href="http://nohost/plone/doc1"...Test Page 1...
    ...This...Page...is referenced by the following items:...
@@ -53,7 +49,7 @@ since their target objects are known to be removed as well.  Hence there are
 no further confirmation forms:
 
   >>> browser.url
-  'http://nohost/plone/...folder_contents'
+  'http://nohost/plone/folder_contents'
   >>> browser.contents
   '...class="portalMessage...Item(s) deleted...'
 

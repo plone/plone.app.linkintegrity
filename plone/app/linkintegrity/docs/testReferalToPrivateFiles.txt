@@ -30,9 +30,7 @@ Now we can go ahead and try to delete the image and thereby check if we're
 told we cannot access the document referencing our image:
 
   >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.open('http://nohost/plone/folder_contents')
-  >>> browser.getControl('Test Image 1').selected = True
-  >>> browser.getControl('Delete').click()
+  >>> browser.post('http://nohost/plone/folder_delete?paths:list=image1&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<form ... action="http://nohost/plone/removeConfirmationAction">...
    ...<a href="http://nohost/plone/image1"...Test Image 1...
