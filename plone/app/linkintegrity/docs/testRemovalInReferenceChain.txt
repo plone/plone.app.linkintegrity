@@ -20,7 +20,7 @@ docs/testRemovalTriggersConfirmation.txt for more info):
   >>> browser = self.getBrowser(loggedIn=True)
   >>> browser.post('http://nohost/plone/folder_delete?paths:list=doc1&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.url
-  'http://nohost/plone/...folder_contents...'
+  'http://nohost/plone/...folder_contents'
   >>> browser.contents
   '...<dl class="portalMessage...Item(s) deleted...</dl>...'
 

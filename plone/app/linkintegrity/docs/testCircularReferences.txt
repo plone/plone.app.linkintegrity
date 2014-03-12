@@ -49,7 +49,7 @@ since their target objects are known to be removed as well.  Hence there are
 no further confirmation forms:
 
   >>> browser.url
-  'http://nohost/plone/folder_contents...'
+  'http://nohost/plone/folder_contents'
   >>> browser.contents
   '...<dl class="portalMessage...Item(s) deleted...</dl>...'
 
