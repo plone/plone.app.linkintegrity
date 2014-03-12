@@ -10,11 +10,11 @@ should appear in this case:
   >>> browser.open('http://nohost/plone/image1/view')
   >>> browser.getLink('Delete').click()
   >>> browser.url
-  'http://nohost/plone/image1/delete_confirmation'
+  'http://nohost/plone/image1/delete_confirmation...'
   >>> browser.contents
   '...Do you really want to delete this item?...
    ...Test Image 1...
-   ...<form...action="http://nohost/plone/image1/delete_confirmation"...'
+   ...<form...action="http://nohost/plone/image1/delete_confirmation...'
 
 Then we create a link to the same image from a text document and try to delete
 it again:

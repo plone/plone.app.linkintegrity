@@ -19,7 +19,7 @@ We use a browser to try to delete all three documents:
   >>> browser = self.getBrowser(loggedIn=True)
   >>> browser.post('http://nohost/plone/folder_delete?paths:list=doc1&paths:list=doc2&paths:list=folder1&_authenticator=' + self.getAuthenticator(), '')
   >>> browser.url
-  'http://nohost/plone/...folder_contents'
+  'http://nohost/plone/...folder_contents...'
   >>> browser.contents
   '...<dl class="portalMessage...Item(s) deleted...</dl>...'
 
