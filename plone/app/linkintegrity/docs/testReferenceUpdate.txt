@@ -21,7 +21,7 @@ browsing a specific url:
   >>> browser.open('http://nohost/plone/updateLinkIntegrityInformation')
   >>> browser.getControl('Update').click()
   >>> browser.contents
-  '...<dl class="portalMessage...Link integrity information updated for ... item(s)...</dl>...'
+  '...class="portalMessage...Link integrity information updated for ... item(s)...'
 
 Now the linking documents should hold the correct link integrity references:
 

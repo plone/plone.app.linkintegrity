@@ -49,7 +49,7 @@ not appear after the link integrity check for some curious reason:
 
   >>> browser.getControl(name='delete').click()
   >>> browser.contents
-  '...<dl class="portalMessage...Test Image 1 has been deleted...</dl>...'
+  '...class="portalMessage...Test Image 1 has been deleted...'
 
 The image should now be gone:
 

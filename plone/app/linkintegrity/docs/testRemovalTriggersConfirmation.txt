@@ -47,7 +47,7 @@ maintaining link integrity:
   >>> browser.url
   'http://nohost/plone/folder_contents'
   >>> browser.contents
-  '...<dl class="portalMessage...Removal cancelled...</dl>...'
+  '...class="portalMessage...Removal cancelled...'
 
 The removal was cancelled, so the image should still exist:
 

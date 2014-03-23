@@ -14,13 +14,13 @@
 
 <metal:main fill-slot="content">
 
-    <dl class="portalMessage warning">
-        <dt i18n:translate="">Warning</dt>
-        <dd i18n:translate="linkintegrity_warning">
+    <div class="portalMessage warning">
+        <strong i18n:translate="">Warning</strong>
+        <span tal:omit-tag="" i18n:translate="linkintegrity_warning">
             One or more of the items you are attempting to delete may cause links
             in your site to break.
-        </dd>
-    </dl>
+        </span>
+    </div>
 
     <div id="content">
         <h1 class="documentFirstHeading"
@@ -36,11 +36,14 @@
             <form method="post" action="removeConfirmationAction"
                   tal:attributes="action view/callbackURL">
 
-              <dl>
-                  <tal:breaches repeat="breach view/integrityBreaches">
+              <div>
+                  <article tal:repeat="breach view/integrityBreaches">
 
-                    <dt><a tal:attributes="href breach/url" tal:content="breach/title" /></dt>
-                    <dd>
+                    <header>
+                      <a tal:attributes="href breach/url"
+                          tal:content="breach/title" />
+                    </header>
+                    <p>
                         <span i18n:translate="linkintegrity_is_referenced">
                             This <span i18n:name="portal_type" tal:content="breach/type_title" />
                             is referenced by the following items:
@@ -60,10 +63,10 @@
                             </tal:private>
                           </li>
                         </ul>
-                    </dd>
+                    </p>
 
-                  </tal:breaches>
-              </dl>
+                  </article>
+              </div>
 
               <br />
 

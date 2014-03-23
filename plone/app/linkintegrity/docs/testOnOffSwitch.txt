@@ -27,7 +27,7 @@ properties and try again:
   >>> browser.url
   'http://nohost/plone/...folder_contents'
   >>> browser.contents
-  '...<dl class="portalMessage...Item(s) deleted...</dl>...'
+  '...class="portalMessage...Item(s) deleted...'
 
 The document should have been deleted:
 
