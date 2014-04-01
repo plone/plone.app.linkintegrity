@@ -8,10 +8,14 @@ First we need to set up a link:
 
 Next we clone the document:
 
-  >>> portal.doc1.object_copy()
-  'http://nohost/plone/doc1/'
-  >>> portal.object_paste()
-  'http://nohost/plone/'
+  >>> token = portal.doc1.restrictedTraverse('authenticator').token()
+  >>> portal.doc1.REQUEST.form['_authenticator'] = token
+  >>> portal.doc1.restrictedTraverse('object_copy')()
+  'http://nohost/plone/doc1'
+  >>> token = portal.restrictedTraverse('authenticator').token()
+  >>> portal.REQUEST.form['_authenticator'] = token
+  >>> portal.restrictedTraverse('object_paste')()
+  'http://nohost/plone'
   >>> 'copy_of_doc1' in portal
   True
 
@@ -26,7 +30,7 @@ Now we can continue and "click" the "delete" action.  The confirmation
 page should list both documents:
 
   >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.post('http://nohost/plone/folder_delete?paths:list=doc2&_authenticator=' + self.getAuthenticator(), '')
+  >>> browser.post('http://nohost/plone/doc2/object_delete?_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<form ... action="http://nohost/plone/removeConfirmationAction">...
    ...<a href="http://nohost/plone/doc2"...Test Page 2...
