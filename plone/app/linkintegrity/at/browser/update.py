@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
@@ -15,9 +16,12 @@ class UpdateView(BrowserView):
         clicked = request.form.has_key
         if clicked('update') or clicked('delete_all'):
             count = self.update()
-            msg = _(u'linkintegrity_update_info',
-                default=u'Link integrity information updated for ${count} item(s).',
-                mapping={'count': count})
+            msg = _(
+                u'linkintegrity_update_info',
+                default=u'Link integrity information updated for ${count} ' +
+                        u'item(s).',
+                mapping={'count': count},
+            )
             IStatusMessage(request).addStatusMessage(msg, type='info')
             request.RESPONSE.redirect(getToolByName(context, 'portal_url')())
         elif clicked('cancel'):

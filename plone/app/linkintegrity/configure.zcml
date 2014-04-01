@@ -4,71 +4,36 @@
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:zcml="http://namespaces.zope.org/zcml">
 
-  <five:registerPackage package="." initialize=".initialize" />
+    <five:registerPackage package="." initialize=".initialize" />
 
-  <include file="dexterity.zcml" 
-           zcml:condition="installed plone.dexterity"/>
+    <adapter
+        for="zope.publisher.interfaces.browser.IBrowserRequest"
+        provides=".interfaces.ILinkIntegrityInfo"
+        factory=".info.LinkIntegrityInfo" />
 
-  <adapter
-      for="zope.publisher.interfaces.browser.IBrowserRequest"
-      provides=".interfaces.ILinkIntegrityInfo"
-      factory=".info.LinkIntegrityInfo" />
+    <class class="OFS.Image.Image">
+        <implements interface=".interfaces.IOFSImage" />
+    </class>
 
-  <class class="OFS.Image.Image">
-    <implements interface=".interfaces.IOFSImage" />
-  </class>
+    <!-- views used to perform link integrity checks and actually remove an object -->
 
-  <!-- views used to perform link integrity checks and actually remove an object -->
+    <browser:page
+        name="index.html"
+        for=".interfaces.ILinkIntegrityNotificationException"
+        template="browser/confirmation.pt"
+        class=".browser.confirmation.RemoveConfirmationView"
+        permission="zope2.Public" />
 
-  <browser:page
-    name="index.html"
-    for=".interfaces.ILinkIntegrityNotificationException"
-    template="browser/confirmation.pt"
-    class=".browser.confirmation.RemoveConfirmationView"
-    permission="zope2.Public" />
+    <browser:page
+        name="removeConfirmationAction"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        class=".browser.remove.RemoveReferencedObjectView"
+        permission="zope2.Public" />
 
-  <browser:page
-    name="removeConfirmationAction"
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    class=".browser.remove.RemoveReferencedObjectView"
-    permission="zope2.Public" />
+    <include package=".at"
+             zcml:condition="installed Products.Archetypes" />
 
-  <configure zcml:condition="installed Products.Archetypes">
-
-    <browser:page 
-      name="updateLinkIntegrityInformation"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      template="browser/update.pt"
-      class=".browser.update.UpdateView"
-      permission="cmf.ManagePortal" /> 
-
-    <!-- event handlers for updating link integrity references -->
-
-    <subscriber
-      for="Products.Archetypes.interfaces.IBaseObject
-           OFS.interfaces.IObjectClonedEvent"
-      handler=".handlers.modifiedArchetype" />
-
-    <subscriber
-      for="Products.Archetypes.interfaces.IBaseObject
-           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-      handler=".handlers.modifiedArchetype" />
-
-    <subscriber
-      for="Products.Archetypes.interfaces.IBaseObject
-           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      handler=".handlers.modifiedArchetype" />
-
-    <subscriber
-      for="Products.Archetypes.interfaces.IBaseObject
-           zope.lifecycleevent.interfaces.IObjectRemovedEvent" 
-      handler=".handlers.referencedObjectRemoved" />
-
-    <subscriber
-      for="Products.Archetypes.interfaces.IReference
-           zope.lifecycleevent.interfaces.IObjectRemovedEvent" 
-      handler=".handlers.referenceRemoved" />
-
-  </configure>
+    <include package=".dx"
+             zcml:condition="installed plone.app.referenceablebehavior" />
 
 </configure>

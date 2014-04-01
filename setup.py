@@ -5,8 +5,10 @@ version = '1.6.0.dev0'
 setup(name='plone.app.linkintegrity',
       version=version,
       description='Manage link integrity in Plone.',
-      long_description=open("README.rst").read() + '\n' +
-                       open('CHANGES.rst').read(),
+      long_description='\n\n'.join([
+          open("README.rst").read(),
+          open('CHANGES.rst').read(),
+      ]),
       classifiers=[
           "Development Status :: 5 - Production/Stable",
           "Environment :: Web Environment",
@@ -18,7 +20,7 @@ setup(name='plone.app.linkintegrity',
           "Operating System :: OS Independent",
           "Programming Language :: Python",
           "Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking",
-        ],
+      ],
       keywords='link integrity plone',
       author='Plone Foundation',
       author_email='plone-developers@lists.sourceforge.net',
@@ -28,15 +30,20 @@ setup(name='plone.app.linkintegrity',
       namespace_packages=['plone', 'plone.app'],
       include_package_data=True,
       install_requires=[
-        'setuptools',
+          'setuptools',
       ],
-      extras_require={'test': [
-        'collective.testcaselayer',
-      ]},
+      extras_require={
+          'test': [
+              'plone.app.testing',
+              'plone.app.contenttypes',
+              'plone.app.referenceablebehavior',
+              'Products.Archetypes',
+          ],
+      },
       platforms='Any',
       zip_safe=False,
       entry_points='''
         [z3c.autoinclude.plugin]
         target = plone
       ''',
-)
+      )

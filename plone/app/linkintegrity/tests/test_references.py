@@ -1,14 +1,32 @@
-from Products.PloneTestCase import PloneTestCase
-from plone.app.linkintegrity.tests.utils import getBrowser
+# -*- coding: utf-8 -*-
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
+from plone.app.linkintegrity.testing import (
+    PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING,
+    PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
+)
+from plone.testing.z2 import Browser
+
+import unittest2
 
 
-PloneTestCase.setupPloneSite()
+class ReferenceGenerationDXTests(unittest2.TestCase):
 
+    layer = PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
 
-class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.browser = Browser(self.layer['app'])
+        self.browser.handleErrors = False
+        self.browser.addHeader(
+            'Authorization',
+            'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
+
+        setRoles(self.portal, TEST_USER_ID, ['Manager', ])
 
     def testRelativeUpwardsLinkGeneratesMatchingReference(self):
-        self.setRoles(['Manager'])
         portal = self.portal
         portal.invokeFactory('Document', id='foo', text='main foo!')
         folder = portal[portal.invokeFactory('Folder', id='folder')]
@@ -16,10 +34,9 @@ class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
         doc = folder[folder.invokeFactory('Document', id='doc',
             text='<html> <body> <a href="../foo">go!</a> </body> </html>')]
         # the way relative links work it leads to the main 'foo'...
-        browser = getBrowser(loggedIn=True)
-        browser.open(doc.absolute_url())
-        browser.getLink('go!').click()
-        self.assertTrue('main foo' in browser.contents)
+        self.browser.open(doc.absolute_url())
+        self.browser.getLink('go!').click()
+        self.assertTrue('main foo' in self.browser.contents)
         # the internal reference should do the same...
         self.assertEqual(doc.getReferences(), [portal.foo])
 
@@ -33,10 +50,9 @@ class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
         doc = bar[bar.invokeFactory('Document', id='doc',
             text='<html> <body> <a href="../foo/doc">go!</a> </body> </html>')]
         # the way relative links work it leads to the document in folder 'foo'
-        browser = getBrowser(loggedIn=True)
-        browser.open(doc.absolute_url())
-        browser.getLink('go!').click()
-        self.assertTrue('dox rule' in browser.contents)
+        self.browser.open(doc.absolute_url())
+        self.browser.getLink('go!').click()
+        self.assertTrue('dox rule' in self.browser.contents)
         # the internal reference should do the same...
         self.assertEqual(doc.getReferences(), [portal.main.foo.doc])
 
@@ -53,3 +69,8 @@ class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
             text='<html> <body> <a href="%s">go!</a> </body> </html>' %
             secret.absolute_url())
         self.assertEqual(self.folder.doc.getReferences(), [secret])
+
+
+class ReferenceGenerationATTests(ReferenceGenerationDXTests):
+
+    layer = PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING

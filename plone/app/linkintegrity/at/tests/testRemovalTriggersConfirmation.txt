@@ -32,7 +32,7 @@ unless we set it explicitely, so we do that:
 
 Now we can continue and finally "click" the "delete" button:
 
-  >>> browser.post('http://nohost/plone/folder_delete?paths:list=image1&_authenticator=' + self.getAuthenticator(), '')
+  >>> browser.post('http://nohost/plone/image1/object_delete?_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<form ... action="http://nohost/plone/removeConfirmationAction">...
    ...<a href="http://nohost/plone/image1"...Test Image 1...

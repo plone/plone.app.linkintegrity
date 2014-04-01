@@ -20,7 +20,7 @@ folder_contents), so that all tests written so far won't need modification:
   >>> self.disableEventCountHelper()
   >>> browser = self.getBrowser(loggedIn=True)
   >>> browser.addHeader('Referer', 'http://nohost/plone/folder_contents')
-  >>> browser.post('http://nohost/plone/folder_delete?paths:list=image1&paths:list=image2&paths:list=image3&_authenticator=' + self.getAuthenticator(), '')
+  >>> browser.open('http://nohost/plone/image1/object_remove?_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<a href="http://nohost/plone/image1"...Test Image 1...
    ...This...Image...is referenced by the following items:...

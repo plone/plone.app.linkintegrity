@@ -1,0 +1,38 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+    <browser:page
+        name="updateLinkIntegrityInformation"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        template="browser/update.pt"
+        class=".browser.update.UpdateView"
+        permission="cmf.ManagePortal"
+        />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+             OFS.interfaces.IObjectClonedEvent"
+        handler="..handlers.modifiedArchetype" />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+             zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+        handler="..handlers.modifiedArchetype" />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler="..handlers.modifiedArchetype" />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler="..handlers.referencedObjectRemoved" />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IReference
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler="..handlers.referenceRemoved" />
+
+</configure>
