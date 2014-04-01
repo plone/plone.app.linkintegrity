@@ -13,7 +13,7 @@ for more info):
 
   >>> self.setStatusCode('LinkIntegrityNotificationException', 200)
   >>> browser = self.getBrowser(loggedIn=True)
-  >>> browser.post('http://nohost/plone/folder_delete?paths:list=folder1&_authenticator=' + self.getAuthenticator(), '')
+  >>> browser.post('http://nohost/plone/folder1/object_delete?_authenticator=' + self.getAuthenticator(), '')
   >>> browser.contents
   '...<form ... action="http://nohost/plone/removeConfirmationAction">...
    ...<a href="http://nohost/plone/folder1/doc3"...Test Page 3...
