@@ -51,6 +51,11 @@ class LinkIntegrityLayer(PloneSandboxLayer):
         xmlconfig.file('configure.zcml', plone.app.linkintegrity,
                        context=configurationContext)
 
+    def setUpMembers(self, portal):
+        pm = getToolByName(portal, 'portal_membership')
+        pm.addMember('editor', 'secret', ['Editor'], [])
+        pm.addMember('authenticated', 'secret', [], [])
+
     def setUpPloneSite(self, portal):
         setRoles(portal, TEST_USER_ID, ['Manager', ])
         login(portal, TEST_USER_NAME)
@@ -73,6 +78,8 @@ class LinkIntegrityLayer(PloneSandboxLayer):
         folder.invokeFactory('Document', id='doc3', title='Test Page 3')
         folder.invokeFactory('Document', id='doc4', title='Test Page 4')
         folder.invokeFactory('Document', id='doc5', title='Test Page 5')
+    
+        self.setUpMembers(portal)
 
 
 PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
