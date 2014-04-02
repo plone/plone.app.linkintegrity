@@ -41,7 +41,6 @@ try:
     from plone.app.textfield import RichText
     from plone.dexterity.interfaces import IDexterityFTI
     from plone.dexterity.utils import getAdditionalSchemata
-    from plone.directives.form import Schema
     HAS_DEXTERITY = True
 except:
     HAS_DEXTERITY = False
@@ -167,8 +166,6 @@ def modifiedDexterity(obj, event):
         return
 
     fti = getUtility(IDexterityFTI, name=obj.portal_type)
-    fields = []
-
     schema = fti.lookupSchema()
     additional_schema = getAdditionalSchemata(context=obj,
                                               portal_type=obj.portal_type)
