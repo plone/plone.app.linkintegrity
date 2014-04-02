@@ -6,4 +6,4 @@ def manage_delObjects(self, ids=None, REQUEST=None):
         REQUEST.set('link_integrity_events_to_expect', len(ids))
     return OFS.ObjectManager.ObjectManager.manage_delObjects(self, ids, REQUEST)
 
-Products.CMFDefault.Portal.CMFSite.manage_delObjects = manage_delObjects
+OFS.ObjectManager.ObjectManager.manage_delObjects = manage_delObjects
