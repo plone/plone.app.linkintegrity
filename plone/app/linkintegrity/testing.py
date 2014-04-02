@@ -5,9 +5,9 @@ from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_FIXTURE,
     PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE
 )
-from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import applyProfile
 from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import ploneSite
@@ -20,8 +20,6 @@ GIF = decodestring(
 
 
 class LinkIntegrityLayer(z2.Layer):
-
-    defaultBases = (PLONE_FIXTURE, )
 
     def setUp(self):
         import plone.app.linkintegrity
@@ -68,26 +66,22 @@ class LinkIntegrityLayer(z2.Layer):
                                  text='<a href="doc6">Doc 4</a>',
                                  )
 
-PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
 
-
-class LinkIntegrityATLayer(z2.Layer):
+class LinkIntegrityATLayer(LinkIntegrityLayer):
 
     directory = 'at'
     defaultBases = (
         PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
-        PLONE_APP_LINKINTEGRITY_FIXTURE,
     )
 
 PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
 
 
-class LinkIntegrityDXLayer(z2.Layer):
+class LinkIntegrityDXLayer(LinkIntegrityLayer):
 
     directory = 'dx'
     defaultBases = (
         PLONE_APP_CONTENTTYPES_FIXTURE,
-        PLONE_APP_LINKINTEGRITY_FIXTURE,
     )
 
     def setUp(self):
@@ -96,6 +90,14 @@ class LinkIntegrityDXLayer(z2.Layer):
             ttool.getTypeInfo('Document').behaviors += (
                 'plone.app.referenceablebehavior.referenceable.IReferenceable',
             )
+
+            # FIXME: we need uid_catalog and referencer_catalog to keep
+            #        plone.app.referencebehavior working. So load Archetypes
+            #        profile to install those tools before we continue
+            applyProfile(portal, 'Products.Archetypes:Archetypes')
+
+        super(LinkIntegrityDXLayer, self).setUp()
+
 
 PLONE_APP_LINKINTEGRITY_DX_FIXTURE = LinkIntegrityDXLayer()
 
