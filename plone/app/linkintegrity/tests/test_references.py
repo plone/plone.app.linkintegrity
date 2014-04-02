@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
+from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
+from plone.app.referenceablebehavior.referenceable import IReferenceable
+
 from plone.app.testing import setRoles
+from plone.app.testing import logout
+from plone.app.testing import login
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
@@ -41,7 +47,7 @@ class ReferenceGenerationDXTests(unittest2.TestCase):
         self.assertEqual(doc.getReferences(), [portal.foo])
 
     def testRelativeSiblingFolderLinkGeneratesMatchingReference(self):
-        self.setRoles(['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
         portal = self.portal
         main = portal[portal.invokeFactory('Folder', id='main')]
         foo = main[main.invokeFactory('Folder', id='foo')]
@@ -57,18 +63,25 @@ class ReferenceGenerationDXTests(unittest2.TestCase):
         self.assertEqual(doc.getReferences(), [portal.main.foo.doc])
 
     def testReferencesToNonAccessibleContentAreGenerated(self):
-        self.loginAsPortalOwner()
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
         secret = self.portal[self.portal.invokeFactory('Document', id='secret')]
-        self.login()
+#        from_member = self.portal[self.portal.invokeFactory('Document', 
+#                                                            id='member')]
+        from plone.dexterity.utils import createContentInContainer
+        from_member = createContentInContainer(self.portal, 'Document', title=u"From Member")
+        from_member.manage_setLocalRoles('member', ['Contributor'])
         # somebody created a document to which the user has no access...
         checkPermission = self.portal.portal_membership.checkPermission
+        logout()
+        login(self.portal, 'member')
         self.assertFalse(checkPermission('View', secret))
         self.assertFalse(checkPermission('Access contents information', secret))
+
         # nevertheless it should be possible to set a link to it...
-        self.folder.invokeFactory('Document', id='doc',
-            text='<html> <body> <a href="%s">go!</a> </body> </html>' %
-            secret.absolute_url())
-        self.assertEqual(self.folder.doc.getReferences(), [secret])
+        from_member.text = '<html> <body> <a href="%s">go!</a> </body> </html>'\
+            % secret.absolute_url()
+        notify(ObjectModifiedEvent(from_member))
+        self.assertEqual(IReferenceable(from_member).getReferences(), [secret])
 
 
 class ReferenceGenerationATTests(ReferenceGenerationDXTests):

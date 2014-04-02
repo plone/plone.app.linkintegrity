@@ -4,6 +4,8 @@
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:zcml="http://namespaces.zope.org/zcml">
 
+    <includeDependencies package="." />
+
     <five:registerPackage package="." initialize=".initialize" />
 
     <adapter

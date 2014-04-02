@@ -1,6 +1,8 @@
 <configure
     xmlns="http://namespaces.zope.org/zope">
 
+    <include package="plone.app.referenceablebehavior" />
+
     <subscriber
         for="plone.app.referenceablebehavior.referenceable.IReferenceable
              OFS.interfaces.IObjectClonedEvent"
