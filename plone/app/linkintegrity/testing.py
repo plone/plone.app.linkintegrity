@@ -74,25 +74,25 @@ PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING = layers.IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
            PLONE_APP_LINKINTEGRITY_FIXTURE,
            PLONE_APP_LINKINTEGRITY_AT_FIXTURE),
-    name='plone.app.linkintegrity:Integration'
+    name='plone.app.linkintegrity:AT:Integration'
 )
 
 PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING = layers.IntegrationTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,
            PLONE_APP_LINKINTEGRITY_FIXTURE,
            PLONE_APP_LINKINTEGRITY_DX_FIXTURE),
-    name='plone.app.linkintegrity:Integration'
+    name='plone.app.linkintegrity:DX:Integration'
 )
 
 PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING = layers.FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
            PLONE_APP_LINKINTEGRITY_FIXTURE,
            PLONE_APP_LINKINTEGRITY_AT_FIXTURE),
-    name='plone.app.linkintegrity:Functional'
+    name='plone.app.linkintegrity:AT:Functional'
 )
 PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING = layers.FunctionalTesting(
     bases=(PLONE_APP_CONTENTTYPES_FIXTURE,
            PLONE_APP_LINKINTEGRITY_FIXTURE,
            PLONE_APP_LINKINTEGRITY_DX_FIXTURE),
-    name='plone.app.linkintegrity:Functional'
+    name='plone.app.linkintegrity:DX:Functional'
 )
