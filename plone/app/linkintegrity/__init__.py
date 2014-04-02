@@ -17,3 +17,5 @@ def initialize(context):
 
     # Install the status code for linkintegritynotificationexception
     monkey.installStatusCode()
+
+import monkey2

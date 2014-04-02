@@ -17,10 +17,9 @@ from plone.testing.z2 import Browser
 
 import unittest
 
-@unittest.skip("DX is broken anyway")
-class ReferenceGenerationDXTests(unittest.TestCase):
+from plone.app.linkintegrity import exceptions
 
-    layer = PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
+class ReferenceGenerationBaseTests(object):
 
     def setUp(self):
         self.portal = self.layer['portal']
@@ -31,6 +30,31 @@ class ReferenceGenerationDXTests(unittest.TestCase):
             'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
 
         setRoles(self.portal, TEST_USER_ID, ['Manager', ])
+
+    def test_notification_exception(self):
+        self.setText(self.portal['doc3'], '<a href="doc1">doc1</a>')
+        self.assertRaises(exceptions.LinkIntegrityNotificationException,
+            self.portal.manage_delObjects, ['doc1'])
+
+    def test_circular_reference_deletion(self):
+        login(self.portal, TEST_USER_NAME)
+        doc1 = self.portal['doc1']
+        doc2 = self.portal['doc2']
+        doc3 = self.portal['doc3']
+        self.setText(doc1, '<a href="doc2">doc2</a>')
+        self.setText(doc2, '<a href="doc3">doc3</a>')
+        self.setText(doc3, '<a href="doc1">doc1</a>')
+        self.portal.manage_delObjects(['doc1', 'doc2', 'doc3'], self.portal.REQUEST)
+        self.assertTrue('doc1' not in self.portal)
+        self.assertTrue('doc2' not in self.portal)
+        self.assertTrue('doc3' not in self.portal)
+
+    def test_is_linked(self):
+        from Products.CMFPlone.utils import isLinked
+        img1 = self.portal['image1']
+        doc1 = self.portal['doc1']
+        self.setText(doc1, '<img src="image1"></img>')
+        self.assertTrue(isLinked(img1))
 
     def testRelativeUpwardsLinkGeneratesMatchingReference(self):
         portal = self.portal
@@ -84,6 +108,15 @@ class ReferenceGenerationDXTests(unittest.TestCase):
         self.assertEqual(IReferenceable(from_member).getReferences(), [secret])
 
 
-class ReferenceGenerationATTests(ReferenceGenerationDXTests):
+#@unittest.skip("DX is broken anyway")
+#class ReferenceGenerationDXTests(ReferenceGenerationBaseTests, unittest.TestCase):
+#    layer = PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
+
+class ReferenceGenerationATTests(ReferenceGenerationBaseTests, unittest.TestCase):
 
     layer = PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING
+    
+    def setText(self, obj, value):
+        obj.setText(value)
+        notify(ObjectModifiedEvent(obj))
+

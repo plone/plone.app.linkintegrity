@@ -5,9 +5,9 @@ from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_FIXTURE,
     PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE
 )
+from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from plone.app.testing import applyProfile
 from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import ploneSite
@@ -21,6 +21,8 @@ GIF = decodestring(
 
 class LinkIntegrityLayer(z2.Layer):
 
+    defaultBases = (PLONE_FIXTURE, )
+
     def setUp(self):
         import plone.app.linkintegrity
 
@@ -31,14 +33,9 @@ class LinkIntegrityLayer(z2.Layer):
             setRoles(portal, TEST_USER_ID, ['Manager', ])
             login(portal, TEST_USER_NAME)
 
-            portal.invokeFactory(type_name='Document', id='doc1',
-                                 title='Test Page 1',
-                                 text='<a href="doc2">Doc 2</a>',
-                                 )
-            portal.invokeFactory(type_name='Document', id='doc2',
-                                 title='Test Page 2',
-                                 text='<a href="doc3">Doc 3</a>',
-                                 )
+            portal.invokeFactory('Document', id='doc1', title='Test Page 1')
+            portal.invokeFactory('Document', id='doc2', title='Test Page 2')
+            portal.invokeFactory('Document', id='doc3', title='Test Page 3')
 
             for i in range(1, 4):
                 portal.invokeFactory(
@@ -53,25 +50,18 @@ class LinkIntegrityLayer(z2.Layer):
             portal.invokeFactory('Folder', id='folder1', title='Test Folder 1')
 
             folder = portal['folder1']
-            folder.invokeFactory(type_name='Document', id='doc3',
-                                 title='Test Page 3',
-                                 text='<a href="doc4">Doc 4</a>',
-                                 )
-            folder.invokeFactory(type_name='Document', id='doc4',
-                                 title='Test Page 4',
-                                 text='<a href="doc5">Doc 5</a>',
-                                 )
-            folder.invokeFactory(type_name='Document', id='doc5',
-                                 title='Test Page 5',
-                                 text='<a href="doc6">Doc 4</a>',
-                                 )
+            folder.invokeFactory('Document', id='doc3', title='Test Page 3')
+            folder.invokeFactory('Document', id='doc4', title='Test Page 4')
+            folder.invokeFactory('Document', id='doc5', title='Test Page 5')
 
+PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
 
 class LinkIntegrityATLayer(LinkIntegrityLayer):
 
     directory = 'at'
     defaultBases = (
         PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
+        PLONE_APP_LINKINTEGRITY_FIXTURE,
     )
 
 PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
@@ -82,6 +72,7 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
     directory = 'dx'
     defaultBases = (
         PLONE_APP_CONTENTTYPES_FIXTURE,
+        PLONE_APP_LINKINTEGRITY_FIXTURE,
     )
 
     def setUp(self):
