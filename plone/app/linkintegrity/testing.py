@@ -5,10 +5,14 @@ from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_FIXTURE,
     PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE
 )
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import ploneSite
+from plone.app.testing import login
 from plone.app.testing import layers
+from plone.app.testing import ploneSite
+from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.configuration import xmlconfig
 
@@ -48,6 +52,9 @@ class LinkIntegrityLayer(PloneSandboxLayer):
                        context=configurationContext)
 
     def setUpPloneSite(self, portal):
+        setRoles(portal, TEST_USER_ID, ['Manager', ])
+        login(portal, TEST_USER_NAME)
+
         portal.invokeFactory('Document', id='doc1', title='Test Page 1')
         portal.invokeFactory('Document', id='doc2', title='Test Page 2')
 
