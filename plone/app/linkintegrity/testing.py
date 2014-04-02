@@ -8,6 +8,7 @@ from plone.app.contenttypes.testing import (
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import applyProfile
 from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import ploneSite
