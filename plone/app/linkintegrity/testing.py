@@ -33,8 +33,14 @@ class LinkIntegrityLayer(z2.Layer):
             setRoles(portal, TEST_USER_ID, ['Manager', ])
             login(portal, TEST_USER_NAME)
 
-            portal.invokeFactory('Document', id='doc1', title='Test Page 1')
-            portal.invokeFactory('Document', id='doc2', title='Test Page 2')
+            portal.invokeFactory(type_name='Document', id='doc1',
+                                 title='Test Page 1',
+                                 text='<a href="doc2">Doc 2</a>',
+                                 )
+            portal.invokeFactory(type_name='Document', id='doc2',
+                                 title='Test Page 2',
+                                 text='<a href="doc3">Doc 3</a>',
+                                 )
 
             for i in range(1, 4):
                 portal.invokeFactory(
@@ -49,14 +55,23 @@ class LinkIntegrityLayer(z2.Layer):
             portal.invokeFactory('Folder', id='folder1', title='Test Folder 1')
 
             folder = portal['folder1']
-            folder.invokeFactory('Document', id='doc3', title='Test Page 3')
-            folder.invokeFactory('Document', id='doc4', title='Test Page 4')
-            folder.invokeFactory('Document', id='doc5', title='Test Page 5')
+            folder.invokeFactory(type_name='Document', id='doc3',
+                                 title='Test Page 3',
+                                 text='<a href="doc4">Doc 4</a>',
+                                 )
+            folder.invokeFactory(type_name='Document', id='doc4',
+                                 title='Test Page 4',
+                                 text='<a href="doc5">Doc 5</a>',
+                                 )
+            folder.invokeFactory(type_name='Document', id='doc5',
+                                 title='Test Page 5',
+                                 text='<a href="doc6">Doc 4</a>',
+                                 )
 
 PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
 
 
-class LinkIntegerityATLayer(z2.Layer):
+class LinkIntegrityATLayer(z2.Layer):
 
     directory = 'at'
     defaultBases = (
@@ -64,10 +79,10 @@ class LinkIntegerityATLayer(z2.Layer):
         PLONE_APP_LINKINTEGRITY_FIXTURE,
     )
 
-PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegerityATLayer()
+PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
 
 
-class LinkIntegerityDXLayer(z2.Layer):
+class LinkIntegrityDXLayer(z2.Layer):
 
     directory = 'dx'
     defaultBases = (
@@ -82,7 +97,7 @@ class LinkIntegerityDXLayer(z2.Layer):
                 'plone.app.referenceablebehavior.referenceable.IReferenceable',
             )
 
-PLONE_APP_LINKINTEGRITY_DX_FIXTURE = LinkIntegerityDXLayer()
+PLONE_APP_LINKINTEGRITY_DX_FIXTURE = LinkIntegrityDXLayer()
 
 PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING = layers.IntegrationTesting(
     bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
