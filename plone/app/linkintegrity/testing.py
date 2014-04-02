@@ -75,13 +75,19 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
         PLONE_APP_CONTENTTYPES_FIXTURE,
         PLONE_APP_LINKINTEGRITY_FIXTURE,
     )
+    types_providing_referencable_behavior = set([
+        'Folder',
+        'Image',
+        'Document',
+    ])
 
     def setUp(self):
         with ploneSite() as portal:
             ttool = getToolByName(portal, 'portal_types')
-            ttool.getTypeInfo('Document').behaviors += (
-                'plone.app.referenceablebehavior.referenceable.IReferenceable',
-            )
+            for type_info in self.types_providing_referencable_behavior:
+                ttool.getTypeInfo(type_info).behaviors += (
+                    'plone.app.referenceablebehavior.referenceable.IReferenceable',  # noqa
+                )
 
             # FIXME: we need uid_catalog and referencer_catalog to keep
             #        plone.app.referencebehavior working. So load Archetypes
