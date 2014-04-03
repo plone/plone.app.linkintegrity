@@ -4,6 +4,8 @@ from plone.app.linkintegrity import testing
 from plone.app.linkintegrity import exceptions
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
 
 import transaction
 
@@ -43,16 +45,26 @@ class FileReferenceTests:
         # Make changes visible to test browser
         transaction.commit()
 
-        # TODO: Check confirmation page is shown in browser. Actually it
-        #       fails because of a different than 200 response code.
-        # self._set_response_status_code(
-        #     'LinkIntegrityNotificationException', 200)
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
 
-        # self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
-        #     afile.absolute_url(), token))
+        self.browser.handleErrors = True
+        self.browser.addHeader(
+            'Authorization',
+            'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
 
-        # self.browser.contents
-        # import pdb; pdb.set_trace( )
+        self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
+            afile.absolute_url(), token))
+
+        self.assertIn('Potential link breakage', self.browser.contents)
+        self.assertIn('removeConfirmationAction', self.browser.contents)
+        self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
+                      self.browser.contents)
+        self.assertIn('Would you like to delete it anyway?',
+                      self.browser.contents)
+
+        # TODO: Fix 500 error here
+        self.browser.getControl(name='delete').click()
 
 
 class FileReferenceDXTests(DXBaseTestCase, FileReferenceTests):
