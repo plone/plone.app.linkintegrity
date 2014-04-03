@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
-from base64 import decodestring
 from StringIO import StringIO
+from base64 import decodestring
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_FIXTURE,
     PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE
@@ -19,8 +19,11 @@ from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.configuration import xmlconfig
 
-GIF = StringIO(decodestring(
-    'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='))
+B64_DATA = 'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+GIF = StringIO(decodestring(B64_DATA))
+GIF.contentType = 'image/gif'
+GIF._width = 1
+GIF._height = 1
 
 
 def create(container, type_name, **kwargs):
