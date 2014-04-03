@@ -17,20 +17,7 @@
         <implements interface=".interfaces.IOFSImage" />
     </class>
 
-    <!-- views used to perform link integrity checks and actually remove an object -->
-
-    <browser:page
-        name="index.html"
-        for=".interfaces.ILinkIntegrityNotificationException"
-        template="browser/confirmation.pt"
-        class=".browser.confirmation.RemoveConfirmationView"
-        permission="zope2.Public" />
-
-    <browser:page
-        name="removeConfirmationAction"
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-        class=".browser.remove.RemoveReferencedObjectView"
-        permission="zope2.Public" />
+    <include package=".browser" />
 
     <include package=".at"
              zcml:condition="installed Products.Archetypes" />
