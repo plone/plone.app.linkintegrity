@@ -60,6 +60,9 @@ class ReferenceGenerationDXTests(unittest.TestCase):
         self._set_text(doc1, '<a href="doc2">doc2</a>')
         self._set_text(doc2, '<a href="doc3">doc3</a>')
         self._set_text(doc3, '<a href="doc1">doc1</a>')
+        self.assertRaises(exceptions.LinkIntegrityNotificationException,
+                          self.portal.manage_delObjects, ['doc1'])
+        transaction.abort()
         self.portal.manage_delObjects(
             ['doc1', 'doc2', 'doc3'], self.request)
         self.assertNotIn('doc1', self.portal)
