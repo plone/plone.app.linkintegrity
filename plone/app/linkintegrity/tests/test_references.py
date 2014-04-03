@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from Products.Archetypes.interfaces import IReferenceable as IATReferenceable
-from plone.app.referenceablebehavior.referenceable \
-    import IReferenceable as IDXReferenceable
+from Products.Archetypes.interfaces import IReferenceable
 from plone.app.testing import setRoles
 from plone.app.testing import logout
 from plone.app.testing import login
@@ -22,7 +20,6 @@ import unittest
 class ReferenceGenerationDXTests(unittest.TestCase):
 
     layer = testing.PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
-    reference_interface = IDXReferenceable
 
     def setUp(self):
         self.portal = self.layer['portal']
@@ -118,27 +115,27 @@ class ReferenceGenerationDXTests(unittest.TestCase):
         doc1a = testing.create(self.portal, 'Document', id='doc1a')
         doc1 = self.portal.doc1
 
-        # A little hack but allows us to use common syntax
-        IReferenceable = self.reference_interface
         self.assertEqual(len(IReferenceable(doc1).getReferences()), 0)
         self._set_text(doc1, '<a href="doc1a">Doc 1a</a>')
         self.assertEqual(len(IReferenceable(doc1).getReferences()), 1)
         self.assertEqual(IReferenceable(doc1).getReferences()[0].id,
                          self.portal.doc1a.id)
 
-        # Now delete the target item, suppress events and test again:
-        self.portal.manage_delObjects(ids=[doc1a.id], suppress_events=1)
-        self.assertEqual(len(IReferenceable(doc1).getReferences()), 1)
+        # Now delete the target item, suppress events and test again,
+        # the reference should be broken now.
+        self.portal._delObject(doc1a.id, suppress_events=True)
+        self.assertEqual(IReferenceable(doc1).getReferences(), [None])
 
-        import pdb; pdb.set_trace( )
-        # TODO: Delete item and check again
+        # If we now try to update the linking document again in order to
+        # remove the link, things used to break raising a
+        # ``ReferenceException``.  This should be handled more
+        # gracefully now:
+        self._set_text(doc1, 'foo!')
+        self.assertEqual(IReferenceable(doc1).getReferences(), [])
 
     def test_relative_upwards_link_generates_matching_reference(self):
         doc3 = self.portal.folder1.doc3
         self._set_text(doc3, '<a href="../folder1">go!</a>')
-
-        # A little hack but allows us to use common syntax
-        IReferenceable = self.reference_interface
 
         self.assertEqual(
             IReferenceable(doc3).getReferences(),
@@ -167,7 +164,6 @@ class ReferenceGenerationDXTests(unittest.TestCase):
 class ReferenceGenerationATTests(ReferenceGenerationDXTests):
 
     layer = testing.PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING
-    reference_interface = IATReferenceable
 
     def _set_text(self, obj, text):
         obj.setText(text)
