@@ -9,6 +9,8 @@ from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 
+import transaction
+
 
 class ReferenceGenerationTests:
 
