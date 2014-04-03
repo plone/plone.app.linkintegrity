@@ -116,6 +116,7 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
     types_providing_referencable_behavior = set([
         'Folder',
         'Image',
+        'File',
         'Document',
     ])
 
