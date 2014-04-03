@@ -37,6 +37,10 @@ class BaseTestCase(unittest.TestCase):
         return getMultiAdapter(
             (obj, self.request), name='authenticator').token()
 
+    def _set_response_status_code(self, key, value):
+        from ZPublisher import HTTPResponse
+        HTTPResponse.status_codes[key.lower()] = value
+
 
 class DXBaseTestCase(BaseTestCase):
     """Base testcase for testing Dexterity content types"""
