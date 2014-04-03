@@ -21,6 +21,7 @@ from zope.configuration import xmlconfig
 
 B64_DATA = 'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
 GIF = StringIO(decodestring(B64_DATA))
+GIF.filename = 'sample.gif'
 GIF.contentType = 'image/gif'
 GIF._width = 1
 GIF._height = 1
