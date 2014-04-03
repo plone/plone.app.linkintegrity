@@ -2,6 +2,7 @@
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from base64 import decodestring
+from StringIO import StringIO
 from plone.app.contenttypes.testing import (
     PLONE_APP_CONTENTTYPES_FIXTURE,
     PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE
@@ -9,6 +10,7 @@ from plone.app.contenttypes.testing import (
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing import applyProfile
 from plone.app.testing import layers
 from plone.app.testing import login
@@ -17,8 +19,8 @@ from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.configuration import xmlconfig
 
-GIF = decodestring(
-    'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==')
+GIF = StringIO(decodestring(
+    'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='))
 
 
 def create(container, type_name, **kwargs):
@@ -44,8 +46,9 @@ class LinkIntegrityLayer(z2.Layer):
 
     def setUpMembers(self, portal):
         pm = getToolByName(portal, 'portal_membership')
-        pm.addMember('editor', 'secret', ['Editor'], [])
-        pm.addMember('authenticated', 'secret', [], [])
+        pm.addMember('editor', TEST_USER_PASSWORD, ['Editor'], [])
+        pm.addMember('member', TEST_USER_PASSWORD, ['Member'], [])
+        pm.addMember('authenticated', TEST_USER_PASSWORD, [], [])
 
     def setUpContent(self):
         import plone.app.linkintegrity
