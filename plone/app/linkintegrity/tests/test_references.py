@@ -45,14 +45,12 @@ class ReferenceGenerationTests:
         self.assertTrue(isLinked(img1))
 
     def test_referal_to_private_files(self):
-        """This tests the behaviour of the link integrity code when a to
-           be deleted item is referred to by some page the current user
-           has no permission to view. In this case the privacy of the
-           linking user should be protected, so neither the name or url
-           of the linking page should be shown. First we need to create
-           the link in question and set up the permissions accordingly.
-        """
-
+        # This tests the behaviour of the link integrity code when a to
+        # be deleted item is referred to by some page the current user
+        # has no permission to view. In this case the privacy of the
+        # linking user should be protected, so neither the name or url
+        # of the linking page should be shown. First we need to create
+        # the link in question and set up the permissions accordingly.
         doc = self.portal.doc1
         img = self.portal.image1
         self._set_text(doc, '<a href="image1">Image 1</a>')
@@ -78,11 +76,6 @@ class ReferenceGenerationTests:
         # Throws exception
         view = img.restrictedTraverse('@@object_delete')
         self.assertRaises(exceptions.LinkIntegrityNotificationException, view)
-
-        # Try using testbrowser
-        # self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
-        #     img.absolute_url(), token))
-        # self.browser.contents
 
     def test_link_extraction_easy(self):
         doc1 = self.portal.doc1
@@ -137,8 +130,8 @@ class ReferenceGenerationTests:
 
 
 class ReferenceGenerationDXTests(DXBaseTestCase, ReferenceGenerationTests):
-    """ """
+    """Reference generation testcase for dx content types"""
 
 
 class ReferenceGenerationATTests(ATBaseTestCase, ReferenceGenerationTests):
-    """ """
+    """Reference generation testcase for at content types"""

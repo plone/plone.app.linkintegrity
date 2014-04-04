@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from ZPublisher import HTTPResponse
+
 from plone.app.linkintegrity import testing
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -14,6 +16,8 @@ from zope.lifecycleevent import modified
 import transaction
 import unittest
 
+orig_status_codes = HTTPResponse.status_codes
+
 
 class BaseTestCase(unittest.TestCase):
 
@@ -27,25 +31,28 @@ class BaseTestCase(unittest.TestCase):
         # Get a testbrowser
         self.browser = Browser(self.layer['app'])
         self.browser.handleErrors = False
+        self.browser.addHeader('Referer', self.portal.absolute_url())
         self.browser.addHeader(
             'Authorization',
             'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
 
         setRoles(self.portal, TEST_USER_ID, ['Manager', ])
 
+    def tearDown(self):
+        HTTPResponse.status_codes = orig_status_codes
+
     def _get_token(self, obj):
         return getMultiAdapter(
             (obj, self.request), name='authenticator').token()
 
     def _set_response_status_code(self, key, value):
-        from ZPublisher import HTTPResponse
         HTTPResponse.status_codes[key.lower()] = value
 
 
 class DXBaseTestCase(BaseTestCase):
     """Base testcase for testing Dexterity content types"""
 
-    layer = testing.PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
+    layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
 
     def _set_text(self, obj, text):
         setattr(obj, 'text', RichTextValue(text))
@@ -59,7 +66,7 @@ class DXBaseTestCase(BaseTestCase):
 class ATBaseTestCase(BaseTestCase):
     """Base testcase for testing Archetypes content types"""
 
-    layer = testing.PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING
+    layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING
 
     def _set_text(self, obj, text):
         obj.setText(text, mimetype='text/html')

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from zope.i18n import translate
-
 from Acquisition import aq_inner
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName, _checkPermission
 from Products.CMFCore.permissions import AccessContentsInformation
-
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.app.linkintegrity.utils import encodeRequestData
+from zope.component import getMultiAdapter
+from zope.i18n import translate
 
 
 class RemoveConfirmationView(BrowserView):
@@ -22,6 +21,11 @@ class RemoveConfirmationView(BrowserView):
         self.exception = context
         self.context, = context.args
         self.request = request
+
+    @property
+    def portal_state(self):
+        return getMultiAdapter(
+            (self.context, self.request), name='plone_portal_state')
 
     def originalRequest(self):
         # in order to interrupt the current request with a confirmation
@@ -72,11 +76,9 @@ class RemoveConfirmationView(BrowserView):
         return info.encodeConfirmedItems(additions=targets)
 
     def callbackURL(self):
-        portal = getToolByName(aq_inner(self.context), "portal_url")
-        return portal() + '/removeConfirmationAction'
+        return '{0:s}/removeConfirmationAction'.format(
+            self.portal_state.navigation_root_url())
 
     def cancelURL(self):
         url = self.request.environ.get('HTTP_REFERER', None)
-        if url is None:
-            url = getToolByName(aq_inner(self.context), "portal_url")()
-        return url
+        return url or self.portal_state.navigation_root_url()

@@ -136,7 +136,6 @@ def modifiedArchetype(obj, event):
         # to `reference_catalog`
         return
     refs = set()
-
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
