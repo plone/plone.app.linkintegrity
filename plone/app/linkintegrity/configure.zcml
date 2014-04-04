@@ -23,6 +23,6 @@
              zcml:condition="installed Products.Archetypes" />
 
     <include package=".dx"
-             zcml:condition="installed plone.app.referenceablebehavior" />
+             zcml:condition="installed plone.dexterity" />
 
 </configure>

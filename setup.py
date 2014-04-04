@@ -31,13 +31,12 @@ setup(name='plone.app.linkintegrity',
       include_package_data=True,
       install_requires=[
           'setuptools',
+          'plone.app.referenceablebehavior',  # Requires Products.Archetypes
       ],
       extras_require={
           'test': [
               'plone.app.testing',
               'plone.app.contenttypes',
-              'plone.app.referenceablebehavior',
-              'Products.Archetypes',
           ],
       },
       platforms='Any',
