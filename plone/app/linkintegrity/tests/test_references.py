@@ -8,6 +8,7 @@ from plone.app.linkintegrity import exceptions
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.uuid.interfaces import IUUID
 
 import transaction
 
@@ -127,6 +128,43 @@ class ReferenceGenerationTests:
         doc3 = self.portal.folder1.doc3
         self._set_text(doc3, '<a href="../doc1">go!</a>')
         self.assertEqual(IReferenceable(doc3).getReferences(), [doc1])
+
+    def test_reference_creation(self):
+        # This tests the correct creation of references used for
+        # ensuring link integrity. Any archetype-based content object
+        # which refers to other (local) objects by `<img>` or `<a>` tags
+        # should create references between those objects on save.
+        doc1 = self.portal.doc1
+        self.assertEqual(IReferenceable(doc1).getReferences(), [])
+        self.assertEqual(IReferenceable(doc1).getBackReferences(), [])
+        img1 = self.portal.image1
+        self.assertEqual(IReferenceable(img1).getReferences(), [])
+        self.assertEqual(IReferenceable(img1).getBackReferences(), [])
+        self._set_text(doc1, img1.restrictedTraverse('@@images').tag())
+
+        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
+        self.assertEqual(IReferenceable(doc1).getBackReferences(), [])
+        self.assertEqual(IReferenceable(img1).getReferences(), [])
+        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
+
+        # Next we change the document again and insert a link to
+        # another page:
+        doc2 = self.portal.doc2
+        self._set_text(doc1, '<a href="doc2">Doc 2</a>')
+        self.assertEqual(IReferenceable(doc2).getReferences(), [])
+        self.assertEqual(IReferenceable(doc2).getBackReferences(), [doc1])
+
+        # Linking image scales should also work:
+        self._set_text(doc1, '<a href="image1/image_thumb">an image</a>')
+        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
+        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
+
+        # Linking via the "resolveuid/UID" method should also work:
+        self._set_text(doc1, '<a href="resolveuid/{0:s}">an image</a>'.format(
+            IUUID(img1)))
+
+        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
+        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
 
 
 class ReferenceGenerationDXTests(DXBaseTestCase, ReferenceGenerationTests):
