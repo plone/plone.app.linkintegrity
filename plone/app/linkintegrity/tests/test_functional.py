@@ -11,7 +11,7 @@ from plone.app.testing import TEST_USER_PASSWORD
 import transaction
 
 
-class FileReferenceTestCase:
+class ReferenceTestCase:
 
     def test_file_reference_throws_exception(self):
         """This tests the behaviour when removing a referenced file."""
@@ -41,7 +41,6 @@ class FileReferenceTestCase:
         self.assertIn('file2', self.portal.objectIds())
 
         token = self._get_token(file2)
-        _response = self.request.response
         self.request['_authenticator'] = token
 
         # Make changes visible to test browser
@@ -85,9 +84,7 @@ class FileReferenceTestCase:
         self.assertNotIn('file2', self.portal.objectIds())
         transaction.commit()
 
-        self.request.response = _response
-
-    def test_unreferenced_file_removal(self):
+    def test_unreferenced_removal(self):
         # This tests against #6666 and #7784, simple removal of a not 
         # referenced file, which broke zeo-based installations.
         self._set_response_status_code(
@@ -96,21 +93,63 @@ class FileReferenceTestCase:
         # We simply use a browser to try to delete a content item. 
         self.browser.open(self.portal.doc1.absolute_url())
         self.browser.getLink('Delete').click()
-        self.assertIn('Do you really want to delete this item?', self.browser.contents)
+        self.assertIn(
+            'Do you really want to delete this item?', self.browser.contents)
         self.browser.getControl(name='form.buttons.Delete').click()
 
         # The resulting page should confirm the removal:
         self.assertIn('Test Page 1 has been deleted', self.browser.contents)
         self.assertNotIn('doc1', self.portal.objectIds())
 
+    def test_renaming_referenced_item(self):
+        doc1 = self.portal.doc1
+        doc2 = self.portal.doc2
 
-class FileReferenceDXTestCase(DXBaseTestCase, FileReferenceTestCase):
-    """File reference testcase for dx content types"""
+        # This tests makes sure items that are linked to can still be 
+        # renamed (see the related bug report in #6608).  First we need 
+        # to create the necessary links:
+        self._set_text(doc1, '<a href="doc2">doc2</a>')
+        self.assertEqual(IReferenceable(doc2).getBackReferences(), [doc1])
+
+        # Make changes visible to testbrowseropen
+        transaction.commit()
+
+        # Then we use a browser to rename the referenced image:
+        self.browser.handleErrors = True
+        self.browser.open('{0:s}/object_rename?_authenticator={1:s}'.format(
+            doc1.absolute_url(), self._get_token(doc1)))
+
+        self.browser.getControl(name='form.widgets.new_id').value = 'nuname'
+        self.browser.getControl(name='form.buttons.Rename').click()
+        self.assertIn("Renamed 'doc1' to 'nuname'.", self.browser.contents)
+        self.assertNotIn('doc1', self.portal.objectIds())
+        self.assertIn('nuname', self.portal.objectIds())
+        self.assertEqual(IReferenceable(doc2).getBackReferences(), [doc1])
+
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
+
+        # We simply use a browser to try to delete a content item. 
+        self.browser.open(doc2.absolute_url())
+        self.browser.getLink('Delete').click()
+        self.assertIn(
+            'Do you really want to delete this item?', self.browser.contents)
+        self.browser.getControl(name='form.buttons.Delete').click()
+        self.assertIn('nuname', self.portal.objectIds())
+
+        # Link breakabe page should be shown
+        self.assertIn('Potential link breakage', self.browser.contents)
+        self.assertIn('<a href="http://nohost/plone/nuname">Test Page 1</a>',
+                      self.browser.contents)
+
+
+class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
+    """Functional reference testcase for dx content types"""
 
     layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
 
 
-class FileReferenceATTestCase(ATBaseTestCase, FileReferenceTestCase):
-    """File reference testcase for dx content types"""
+class FunctionalReferenceATTestCase(ATBaseTestCase, ReferenceTestCase):
+    """Functional reference testcase for dx content types"""
 
     layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING
