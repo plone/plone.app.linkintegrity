@@ -87,6 +87,22 @@ class FileReferenceTestCase:
 
         self.request.response = _response
 
+    def test_unreferenced_file_removal(self):
+        # This tests against #6666 and #7784, simple removal of a not 
+        # referenced file, which broke zeo-based installations.
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
+
+        # We simply use a browser to try to delete a content item. 
+        self.browser.open(self.portal.doc1.absolute_url())
+        self.browser.getLink('Delete').click()
+        self.assertIn('Do you really want to delete this item?', self.browser.contents)
+        self.browser.getControl(name='form.buttons.Delete').click()
+
+        # The resulting page should confirm the removal:
+        self.assertIn('Test Page 1 has been deleted', self.browser.contents)
+        self.assertNotIn('doc1', self.portal.objectIds())
+
 
 class FileReferenceDXTestCase(DXBaseTestCase, FileReferenceTestCase):
     """File reference testcase for dx content types"""
