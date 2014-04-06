@@ -19,7 +19,7 @@ from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.configuration import xmlconfig
 
-B64_DATA = 'R0lGODlhAQABAPAAAPj8+AAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+B64_DATA = 'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
 GIF = StringIO(decodestring(B64_DATA))
 GIF.filename = 'sample.gif'
 GIF.contentType = 'image/gif'
