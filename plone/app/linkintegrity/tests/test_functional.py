@@ -294,6 +294,50 @@ class ReferenceTestCase:
         self.assertEqual(IReferenceable(doc1).getReferences(), [doc2, ])
         self.assertEqual(IReferenceable(doc2).getReferences(), [doc4, ])
 
+    def test_references_on_cloned_objects(self):
+        doc1 = self.portal.doc1
+        doc2 = self.portal.doc2
+
+        # This tests ensures that link integrity is correctly setup when
+        # cloning an object.
+        self._set_text(doc1, '<a href="doc2">a document</a>')
+
+        # Next we clone the document:
+        token = self._get_token(doc1)
+        self.request['_authenticator'] = token
+        doc1.restrictedTraverse('object_copy')()
+
+        self.request['_authenticator'] = token
+        self.portal.restrictedTraverse('object_paste')()
+        self.assertIn('copy_of_doc1', self.portal)
+        transaction.commit()
+
+        # Then we try to delete the document linked by the original document
+        # and its clone. Before we can do this we need to prevent the test
+        # framework from choking on the exception we intentionally throw.
+        self.browser.handleErrors = True
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
+
+        # Now we can continue and "click" the "delete" action. The confirmation
+        # page should list both documents:
+        self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
+            doc2.absolute_url(), self._get_token(doc2)))
+        self.assertIn(
+            'is referenced by the following items:', self.browser.contents)
+        self.assertIn('Potential link breakage', self.browser.contents)
+        self.assertIn(
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>',
+            self.browser.contents
+        )
+        self.assertIn(
+            '<a href="http://nohost/plone/copy_of_doc1">Test Page 1</a>',
+            self.browser.contents
+        )
+
+        # XXX: This test fails on dexterity, seems one event is missing.
+
+
 
 class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
     """Functional reference testcase for dx content types"""

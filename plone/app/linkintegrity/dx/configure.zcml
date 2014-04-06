@@ -5,7 +5,7 @@
 
     <subscriber
         for="plone.app.referenceablebehavior.referenceable.IReferenceable
-             OFS.interfaces.IObjectClonedEvent"
+             zope.lifecycleevent.interfaces.IObjectMovedEvent"
         handler="..handlers.modifiedDexterity" />
 
     <subscriber
