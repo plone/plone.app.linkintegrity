@@ -3,6 +3,14 @@
     xmlns:browser="http://namespaces.zope.org/browser">
 
     <browser:page
+        name="updateLinkIntegrityInformation"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        template="update.pt"
+        class=".update.UpdateView"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
         name="index.html"
         for="..interfaces.ILinkIntegrityNotificationException"
         template="confirmation.pt"

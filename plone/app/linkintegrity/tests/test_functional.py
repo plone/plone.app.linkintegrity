@@ -263,6 +263,37 @@ class ReferenceTestCase:
         self.assertIn('Test Page 2 has been deleted.', self.browser.contents)
         self.assertNotIn('doc2', self.portal.objectIds())
 
+    def test_update(self):
+        doc1 = self.portal.doc1
+        doc2 = self.portal.doc2
+        doc4 = self.portal.folder1.doc4
+
+        # This tests updating link integrity information for all site content,
+        # i.e. after migrating from a previous version.
+        self._set_text(doc1, '<a href="doc2">a document</a>')
+        self._set_text(doc2, '<a href="folder1/doc4">a document</a>')
+        IReferenceable(doc1).deleteReferences(relationship='isReferencing')
+        IReferenceable(doc2).deleteReferences(relationship='isReferencing')
+
+        # Just to make sure, we check that there are no references from or to
+        # these documents at this point:
+        self.assertEqual(IReferenceable(doc1).getReferences(), [])
+        self.assertEqual(IReferenceable(doc2).getReferences(), [])
+
+        # An update of link integrity information for all content is triggered
+        # by browsing a specific url:
+        transaction.commit()
+        self.browser.open('{0:s}/updateLinkIntegrityInformation'.format(
+            self.portal.absolute_url()))
+        self.browser.getControl('Update').click()
+        self.assertIn('Link integrity information updated for',
+                      self.browser.contents)
+
+        # Now the linking documents should hold the correct link integrity
+        # references:
+        self.assertEqual(IReferenceable(doc1).getReferences(), [doc2, ])
+        self.assertEqual(IReferenceable(doc2).getReferences(), [doc4, ])
+
 
 class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
     """Functional reference testcase for dx content types"""
