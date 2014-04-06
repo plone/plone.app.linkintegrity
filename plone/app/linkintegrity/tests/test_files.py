@@ -11,7 +11,7 @@ from plone.app.testing import TEST_USER_PASSWORD
 import transaction
 
 
-class FileReferenceTests:
+class FileReferenceTestCase:
 
     def test_file_reference_throws_exception(self):
         """This tests the behaviour when removing a referenced file."""
@@ -88,10 +88,13 @@ class FileReferenceTests:
         self.request.response = _response
 
 
-
-class FileReferenceDXTests(DXBaseTestCase, FileReferenceTests):
+class FileReferenceDXTestCase(DXBaseTestCase, FileReferenceTestCase):
     """File reference testcase for dx content types"""
 
+    layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
 
-class FileReferenceATTests(ATBaseTestCase, FileReferenceTests):
+
+class FileReferenceATTestCase(ATBaseTestCase, FileReferenceTestCase):
     """File reference testcase for dx content types"""
+
+    layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING

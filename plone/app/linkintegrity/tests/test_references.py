@@ -1,42 +1,21 @@
 # -*- coding: utf-8 -*-
 from Products.Archetypes.interfaces import IReferenceable
 from plone.app.linkintegrity import testing
-from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import logout
 from plone.app.testing import login
 from plone.app.linkintegrity import exceptions
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
-from plone.uuid.interfaces import IUUID
-
-import transaction
 
 
-class ReferenceGenerationTests:
+class ReferenceGenerationTestCase:
 
     def test_notification_exception(self):
         self._set_text(self.portal['doc3'], '<a href="doc1">doc1</a>')
         self.assertRaises(
             exceptions.LinkIntegrityNotificationException,
             self.portal.manage_delObjects, ['doc1'])
-
-    def test_circular_reference_deletion(self):
-        login(self.portal, TEST_USER_NAME)
-        doc1 = self.portal['doc1']
-        doc2 = self.portal['doc2']
-        doc3 = self.portal['doc3']
-        self._set_text(doc1, '<a href="doc2">doc2</a>')
-        self._set_text(doc2, '<a href="doc3">doc3</a>')
-        self._set_text(doc3, '<a href="doc1">doc1</a>')
-        self.assertRaises(exceptions.LinkIntegrityNotificationException,
-                          self.portal.manage_delObjects, ['doc1'])
-        transaction.abort()
-        self.portal.manage_delObjects(
-            ['doc1', 'doc2', 'doc3'], self.request)
-        self.assertNotIn('doc1', self.portal)
-        self.assertNotIn('doc2', self.portal)
-        self.assertNotIn('doc3', self.portal)
 
     def test_is_linked(self):
         from Products.CMFPlone.utils import isLinked
@@ -129,47 +108,10 @@ class ReferenceGenerationTests:
         self._set_text(doc3, '<a href="../doc1">go!</a>')
         self.assertEqual(IReferenceable(doc3).getReferences(), [doc1])
 
-    def test_reference_creation(self):
-        # This tests the correct creation of references used for
-        # ensuring link integrity. Any archetype-based content object
-        # which refers to other (local) objects by `<img>` or `<a>` tags
-        # should create references between those objects on save.
-        doc1 = self.portal.doc1
-        self.assertEqual(IReferenceable(doc1).getReferences(), [])
-        self.assertEqual(IReferenceable(doc1).getBackReferences(), [])
-        img1 = self.portal.image1
-        self.assertEqual(IReferenceable(img1).getReferences(), [])
-        self.assertEqual(IReferenceable(img1).getBackReferences(), [])
-        self._set_text(doc1, img1.restrictedTraverse('@@images').tag())
 
-        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
-        self.assertEqual(IReferenceable(doc1).getBackReferences(), [])
-        self.assertEqual(IReferenceable(img1).getReferences(), [])
-        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
-
-        # Next we change the document again and insert a link to
-        # another page:
-        doc2 = self.portal.doc2
-        self._set_text(doc1, '<a href="doc2">Doc 2</a>')
-        self.assertEqual(IReferenceable(doc2).getReferences(), [])
-        self.assertEqual(IReferenceable(doc2).getBackReferences(), [doc1])
-
-        # Linking image scales should also work:
-        self._set_text(doc1, '<a href="image1/image_thumb">an image</a>')
-        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
-        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
-
-        # Linking via the "resolveuid/UID" method should also work:
-        self._set_text(doc1, '<a href="resolveuid/{0:s}">an image</a>'.format(
-            IUUID(img1)))
-
-        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
-        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
-
-
-class ReferenceGenerationDXTests(DXBaseTestCase, ReferenceGenerationTests):
+class ReferenceGenerationDXTestCase(DXBaseTestCase, ReferenceGenerationTestCase):
     """Reference generation testcase for dx content types"""
 
 
-class ReferenceGenerationATTests(ATBaseTestCase, ReferenceGenerationTests):
+class ReferenceGenerationATTestCase(ATBaseTestCase, ReferenceGenerationTestCase):
     """Reference generation testcase for at content types"""

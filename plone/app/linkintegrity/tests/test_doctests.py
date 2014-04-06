@@ -23,6 +23,10 @@ def test_suite():
         path = os.path.join(os.path.dirname(testing.__file__),
                             test_directory, 'tests')
 
+        # Skip non-existing directories
+        if not os.path.isdir(path):
+            continue
+
         for name in os.listdir(path):
             if pattern.search(name):
                 tests.append(
