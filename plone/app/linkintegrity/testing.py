@@ -71,20 +71,11 @@ class LinkIntegrityLayer(z2.Layer):
                 type_data['title'] = 'Test Page {0:d}'.format(i)
                 create(portal, **type_data)
 
-            type_data = dict(type_name='Image', image=GIF)
-            for i in range(1, 3):
-                type_data['id'] = 'image{0:d}'.format(i)
-                type_data['title'] = 'Test Image {0:d}'.format(i)
-                create(portal, **type_data)
-
-            create(portal, 'Folder', id='folder1', title='Test Folder 1')
-            create(portal, 'File', id='file1', title='Test File 1', file=GIF)
-
-            type_data = dict(type_name='Document')
-            for i in range(4, 6):
-                type_data['id'] = 'doc{0:d}'.format(i)
-                type_data['title'] = 'Test Page {0:d}'.format(i)
-                create(portal['folder1'], **type_data)
+            create(portal, 'File', id='file1', title='File 1', file=GIF)
+            create(portal, 'Image', id='image1', title='Image 1', image=GIF)
+            create(portal, 'Folder', id='folder1', title='Folder 1')
+            subfolder = portal['folder1']
+            create(subfolder, 'Document', id='doc4', title='Test Page 4')
 
             self.setUpMembers(portal)
 
