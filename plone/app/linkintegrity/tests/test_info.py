@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import unittest2
+import unittest
 
 
-class TestLinkIntegrityInfo(unittest2.TestCase):
+class TestLinkIntegrityInfo(unittest.TestCase):
 
     def test_confirmedItems_decodes_oids_with_colons(self):
         oid1 = '\x00' * 8
