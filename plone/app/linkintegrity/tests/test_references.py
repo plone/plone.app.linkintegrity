@@ -108,6 +108,16 @@ class ReferenceGenerationTestCase:
         self._set_text(doc3, '<a href="../doc1">go!</a>')
         self.assertEqual(IReferenceable(doc3).getReferences(), [doc1])
 
+    def test_unicode_links(self):
+        doc1 = self.portal.doc1
+
+        # This tests checks that isLinked can now be used safely as it 
+        # eventually plays well with transaction machinery.
+        # Add bad link, should not raise exception and there should not 
+        # be any references added.
+        self._set_text(doc1, unicode('<a href="ö?foo=bar&baz=bam">bug</a>', 'utf-8'))
+        self.assertEqual(IReferenceable(doc1).getReferences(), [])
+
 
 class ReferenceGenerationDXTestCase(DXBaseTestCase, ReferenceGenerationTestCase):
     """Reference generation testcase for dx content types"""
