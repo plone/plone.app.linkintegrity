@@ -110,7 +110,10 @@ def getObjectsFromLinks(base, links):
         # relative or local url
         if (not s and not h) or (s == scheme and h == host):
             # Paths should always be strings
-            obj, extra = findObject(base, str(path))
+            if isinstance(path, unicode):
+                path = path.encode('utf-8')
+
+            obj, extra = findObject(base, path)
             if obj:
                 if IOFSImage.providedBy(obj):
                     # use atimage object for scaled images
