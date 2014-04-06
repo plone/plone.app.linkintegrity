@@ -142,6 +142,44 @@ class ReferenceTestCase:
         self.assertIn('<a href="http://nohost/plone/nuname">Test Page 1</a>',
                       self.browser.contents)
 
+    def test_removal_in_subfolder(self):
+        doc1 = self.portal.doc1
+        doc2 = self.portal.doc2
+        folder1 = self.portal.folder1
+
+        # This tests ensuring link integrity when removing an referenced 
+        # object contained in a folder that is removed.
+        self._set_text(doc1, '<a href="folder1/doc4">a document</a>')
+        self._set_text(doc2, '<a href="folder1/doc4">a document</a>')
+
+        # Make changes visible to testbrowseropen
+        transaction.commit()
+
+        # Then we try to delete the folder holding the referenced 
+        # document. Before we can do this we need to prevent the test 
+        # framework from choking on the exception we intentionally 
+        # throw.
+        self.browser.handleErrors = True
+        self._disable_event_count_helper()
+        self._set_response_status_code('Retry', 200)
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
+
+        self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
+            folder1.absolute_url(), self._get_token(folder1)))
+        self.assertIn('Potential link breakage', self.browser.contents)
+        self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
+                      self.browser.contents)
+        self.assertIn('<a href="http://nohost/plone/doc2">Test Page 2</a>',
+                      self.browser.contents)
+        self.browser.getControl(name='delete').click()
+        
+        # TODO: Retry exception is raised. Not sure this is an error in 
+        # z2.Browser or just a wrong patched environment. Can please 
+        # somebody who did this patching check this and fix this test 
+        # here, thanks.
+        # self.assertNotIn('folder1', self.portal.objectIds())
+
 
 class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
     """Functional reference testcase for dx content types"""
