@@ -34,11 +34,11 @@ class CircularReferencesTestCase:
         doc2 = self.portal.doc2
         doc4 = self.portal.folder1.doc4
 
-        # This tests the behaviour when removing three object 
-        # referencing each other in a circle.  This situation cannot be 
-        # resolved completely, since the removal events are fired 
-        # separately.  However, the circle gets "broken up" when 
-        # confirming the removal of the first object, and no further 
+        # This tests the behaviour when removing three object
+        # referencing each other in a circle.  This situation cannot be
+        # resolved completely, since the removal events are fired
+        # separately.  However, the circle gets "broken up" when
+        # confirming the removal of the first object, and no further
         # confirmation form are necessary:
         self._set_text(doc1, '<a href="doc2">documents...</a>')
         self._set_text(doc2, '<a href="folder1/doc4">linking...</a>')
@@ -47,7 +47,7 @@ class CircularReferencesTestCase:
         self.assertEqual(IReferenceable(doc2).getReferences(), [doc4, ])
         self.assertEqual(IReferenceable(doc4).getReferences(), [doc1, ])
 
-        self.assertRaises(exceptions.LinkIntegrityNotificationException, 
+        self.assertRaises(exceptions.LinkIntegrityNotificationException,
             self.portal.manage_delObjects, ['doc1', 'doc2', ], self.request)
         transaction.abort()
 
@@ -57,15 +57,11 @@ class CircularReferencesTestCase:
         self.assertNotIn('doc1', self.portal)
         self.assertNotIn('doc2', self.portal)
         self.assertNotIn('folder1', self.portal)
-    
+
 
 class CircularReferencesDXTestCase(DXBaseTestCase, CircularReferencesTestCase):
     """Circular reference testcase for dx content types"""
 
-    layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
-
 
 class CircularReferencesATTestCase(ATBaseTestCase, CircularReferencesTestCase):
     """Circular reference testcase for dx content types"""
-
-    layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING

@@ -7,6 +7,7 @@ from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
+from plone.testing.z2 import Browser
 
 import transaction
 
@@ -85,12 +86,12 @@ class ReferenceTestCase:
         transaction.commit()
 
     def test_unreferenced_removal(self):
-        # This tests against #6666 and #7784, simple removal of a not 
+        # This tests against #6666 and #7784, simple removal of a not
         # referenced file, which broke zeo-based installations.
         self._set_response_status_code(
             'LinkIntegrityNotificationException', 200)
 
-        # We simply use a browser to try to delete a content item. 
+        # We simply use a browser to try to delete a content item.
         self.browser.open(self.portal.doc1.absolute_url())
         self.browser.getLink('Delete').click()
         self.assertIn(
@@ -105,8 +106,8 @@ class ReferenceTestCase:
         doc1 = self.portal.doc1
         doc2 = self.portal.doc2
 
-        # This tests makes sure items that are linked to can still be 
-        # renamed (see the related bug report in #6608).  First we need 
+        # This tests makes sure items that are linked to can still be
+        # renamed (see the related bug report in #6608).  First we need
         # to create the necessary links:
         self._set_text(doc1, '<a href="doc2">doc2</a>')
         self.assertEqual(IReferenceable(doc2).getBackReferences(), [doc1])
@@ -129,7 +130,7 @@ class ReferenceTestCase:
         self._set_response_status_code(
             'LinkIntegrityNotificationException', 200)
 
-        # We simply use a browser to try to delete a content item. 
+        # We simply use a browser to try to delete a content item.
         self.browser.open(doc2.absolute_url())
         self.browser.getLink('Delete').click()
         self.assertIn(
@@ -147,7 +148,7 @@ class ReferenceTestCase:
         doc2 = self.portal.doc2
         folder1 = self.portal.folder1
 
-        # This tests ensuring link integrity when removing an referenced 
+        # This tests ensuring link integrity when removing an referenced
         # object contained in a folder that is removed.
         self._set_text(doc1, '<a href="folder1/doc4">a document</a>')
         self._set_text(doc2, '<a href="folder1/doc4">a document</a>')
@@ -155,9 +156,9 @@ class ReferenceTestCase:
         # Make changes visible to testbrowseropen
         transaction.commit()
 
-        # Then we try to delete the folder holding the referenced 
-        # document. Before we can do this we need to prevent the test 
-        # framework from choking on the exception we intentionally 
+        # Then we try to delete the folder holding the referenced
+        # document. Before we can do this we need to prevent the test
+        # framework from choking on the exception we intentionally
         # throw.
         self.browser.handleErrors = True
         self._disable_event_count_helper()
@@ -173,12 +174,94 @@ class ReferenceTestCase:
         self.assertIn('<a href="http://nohost/plone/doc2">Test Page 2</a>',
                       self.browser.contents)
         self.browser.getControl(name='delete').click()
-        
-        # TODO: Retry exception is raised. Not sure this is an error in 
-        # z2.Browser or just a wrong patched environment. Can please 
-        # somebody who did this patching check this and fix this test 
+
+        # TODO: Retry exception is raised. Not sure this is an error in
+        # z2.Browser or just a wrong patched environment. Can please
+        # somebody who did this patching check this and fix this test
         # here, thanks.
         # self.assertNotIn('folder1', self.portal.objectIds())
+
+    def test_removal_with_cookie_auth(self):
+        doc1 = self.portal.doc1
+        doc2 = self.portal.doc2
+
+        # This tests ensures link integrity working correctly without
+        # http basic authentication (see the bug report in #6607).
+        self._set_text(doc1, '<a href="doc2">doc2</a>')
+        transaction.commit()
+
+        browser = Browser(self.layer['app'])
+        browser.handleErrors = True
+        browser.addHeader('Referer', self.portal.absolute_url())
+        browser.open(
+            '{0:s}/folder_contents'.format(self.portal.absolute_url()))
+
+        # At this point we shouldn't be able to look at the folder
+        # contents (as an anonymous user):
+        self.assertIn('require_login?came_from', browser.url)
+
+        # So we log in via the regular plone login form and additionally check
+        # that there is no 'authorization' header set afterwards:
+        browser.getControl(name='__ac_name').value = TEST_USER_NAME
+        browser.getControl(name='__ac_password').value = TEST_USER_PASSWORD
+        browser.getControl('Log in').click()
+        self.assertNotIn(
+            'authorization', [h.lower() for h in browser.headers.keys()])
+
+        # This should lead us back to the "folder contents" listing,
+        # where we try to delete the referenced document. Before we can
+        # do this we need to prevent the test framework from choking on
+        # the exception we intentionally throw.
+        self._disable_event_count_helper()
+        self._set_response_status_code('Retry', 200)
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
+        browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
+            doc2.absolute_url(), self._get_token(doc2)))
+        self.assertIn('Potential link breakage', browser.contents)
+        self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
+                      browser.contents)
+        browser.getControl(name='delete').click()
+
+        # TODO: Retry exception is raised. Not sure this is an error in
+        # z2.Browser or just a wrong patched environment. Can please
+        # somebody who did this patching check this and fix this test
+        # here, thanks.
+        # self.assertNotIn('doc1', self.portal.objectIds())
+
+    def test_linkintegrity_on_of_switch(self):
+        doc1 = self.portal.doc1
+        doc2 = self.portal.doc2
+
+        # This tests switching link integrity checking on and off.
+        self._set_text(doc1, '<a href="doc2">a document</a>')
+        transaction.commit()
+
+        # This should lead us back to the "folder contents" listing,
+        # where we try to delete the referenced document. Before we can
+        # do this we need to prevent the test framework from choking on
+        # the exception we intentionally throw.
+        self.browser.handleErrors = True
+        self._disable_event_count_helper()
+        self._set_response_status_code('Retry', 200)
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
+
+        self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
+            doc2.absolute_url(), self._get_token(doc2)))
+        self.assertIn('Potential link breakage', self.browser.contents)
+        self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
+                      self.browser.contents)
+
+        # Now we turn the switch for link integrity checking off via the site
+        # properties and try again:
+        props = self.portal.portal_properties.site_properties
+        props.manage_changeProperties(enable_link_integrity_checks=False)
+        transaction.commit()
+        self.browser.reload()
+        self.assertEqual(self.browser.url, self.portal.absolute_url())
+        self.assertIn('Test Page 2 has been deleted.', self.browser.contents)
+        self.assertNotIn('doc2', self.portal.objectIds())
 
 
 class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
