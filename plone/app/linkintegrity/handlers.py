@@ -1,27 +1,25 @@
-from urlparse import urlsplit
-from urllib import unquote
-
+# -*- coding: utf-8 -*-
 from Acquisition import aq_get
 from Acquisition import aq_parent
-from zope.component import getUtility
-from zope.schema import getFieldsInOrder
-from Products.CMFCore.utils import getToolByName
-from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
+from Products.Archetypes.interfaces import IBaseObject
+from Products.Archetypes.interfaces import IReference
+from Products.Archetypes.interfaces import IReferenceable
+from Products.CMFCore.utils import getToolByName
 from OFS.interfaces import IItem
-from zExceptions import NotFound
 from ZODB.POSException import ConflictError
-from zope.component.hooks import getSite
-from zope.publisher.interfaces import NotFound as ztkNotFound
-
 from plone.app.linkintegrity.exceptions \
     import LinkIntegrityNotificationException
-
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.references import updateReferences
-from Products.Archetypes.interfaces import IReferenceable
-from Products.Archetypes.interfaces import IBaseObject
+from zExceptions import NotFound
+from zope.component import getUtility
+from zope.schema import getFieldsInOrder
+from zope.component.hooks import getSite
+from zope.publisher.interfaces import NotFound as ztkNotFound
+from urllib import unquote
+from urlparse import urlsplit
 
 # To support various Plone versions, we need to support various UUID resolvers
 # This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
@@ -42,7 +40,7 @@ try:
     from plone.dexterity.interfaces import IDexterityFTI
     from plone.dexterity.utils import getAdditionalSchemata
     HAS_DEXTERITY = True
-except:
+except ImportError:
     HAS_DEXTERITY = False
 
 
