@@ -337,6 +337,47 @@ class ReferenceTestCase:
 
         # XXX: This test fails on dexterity, seems one event is missing.
 
+    def test_files_with_spaces_removal(self):
+        doc1 = self.portal.doc1
+
+        # This tests the behaviour when removing a referenced file that has
+        # spaces in its id.  First we need to rename the existing file:
+        self.portal.invokeFactory(
+            'Document', id='some spaces.doc', title='A spaces doc')
+
+        self.assertIn('some spaces.doc', self.portal.objectIds())
+        spaces1 = self.portal['some spaces.doc']
+
+        self._set_text(doc1, '<a href="some spaces.doc">a document</a>')
+
+        # The document should now have a reference to the file:
+        self.assertEqual(IReferenceable(doc1).getReferences(), [spaces1])
+        transaction.commit()
+
+        # Then we use a browser to try to delete the referenced file.
+        # Before we can do this we need to prevent the test framework
+        # from choking on the exception we intentionally throw.
+        self.browser.handleErrors = True
+        self._disable_event_count_helper()
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
+
+        self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
+            spaces1.absolute_url(), self._get_token(spaces1)))
+        self.assertIn('Potential link breakage', self.browser.contents)
+        self.assertIn(
+            '<a href="http://nohost/plone/some%20spaces.doc">A spaces doc</a>',
+            self.browser.contents
+        )
+        self._set_response_status_code('Retry', 200)
+        self.browser.getControl(name='delete').click()
+        transaction.commit()
+
+        # TODO: Retry exception is raised. Not sure this is an error in
+        # z2.Browser or just a wrong patched environment. Can please
+        # somebody who did this patching check this and fix this test
+        # here, thanks.
+        # self.assertNotIn('some spaces.doc', self.portal.objectIds())
 
 
 class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
