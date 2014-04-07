@@ -366,7 +366,7 @@ class ReferenceTestCase:
             spaces1.absolute_url(), self._get_token(spaces1)))
         self.assertIn('Potential link breakage', self.browser.contents)
         self.assertIn(
-            '<a href="http://nohost/plone/some%20spaces.doc">A spaces doc</a>',
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>',
             self.browser.contents
         )
         self._set_response_status_code('Retry', 200)
@@ -378,6 +378,47 @@ class ReferenceTestCase:
         # somebody who did this patching check this and fix this test
         # here, thanks.
         # self.assertNotIn('some spaces.doc', self.portal.objectIds())
+
+    def test_removal_via_zmi(self):
+        doc1 = self.portal.doc1
+        doc2 = self.portal.doc2
+
+        # This tests ensuring link integrity when removing an object via
+        # the ZMI.
+        self._set_text(doc1, '<a href="doc2">a document</a>')
+        self.assertEqual(IReferenceable(doc1).getReferences(), [doc2])
+
+        transaction.commit()
+        # Then we use a browser to try to delete the referenced
+        # document. Before we can do this we need to prevent the test
+        # framework from choking on the exception we intentionally throw.
+        self.browser.handleErrors = True
+        self._set_response_status_code(
+            'LinkIntegrityNotificationException', 200)
+
+        self.browser.open('http://nohost/plone/manage_main')
+        self.browser\
+            .getControl(name='ids:list')\
+            .getControl(value='doc2').selected = True
+
+        self.browser.getControl('Delete').click()
+        self.assertIn('Potential link breakage', self.browser.contents)
+        self.assertIn(
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>',
+            self.browser.contents
+        )
+
+        # After we have acknowledged the breach in link integrity the
+        # document should have been deleted:
+        self._set_response_status_code('Retry', 200)
+        self.browser.getControl(name='delete').click()
+        transaction.commit()
+
+        # TODO: Retry exception is raised. Not sure this is an error in
+        # z2.Browser or just a wrong patched environment. Can please
+        # somebody who did this patching check this and fix this test
+        # here, thanks.
+        # self.assertNotIn('doc2', self.portal.objectIds())
 
 
 class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
