@@ -5,12 +5,12 @@
 
     <subscriber
         for="plone.app.referenceablebehavior.referenceable.IReferenceable
-             zope.lifecycleevent.interfaces.IObjectMovedEvent"
+             zope.lifecycleevent.interfaces.IObjectCopiedEvent"
         handler="..handlers.modifiedDexterity" />
 
     <subscriber
         for="plone.app.referenceablebehavior.referenceable.IReferenceable
-             zope.lifecycleevent.interfaces.IObjectAddedEvent"
+             zope.lifecycleevent.interfaces.IObjectCreatedEvent"
         handler="..handlers.modifiedDexterity" />
 
     <subscriber

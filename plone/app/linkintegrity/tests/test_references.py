@@ -111,12 +111,49 @@ class ReferenceGenerationTestCase:
     def test_unicode_links(self):
         doc1 = self.portal.doc1
 
-        # This tests checks that isLinked can now be used safely as it 
+        # This tests checks that isLinked can now be used safely as it
         # eventually plays well with transaction machinery.
-        # Add bad link, should not raise exception and there should not 
+        # Add bad link, should not raise exception and there should not
         # be any references added.
         self._set_text(doc1, unicode('<a href="ö?foo=bar&baz=bam">bug</a>', 'utf-8'))
         self.assertEqual(IReferenceable(doc1).getReferences(), [])
+
+    def test_reference_orthogonality(self):
+        doc = self.portal.doc1
+        img = self.portal.image1
+        tag = img.restrictedTraverse('@@images').tag()
+
+        # This tests the behavior when other references already exist.
+        self.assertEqual(IReferenceable(doc).getReferences(), [])
+        self.assertEqual(IReferenceable(doc).getBackReferences(), [])
+        self.assertEqual(IReferenceable(img).getReferences(), [])
+        self.assertEqual(IReferenceable(img).getBackReferences(), [])
+
+        # Then establish a reference between the document and image as
+        # a related item:
+        self._set_related_items(doc, [img, ])
+        self.assertEqual(self._get_related_items(doc), [img, ])
+
+        # Next edit the document body and insert a link to the image,
+        # which should trigger the creation of a link integrity reference:
+        self._set_text(doc, tag)
+
+        from plone.app.linkintegrity.handlers import referencedRelationship
+        self.assertEqual(IReferenceable(doc).getReferences(
+            relationship=referencedRelationship), [img, ])
+
+        # And the related item reference remains in place:
+        self.assertEqual(self._get_related_items(doc), [img, ])
+
+        # Finally, edit the document body again, this time removing the
+        # link to the image, which should trigger the removal of the
+        # link integrity reference:
+        self._set_text(doc, 'where did my link go?')
+        self.assertEqual(IReferenceable(doc).getReferences(
+            relationship=referencedRelationship), [])
+
+        # And again the related item reference remains in place:
+        self.assertEqual(self._get_related_items(doc), [img, ])
 
 
 class ReferenceGenerationDXTestCase(DXBaseTestCase, ReferenceGenerationTestCase):

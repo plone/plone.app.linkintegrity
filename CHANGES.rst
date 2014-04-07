@@ -9,6 +9,11 @@ Changelog
   https://github.com/plone/Products.CMFPlone/issues/153
   [khink, mrtango]
 
+- Restructure package to fully support dexterity framework. Use two different
+  test layers in ``plone.app.testing``, migrate all doctests into real
+  TestCases.
+  [saily, do3cc]
+
 
 1.5.4 (2014-01-27)
 ------------------

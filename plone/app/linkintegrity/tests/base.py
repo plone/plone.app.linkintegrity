@@ -3,6 +3,7 @@ from ZPublisher import HTTPResponse
 from ZPublisher.HTTPRequest import HTTPRequest
 
 from plone.app.linkintegrity import testing
+from plone.app.relationfield.behavior import IRelatedItems
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
@@ -71,12 +72,19 @@ class DXBaseTestCase(BaseTestCase):
     layer = testing.PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
 
     def _set_text(self, obj, text):
-        setattr(obj, 'text', RichTextValue(text))
+        obj.text = RichTextValue(text)
         modified(obj)
 
     def _get_text(self, obj):
-        richtext_value = getattr(obj, 'text', None)
-        return richtext_value and richtext_value.output
+        return obj.text.raw
+
+    def _set_related_items(self, obj, items):
+        assert IRelatedItems.providedBy(obj)
+        setattr(obj, 'relatedItems', items)
+        modified(obj)
+
+    def _get_related_items(self, obj):
+        return obj.relatedItems
 
 
 class ATBaseTestCase(BaseTestCase):
@@ -92,3 +100,10 @@ class ATBaseTestCase(BaseTestCase):
         # This is the equivalent to obj.text in dexterity. No transforms,
         # no rewritten relative urls
         return obj.getText(raw=1).raw
+
+    def _set_related_items(self, obj, items):
+        obj.setRelatedItems(items)
+        modified(obj)
+
+    def _get_related_items(self, obj):
+        return obj.getRelatedItems()

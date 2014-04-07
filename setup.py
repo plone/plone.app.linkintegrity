@@ -37,6 +37,7 @@ setup(name='plone.app.linkintegrity',
           'test': [
               'plone.app.testing',
               'plone.app.contenttypes',
+              'plone.app.dexterity [relations]',  # related items in dx 2.0
           ],
       },
       platforms='Any',

@@ -117,6 +117,7 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
             ttool = getToolByName(portal, 'portal_types')
             for type_info in self.types_providing_referencable_behavior:
                 ttool.getTypeInfo(type_info).behaviors += (
+                    'plone.app.relationfield.behavior.IRelatedItems',
                     'plone.app.referenceablebehavior.referenceable.IReferenceable',  # noqa
                 )
 
