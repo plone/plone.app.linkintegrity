@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.6.0 (unreleased)
+2.0.0 (2014-04-13)
 ------------------
 
 - Adapt tests for removal of DT, DD and DL elements.
