@@ -1,10 +1,13 @@
 Changelog
 =========
 
-2.0.1 (unreleased)
+2.1.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Restructure package to fully support dexterity framework. Use two different
+  test layers in ``plone.app.testing``, migrate all doctests into real
+  TestCases.
+  [saily, do3cc]
 
 
 2.0.0 (2014-04-13)
@@ -14,11 +17,6 @@ Changelog
   Remove DL's from portal message in templates.
   https://github.com/plone/Products.CMFPlone/issues/153
   [khink, mrtango]
-
-- Restructure package to fully support dexterity framework. Use two different
-  test layers in ``plone.app.testing``, migrate all doctests into real
-  TestCases.
-  [saily, do3cc]
 
 
 1.5.4 (2014-01-27)
