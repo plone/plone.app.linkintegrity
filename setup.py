@@ -32,6 +32,7 @@ setup(name='plone.app.linkintegrity',
       ],
       extras_require={'test': [
         'collective.testcaselayer',
+        'Products.PloneTestCase',
       ]},
       platforms='Any',
       zip_safe=False,
