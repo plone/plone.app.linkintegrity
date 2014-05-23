@@ -1,11 +1,40 @@
 from Products.PloneTestCase import PloneTestCase
 from plone.app.linkintegrity.tests.utils import getBrowser
-
+from Products.Five.browser import BrowserView
+from zope.component import provideAdapter
+from zope.interface import implementer
+from zope.interface import Interface
+from zope.publisher.interfaces import IPublishTraverse
+from zope.publisher.interfaces.browser import IHTTPRequest
+from zope.publisher.interfaces.browser import IBrowserView
 
 PloneTestCase.setupPloneSite()
 
 
+@implementer(IPublishTraverse)
+class MyTraversingView(BrowserView):
+
+    def __call__(self):        
+        return self.subpath
+
+    def publishTraverse(self, request, name):
+        if not hasattr(self, 'subpath'):
+            self.subpath = []
+        self.subpath.append(name)
+        return self
+
+
 class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
+    
+    def setUp(self):
+        super(ReferenceGenerationTests, self).setUp()
+        provideAdapter(
+                MyTraversingView,
+                (Interface,
+                 IHTTPRequest),
+                 provides=IBrowserView,
+                name=u'foo-view'
+            )
 
     def testRelativeUpwardsLinkGeneratesMatchingReference(self):
         self.setRoles(['Manager'])
@@ -53,3 +82,17 @@ class ReferenceGenerationTests(PloneTestCase.FunctionalTestCase):
             text='<html> <body> <a href="%s">go!</a> </body> </html>' %
             secret.absolute_url())
         self.assertEqual(self.folder.doc.getReferences(), [secret])
+
+    def testReferencesToFSPythonScriptAreGenerated(self):
+        self.loginAsPortalOwner()
+        self.portal.invokeFactory('File', id='attachment', file='foo bar')
+        self.portal.invokeFactory('Document', id='foo',
+                                  text='<p><a href="attachment/at_download/whatever">go!</a></p>')
+        self.assertEqual(self.portal.foo.getReferences(), [self.portal.attachment])
+
+    def testReferencesToViewAreGenerated(self):
+        self.loginAsPortalOwner()
+        self.portal.invokeFactory('File', id='attachment', file='foo bar')
+        self.portal.invokeFactory('Document', id='foo',
+                                  text='<p><a href="attachment/@@foo-view/something">go!</a></p>')
+        self.assertEqual(self.portal.foo.getReferences(), [self.portal.attachment])

@@ -8,7 +8,7 @@ from zope.schema import getFieldsInOrder
 from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
-from OFS.interfaces import IItem
+from Products.CMFCore.interfaces import IContentish
 from zExceptions import NotFound
 from ZODB.POSException import ConflictError
 from zope.component.hooks import getSite
@@ -94,7 +94,7 @@ def findObject(base, path):
         except (AttributeError, KeyError,
                 NotFound, ztkNotFound, UnicodeEncodeError):
             return None, None
-        if not IItem.providedBy(child):
+        if not IContentish.providedBy(child):
             break
         obj = child
         components.pop(0)

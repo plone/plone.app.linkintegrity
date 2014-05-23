@@ -4,7 +4,9 @@ Changelog
 1.5.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Keep reference integrity  also for URLs that are calling ``FSPythonScript``
+  (like ``...atfile/at_download/file``)
+  [keul]
 
 
 1.5.4 (2014-01-27)
