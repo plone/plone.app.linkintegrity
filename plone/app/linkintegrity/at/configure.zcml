@@ -1,0 +1,29 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+             OFS.interfaces.IObjectClonedEvent"
+        handler="..handlers.modifiedArchetype" />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+             zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+        handler="..handlers.modifiedArchetype" />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler="..handlers.modifiedArchetype" />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler="..handlers.referencedObjectRemoved" />
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IReference
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler="..handlers.referenceRemoved" />
+
+</configure>

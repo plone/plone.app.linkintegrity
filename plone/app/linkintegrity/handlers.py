@@ -1,27 +1,25 @@
-from urlparse import urlsplit
-from urllib import unquote
-
+# -*- coding: utf-8 -*-
 from Acquisition import aq_get
 from Acquisition import aq_parent
-from zope.component import getUtility
-from zope.schema import getFieldsInOrder
-from Products.CMFCore.utils import getToolByName
-from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.Field import TextField
+from Products.Archetypes.interfaces import IBaseObject
+from Products.Archetypes.interfaces import IReference
+from Products.Archetypes.interfaces import IReferenceable
+from Products.CMFCore.utils import getToolByName
 from OFS.interfaces import IItem
-from zExceptions import NotFound
 from ZODB.POSException import ConflictError
-from zope.component.hooks import getSite
-from zope.publisher.interfaces import NotFound as ztkNotFound
-
 from plone.app.linkintegrity.exceptions \
     import LinkIntegrityNotificationException
-
 from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.references import updateReferences
-from Products.Archetypes.interfaces import IReferenceable
-from Products.Archetypes.interfaces import IBaseObject
+from zExceptions import NotFound
+from zope.component import getUtility
+from zope.schema import getFieldsInOrder
+from zope.component.hooks import getSite
+from zope.publisher.interfaces import NotFound as ztkNotFound
+from urllib import unquote
+from urlparse import urlsplit
 
 # To support various Plone versions, we need to support various UUID resolvers
 # This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
@@ -41,9 +39,8 @@ try:
     from plone.app.textfield import RichText
     from plone.dexterity.interfaces import IDexterityFTI
     from plone.dexterity.utils import getAdditionalSchemata
-    from plone.directives.form import Schema
     HAS_DEXTERITY = True
-except:
+except ImportError:
     HAS_DEXTERITY = False
 
 
@@ -110,6 +107,10 @@ def getObjectsFromLinks(base, links):
         s, h, path, q, f = urlsplit(link)
         # relative or local url
         if (not s and not h) or (s == scheme and h == host):
+            # Paths should always be strings
+            if isinstance(path, unicode):
+                path = path.encode('utf-8')
+
             obj, extra = findObject(base, path)
             if obj:
                 if IOFSImage.providedBy(obj):
@@ -137,7 +138,6 @@ def modifiedArchetype(obj, event):
         # to `reference_catalog`
         return
     refs = set()
-
     for field in obj.Schema().fields():
         if isinstance(field, TextField):
             accessor = field.getAccessor(obj)
@@ -167,8 +167,6 @@ def modifiedDexterity(obj, event):
         return
 
     fti = getUtility(IDexterityFTI, name=obj.portal_type)
-    fields = []
-
     schema = fti.lookupSchema()
     additional_schema = getAdditionalSchemata(context=obj,
                                               portal_type=obj.portal_type)

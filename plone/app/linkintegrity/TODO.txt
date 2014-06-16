@@ -16,3 +16,14 @@ nice things to have later on:
 - factor out all archetypes related stuff using adapters etc (i.e. references)
 - possibly replace atreferences by something more generic (five.intid should do)
 - use pullparser.py instead of the newly written link-parser?
+
+Things done and/or discovered in PLIP 13260 (winebeersprint 2014, saily, do3cc)
+- restructured whole package
+- using at and dx folders to allow setup of different specific tests in each
+  folder.
+- converted all doctests into p.a.testing tests, which run now quite fast.
+- linkintegrity is a huge hack. we should think about a more cleaner and
+  generic approach to implement such checks.
+- currently we have one failing test on dexerity, which targets renaming
+  documents. it has a decorator allowfailure to not break whole setup, we might
+  need to fix that later.

@@ -1,0 +1,26 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+    <browser:page
+        name="updateLinkIntegrityInformation"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        template="update.pt"
+        class=".update.UpdateView"
+        permission="cmf.ManagePortal"
+        />
+
+    <browser:page
+        name="index.html"
+        for="..interfaces.ILinkIntegrityNotificationException"
+        template="confirmation.pt"
+        class=".confirmation.RemoveConfirmationView"
+        permission="zope2.Public" />
+
+    <browser:page
+        name="removeConfirmationAction"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        class=".remove.RemoveReferencedObjectView"
+        permission="zope2.Public" />
+
+</configure>

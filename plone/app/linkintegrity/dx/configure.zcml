@@ -1,0 +1,26 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+
+    <include package="plone.app.referenceablebehavior" />
+
+    <subscriber
+        for="plone.app.referenceablebehavior.referenceable.IReferenceable
+             zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+        handler="..handlers.modifiedDexterity" />
+
+    <subscriber
+        for="plone.app.referenceablebehavior.referenceable.IReferenceable
+             zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+        handler="..handlers.modifiedDexterity" />
+
+    <subscriber
+        for="plone.app.referenceablebehavior.referenceable.IReferenceable
+             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler="..handlers.modifiedDexterity" />
+
+    <subscriber
+        for="plone.app.referenceablebehavior.referenceable.IReferenceable
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler="..handlers.referencedObjectRemoved" />
+
+</configure>
