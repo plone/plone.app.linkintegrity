@@ -8,4 +8,4 @@ def manage_delObjects(self, ids=None, REQUEST=None):
         REQUEST.set('link_integrity_events_to_expect', len(ids))
     return original(self, ids, REQUEST)
 
-OFS.ObjectManager.ObjectManager.manage_delObjects = manage_delObjects
+#OFS.ObjectManager.ObjectManager.manage_delObjects = manage_delObjects
