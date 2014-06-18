@@ -12,8 +12,10 @@ original = OFS.ObjectManager.ObjectManager.manage_delObjects
 # which is manage_delObjects
 
 def manage_delObjects(self, ids=None, REQUEST=None):
+    """Checking for docstrings as a security constraint is a very clever idea
+    """
     if REQUEST is not None and not isinstance(ids, basestring):
         REQUEST.set('link_integrity_events_to_expect', len(ids))
     return original(self, ids, REQUEST)
 
-#OFS.ObjectManager.ObjectManager.manage_delObjects = manage_delObjects
+OFS.ObjectManager.ObjectManager.manage_delObjects = manage_delObjects
