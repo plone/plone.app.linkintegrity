@@ -169,7 +169,6 @@ def modifiedDexterity(obj, event):
         return
 
     fti = getUtility(IDexterityFTI, name=obj.portal_type)
-    fields = []
 
     schema = fti.lookupSchema()
     additional_schema = getAdditionalSchemata(context=obj,

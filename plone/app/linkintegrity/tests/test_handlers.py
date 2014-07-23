@@ -1,10 +1,5 @@
-from Products.Five.browser import BrowserView
 from Products.PloneTestCase import PloneTestCase
 from plone.app.linkintegrity.handlers import findObject
-from plone.app.linkintegrity.tests.utils import getBrowser
-from zope.component import provideAdapter
-from zope.interface import Interface
-from zope.interface import implementer
 
 PloneTestCase.setupPloneSite()
 
@@ -24,6 +19,7 @@ class FindObjectTests(PloneTestCase.PloneTestCase):
         self.assertEqual(components, '')
 
     def test_relative_to_portal_root_2(self):
+        # Prevent regression. See https://github.com/plone/plone.app.linkintegrity/pull/17
         obj, components = findObject(self.portal.doc1, '/doc2')
         self.assertEqual(obj.absolute_url_path(), '/plone/doc2')
         self.assertEqual(components, '')
