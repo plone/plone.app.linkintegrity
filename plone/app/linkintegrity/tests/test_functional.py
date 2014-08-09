@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.Archetypes.interfaces import IReferenceable
+from Products.CMFPlone.interfaces import IEditingSchema
+
 from plone.app.linkintegrity import testing
 from plone.app.linkintegrity import exceptions
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
@@ -7,6 +9,9 @@ from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing.z2 import Browser
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
+
 
 import transaction
 
@@ -219,8 +224,9 @@ class ReferenceTestCase:
 
         # Now we turn the switch for link integrity checking off via the site
         # properties and try again:
-        props = self.portal.portal_properties.site_properties
-        props.manage_changeProperties(enable_link_integrity_checks=False)
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(IEditingSchema, prefix='plone')
+        settings.enable_link_integrity_checks = False
         transaction.commit()
         self.browser.reload()
         self.assertEqual(self.browser.url, self.portal.absolute_url())
