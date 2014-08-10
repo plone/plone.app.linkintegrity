@@ -4,6 +4,10 @@ Changelog
 2.1.0 (unreleased)
 ------------------
 
+- Read the enable_link_integrity_checks setting from plone.app.registry
+  instead of from the portal_properties.
+  [timo]
+
 - Restructure package to fully support dexterity framework. Use two different
   test layers in ``plone.app.testing``, migrate all doctests into real
   TestCases.
