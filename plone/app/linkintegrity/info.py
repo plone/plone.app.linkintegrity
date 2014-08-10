@@ -3,8 +3,6 @@ from zope.interface import implements
 from zope.component import queryUtility
 from Acquisition import aq_base
 from Products.CMFCore.interfaces import IPropertiesTool
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
 
 try:
     from plone.uuid.interfaces import IUUID
@@ -16,11 +14,6 @@ except ImportError:
             return obj.UID()
         else:
             return default
-try:
-    from Products.CMFPlone.interfaces import IEditingSchema
-    IS_PLONE5 = True
-except ImportError:
-    IS_PLONE5 = False
 
 
 class LinkIntegrityInfo(object):
@@ -35,20 +28,12 @@ class LinkIntegrityInfo(object):
 
     def integrityCheckingEnabled(self):
         """ determine if link integrity checking for the site is enabled """
-        # Plone 5 uses p.a.registry to store the enable_link_integrity setting.
-        if IS_PLONE5:
-            registry = getUtility(IRegistry)
-            settings = registry.forInterface(IEditingSchema, prefix='plone')
-            return settings.enable_link_integrity_checks
-        # Plone version < 5 store the enable_link_integrity setting in the
-        # site_properties.
         ptool = queryUtility(IPropertiesTool)
         enabled = False
         if ptool is not None:
             props = getattr(ptool, 'site_properties', None)
             if props is not None:
-                enabled = props.getProperty(
-                    'enable_link_integrity_checks', False)
+                enabled = props.getProperty('enable_link_integrity_checks', False)
         return enabled
 
     def getIntegrityInfo(self):
