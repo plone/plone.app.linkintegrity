@@ -22,7 +22,7 @@
         </span>
     </div>
 
-    <article id="content">
+    <div id="content">
         <h1 class="documentFirstHeading"
             i18n:translate="linkintegrity_breaches_title">Potential link breakage</h1>
 
@@ -94,7 +94,7 @@
 
             </form>
         </div>
-    </article>
+    </div>
 
 </metal:main>
 
