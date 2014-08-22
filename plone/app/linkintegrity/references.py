@@ -10,25 +10,47 @@
 #
 # you have been warned! :)
 
-from logging import getLogger
-from Products.CMFCore.utils import getToolByName
+from OFS.interfaces import IItem
 from Products.Archetypes.exceptions import ReferenceException
-from ZODB.POSException import ConflictError
-from Products.Archetypes import config
-from Products.Archetypes.interfaces import IReferenceable
 from Products.Archetypes.interfaces import IBaseObject
+from Products.CMFCore.utils import getToolByName
+from ZODB.POSException import ConflictError
+from logging import getLogger
 
 
 def updateReferences(obj, relationship, newrefs):
+
+    # This for sure looks ugly, but is necessary to maintian AT compatibility
+    # newrefs are wrapped objects, but getRefreences returns the real objects
+    # to generate a difference, we must do the difference with the objects
+    # the adapters wrapped. This is what real_newrefs is about
+    # next, when adding references, we have to provide the wrapped object
+    # again, so we create a mapping, newref_r_a_mapping to get the
+    # wrapped object.
+
+    real_newrefs = set()
+    newref_r_a_mapping = {}
+    for newref in newrefs:
+        # Checking for IItem is a hack to check wether this reference
+        # is an adapter or a real object. Real Objects from AT are IItem
+        if not IItem.providedBy(newref):
+            real_newrefs.add(newref.context)
+            newref_r_a_mapping[newref.context] = newref
+        else:
+            real_newrefs.add(newref)
+
     existing = set(obj.getReferences(relationship=relationship))
-    for ref in newrefs.difference(existing):   # add new references and...
+
+    for ref in real_newrefs.difference(existing):   # add new references and...
         try:
-            obj.addReference(ref, relationship=relationship)
-        except (ReferenceException,AttributeError):
+            obj.addReference(newref_r_a_mapping.get(ref, ref), 
+                             relationship=relationship)
+        except (ReferenceException, AttributeError):
             pass
-    for ref in existing.difference(newrefs):   # removed leftovers
+    for ref in existing.difference(real_newrefs):   # removed leftovers
         try:
-            obj.deleteReference(ref, relationship=relationship)
+            obj.deleteReference(newref_r_a_mapping.get(ref, ref),
+                                relationship=relationship)
         except ReferenceException:
             removeDanglingReference(obj, relationship)
 

@@ -103,7 +103,6 @@ class ReferenceTestCase:
         self.assertIn('Test Page 1 has been deleted', self.browser.contents)
         self.assertNotIn('doc1', self.portal.objectIds())
 
-    @unittest.skip('XXX: No idea why this fails on DX')
     def test_renaming_referenced_item(self):
         doc1 = self.portal.doc1
         doc2 = self.portal.doc2
