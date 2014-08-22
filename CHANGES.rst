@@ -8,6 +8,10 @@ Changelog
   (like ``...atfile/at_download/file``)
   [keul]
 
+- Be sure that every absolute path is relative to portal root, not only ones that
+  starts with portal id. This will fix an issue of missing references when Plone is
+  behind virtual hosting
+  [keul]
 
 1.5.4 (2014-01-27)
 ------------------

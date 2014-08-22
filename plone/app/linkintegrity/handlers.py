@@ -68,6 +68,8 @@ def findObject(base, path):
         portal_path = '/'.join(obj.getPhysicalPath()) + '/'
         if path.startswith(portal_path):
             path = path[len(portal_path):]
+        else:
+            path = path[1:]
     else:
         obj = aq_parent(base)   # relative urls start at the parent...
 
@@ -167,7 +169,6 @@ def modifiedDexterity(obj, event):
         return
 
     fti = getUtility(IDexterityFTI, name=obj.portal_type)
-    fields = []
 
     schema = fti.lookupSchema()
     additional_schema = getAdditionalSchemata(context=obj,
