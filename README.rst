@@ -31,6 +31,14 @@ items, is implemented by `plone.app.redirector`__.
 
   .. __: http://pypi.python.org/pypi/plone.app.redirector/
 
+Refresh the linkintegrity site status
+-------------------------------------
+
+In the case you'll need to update/refresh the linkintegrity status of the
+whole site, you can call the ``@@updateLinkIntegrityInformation`` view.
+
+It can be really slow operation.
+
 Using plone.app.linkintegrity in a WSGI application using repoze.zope2
 ----------------------------------------------------------------------
 
