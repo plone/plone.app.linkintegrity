@@ -6,7 +6,7 @@ from Products.Archetypes.interfaces import IBaseObject
 from Products.Archetypes.interfaces import IReference
 from Products.Archetypes.interfaces import IReferenceable
 from Products.CMFCore.utils import getToolByName
-from OFS.interfaces import IItem
+from Products.CMFCore.interfaces import IContentish
 from ZODB.POSException import ConflictError
 from plone.app.linkintegrity.exceptions \
     import LinkIntegrityNotificationException
@@ -91,7 +91,7 @@ def findObject(base, path):
         except (AttributeError, KeyError,
                 NotFound, ztkNotFound, UnicodeEncodeError):
             return None, None
-        if not IItem.providedBy(child):
+        if not IContentish.providedBy(child): 
             break
         obj = child
         components.pop(0)

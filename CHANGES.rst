@@ -9,6 +9,8 @@ Changelog
   TestCases.
   [saily, do3cc]
 
+- Keep reference integrity also for URLs that are calling ``FSPythonScript``
+  (like ``...atfile/at_download/file``)
 
 2.0.0 (2014-04-13)
 ------------------
