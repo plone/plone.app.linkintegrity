@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.5 (unreleased)
+1.5.5 (2014-10-22)
 ------------------
 
 - Keep reference integrity  also for URLs that are calling ``FSPythonScript``
