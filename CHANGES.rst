@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1.0 (unreleased)
+2.1.0 (2014-10-23)
 ------------------
 
 - Restructure package to fully support dexterity framework. Use two different
