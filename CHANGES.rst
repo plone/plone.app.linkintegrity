@@ -4,7 +4,8 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Removed Zope 2.10 compatibility from publisher monkey patch.
+  [davisagli]
 
 
 2.1.0 (2014-10-23)

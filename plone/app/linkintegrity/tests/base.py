@@ -18,9 +18,6 @@ from zope.lifecycleevent import modified
 import transaction
 import unittest
 
-orig_status_codes = HTTPResponse.status_codes
-orig_set = HTTPRequest.set
-
 
 class BaseTestCase(unittest.TestCase):
 
@@ -39,31 +36,16 @@ class BaseTestCase(unittest.TestCase):
             'Authorization',
             'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
 
+        # Do an initial page load to make sure the bundles get compiled
+        # (which currently commits a transaction)
+        # before we render exception views
+        self.browser.open(self.portal.absolute_url())
+
         setRoles(self.portal, TEST_USER_ID, ['Manager', ])
-
-    def _disable_event_count_helper(self):
-        # so here's yet another monkey patch ;), but only to avoid having
-        # to change almost all the tests after introducing the setting of
-        # the helper value in 'folder_delete', which prevents presenting
-        # the user with multiple confirmation forms; this patch prevents
-        # setting the value and is meant to disable this optimization in
-        # some of the tests written so far, thereby not invalidating them...
-        def set(self, key, value, set_orig=orig_set):
-            if key == 'link_integrity_events_to_expect':
-                value = 0
-            orig_set(self, key, value)
-        HTTPRequest.set = set
-
-    def tearDown(self):
-        HTTPResponse.status_codes = orig_status_codes
-        HTTPRequest.set = orig_set
 
     def _get_token(self, obj):
         return getMultiAdapter(
             (obj, self.request), name='authenticator').token()
-
-    def _set_response_status_code(self, key, value):
-        HTTPResponse.status_codes[key.lower()] = value
 
 
 class DXBaseTestCase(BaseTestCase):

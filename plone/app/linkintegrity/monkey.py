@@ -1,11 +1,9 @@
 # the following code is "stolen" from (or maybe it was inspired by? :))
 # FiveException (http://codespeak.net/svn/z3/FiveException)
 
-from zope.component import queryMultiAdapter
 from Zope2.App.startup import zpublisher_exception_hook
 from ZPublisher.Publish import Retry
 from ZPublisher.Publish import get_module_info
-from plone.app.linkintegrity import HAS_ZOPE_212
 
 
 def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
@@ -15,26 +13,7 @@ def zpublisher_exception_hook_wrapper(published, REQUEST, t, v, traceback):
         # trying to log it (like FiveException does)
         if t is Retry:
             v.reraise()
-        if HAS_ZOPE_212:
-            # In Zope 2.12 we defer to the normal publisher exception hook,
-            # which already knows how to render a view of an exception.
-            return zpublisher_exception_hook(published, REQUEST, t, v, traceback)
-        else:
-            # In Zope 2.10 we have to handle exception views ourselves.
-            # First we try to find a view/adapter for the current exception and
-            # let the original function try to handle the exception if we can't
-            # find one...
-            view = queryMultiAdapter((v, REQUEST), name='index.html', default=None)
-            if view is None:
-                zpublisher_exception_hook(published, REQUEST, t, v, traceback)
-            else:
-                # otherwise render the view and raise the rendered string like
-                # raise_standardErrorMessage does...
-                view = view.__of__(published)
-                message = view()
-                if isinstance(message, unicode):
-                    message = message.encode('utf-8')
-                raise t, message, traceback
+        return zpublisher_exception_hook(published, REQUEST, t, v, traceback)
     finally:
         traceback = None
 
@@ -49,6 +28,7 @@ def proxy_get_module_info(*args, **kwargs):
 def installExceptionHook():
     import ZPublisher.Publish
     ZPublisher.Publish.get_module_info = proxy_get_module_info
+
 
 def installStatusCode():
     from ZPublisher import HTTPResponse

@@ -60,6 +60,9 @@ class LinkIntegrityLayer(z2.Layer):
         xmlconfig.file('configure.zcml', plone.app.linkintegrity,
                        context=self['configurationContext'])
 
+        with z2.zopeApp() as app:
+            z2.installProduct(app, 'plone.app.linkintegrity')
+
         with ploneSite() as portal:
             setRoles(portal, TEST_USER_ID, ['Manager', ])
             login(portal, TEST_USER_NAME)
@@ -78,6 +81,10 @@ class LinkIntegrityLayer(z2.Layer):
             create(subfolder, 'Document', id='doc4', title='Test Page 4')
 
             self.setUpMembers(portal)
+
+    def tearDown(self):
+        with z2.zopeApp() as app:
+            z2.uninstallProduct(app, 'plone.app.linkintegrity')
 
 PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
 

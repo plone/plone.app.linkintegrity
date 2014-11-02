@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from ZPublisher.Publish import Retry
 from Products.Archetypes.interfaces import IReferenceable
 from plone.app.linkintegrity import testing
 from plone.app.linkintegrity import exceptions
@@ -10,7 +9,6 @@ from plone.app.testing import TEST_USER_PASSWORD
 from plone.testing.z2 import Browser
 
 import transaction
-import unittest
 
 
 class ReferenceTestCase:
@@ -48,10 +46,6 @@ class ReferenceTestCase:
         # Make changes visible to test browser
         transaction.commit()
 
-        self._set_response_status_code('Retry', 200)
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
-
         self.browser.handleErrors = True
         self.browser.addHeader(
             'Authorization',
@@ -79,18 +73,12 @@ class ReferenceTestCase:
 
         # Try to remove and confirm
         self.browser.open(delete_url)
-        self.browser.handleErrors = False
-        self.assertRaises(Retry, self.browser.getControl(name='delete').click)
-
-        self.portal._delObject('file2', suppress_events=True)
+        self.browser.getControl(name='delete').click()
         self.assertNotIn('file2', self.portal.objectIds())
-        transaction.commit()
 
     def test_unreferenced_removal(self):
         # This tests against #6666 and #7784, simple removal of a not
         # referenced file, which broke zeo-based installations.
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
 
         # We simply use a browser to try to delete a content item.
         self.browser.open(self.portal.doc1.absolute_url())
@@ -130,9 +118,6 @@ class ReferenceTestCase:
         self.assertIn('nuname', self.portal.objectIds())
         self.assertEqual(IReferenceable(doc2).getBackReferences(), [doc1])
 
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
-
         # We simply use a browser to try to delete a content item.
         self.browser.open(doc2.absolute_url())
         self.browser.getLink('Delete').click()
@@ -164,10 +149,6 @@ class ReferenceTestCase:
         # framework from choking on the exception we intentionally
         # throw.
         self.browser.handleErrors = True
-        self._disable_event_count_helper()
-        self._set_response_status_code('Retry', 200)
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
 
         self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
             folder1.absolute_url(), self._get_token(folder1)))
@@ -177,12 +158,7 @@ class ReferenceTestCase:
         self.assertIn('<a href="http://nohost/plone/doc2">Test Page 2</a>',
                       self.browser.contents)
         self.browser.getControl(name='delete').click()
-
-        # TODO: Retry exception is raised. Not sure this is an error in
-        # z2.Browser or just a wrong patched environment. Can please
-        # somebody who did this patching check this and fix this test
-        # here, thanks.
-        # self.assertNotIn('folder1', self.portal.objectIds())
+        self.assertNotIn('folder1', self.portal.objectIds())
 
     def test_removal_with_cookie_auth(self):
         doc1 = self.portal.doc1
@@ -212,27 +188,16 @@ class ReferenceTestCase:
             'authorization', [h.lower() for h in browser.headers.keys()])
 
         # This should lead us back to the "folder contents" listing,
-        # where we try to delete the referenced document. Before we can
-        # do this we need to prevent the test framework from choking on
-        # the exception we intentionally throw.
-        self._disable_event_count_helper()
-        self._set_response_status_code('Retry', 200)
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
+        # where we try to delete the referenced document.
         browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
             doc2.absolute_url(), self._get_token(doc2)))
         self.assertIn('Potential link breakage', browser.contents)
         self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
                       browser.contents)
         browser.getControl(name='delete').click()
+        self.assertNotIn('doc2', self.portal.objectIds())
 
-        # TODO: Retry exception is raised. Not sure this is an error in
-        # z2.Browser or just a wrong patched environment. Can please
-        # somebody who did this patching check this and fix this test
-        # here, thanks.
-        # self.assertNotIn('doc1', self.portal.objectIds())
-
-    def test_linkintegrity_on_of_switch(self):
+    def test_linkintegrity_on_off_switch(self):
         doc1 = self.portal.doc1
         doc2 = self.portal.doc2
 
@@ -245,10 +210,6 @@ class ReferenceTestCase:
         # do this we need to prevent the test framework from choking on
         # the exception we intentionally throw.
         self.browser.handleErrors = True
-        self._disable_event_count_helper()
-        self._set_response_status_code('Retry', 200)
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
 
         self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
             doc2.absolute_url(), self._get_token(doc2)))
@@ -319,8 +280,6 @@ class ReferenceTestCase:
         # and its clone. Before we can do this we need to prevent the test
         # framework from choking on the exception we intentionally throw.
         self.browser.handleErrors = True
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
 
         # Now we can continue and "click" the "delete" action. The confirmation
         # page should list both documents:
@@ -359,9 +318,6 @@ class ReferenceTestCase:
         # Before we can do this we need to prevent the test framework
         # from choking on the exception we intentionally throw.
         self.browser.handleErrors = True
-        self._disable_event_count_helper()
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
 
         self.browser.open('{0:s}/object_delete?_authenticator={1:s}'.format(
             spaces1.absolute_url(), self._get_token(spaces1)))
@@ -370,15 +326,8 @@ class ReferenceTestCase:
             '<a href="http://nohost/plone/doc1">Test Page 1</a>',
             self.browser.contents
         )
-        self._set_response_status_code('Retry', 200)
         self.browser.getControl(name='delete').click()
-        transaction.commit()
-
-        # TODO: Retry exception is raised. Not sure this is an error in
-        # z2.Browser or just a wrong patched environment. Can please
-        # somebody who did this patching check this and fix this test
-        # here, thanks.
-        # self.assertNotIn('some spaces.doc', self.portal.objectIds())
+        self.assertNotIn('some spaces.doc', self.portal.objectIds())
 
     def test_removal_via_zmi(self):
         doc1 = self.portal.doc1
@@ -394,8 +343,6 @@ class ReferenceTestCase:
         # document. Before we can do this we need to prevent the test
         # framework from choking on the exception we intentionally throw.
         self.browser.handleErrors = True
-        self._set_response_status_code(
-            'LinkIntegrityNotificationException', 200)
 
         self.browser.open('http://nohost/plone/manage_main')
         self.browser\
@@ -411,15 +358,8 @@ class ReferenceTestCase:
 
         # After we have acknowledged the breach in link integrity the
         # document should have been deleted:
-        self._set_response_status_code('Retry', 200)
         self.browser.getControl(name='delete').click()
-        transaction.commit()
-
-        # TODO: Retry exception is raised. Not sure this is an error in
-        # z2.Browser or just a wrong patched environment. Can please
-        # somebody who did this patching check this and fix this test
-        # here, thanks.
-        # self.assertNotIn('doc2', self.portal.objectIds())
+        self.assertNotIn('doc2', self.portal.objectIds())
 
 
 class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
