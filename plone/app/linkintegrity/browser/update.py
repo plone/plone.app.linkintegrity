@@ -10,6 +10,7 @@ from plone.app.linkintegrity.handlers import modifiedArchetype
 from plone.app.linkintegrity.handlers import modifiedDexterity
 from plone.app.linkintegrity import HAS_LINGUAPLONE
 from plone.app.linkintegrity import HAS_PAM
+from plone.app.referenceablebehavior.referenceable import IReferenceable
 from plone.dexterity.interfaces import IDexterityContent
 
 
@@ -50,6 +51,7 @@ class UpdateView(BrowserView):
                 modifiedArchetype(obj, 'dummy event parameter')
                 count += 1
             elif IDexterityContent.providedBy(obj):
-                modifiedDexterity(obj, 'dummy event parameter')
+                if IReferenceable.providedBy(obj):
+                    modifiedDexterity(obj, 'dummy event parameter')
                 count += 1
         return count

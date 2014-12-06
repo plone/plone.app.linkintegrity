@@ -4,6 +4,10 @@ Changelog
 2.1.1 (unreleased)
 ------------------
 
+- When using the update view for dexterity objects, only call the method if
+  object provides IReferenceable
+  [frapell]
+
 - Removed Zope 2.10 compatibility from publisher monkey patch.
   [davisagli]
 

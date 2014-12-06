@@ -135,6 +135,13 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
 
         self.setUpContent()
 
+    def setUpContent(self):
+        super(LinkIntegrityDXLayer, self).setUpContent()
+
+        with ploneSite() as portal:
+            # Create an object that does not provide the behavior to live along
+            create(portal, 'News Item', id='news1', title='News 1')
+
 
 PLONE_APP_LINKINTEGRITY_DX_FIXTURE = LinkIntegrityDXLayer()
 
