@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1.1 (unreleased)
+2.1.1 (2015-03-13)
 ------------------
 
 - When using the update view for dexterity objects, only call the method if
