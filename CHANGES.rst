@@ -4,7 +4,8 @@ Changelog
 2.1.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix html structure in confirmation.pt
+  [vincentfretin]
 
 
 2.1.1 (2015-03-13)

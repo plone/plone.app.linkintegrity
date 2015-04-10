@@ -48,6 +48,7 @@
                             This <span i18n:name="portal_type" tal:content="breach/type_title" />
                             is referenced by the following items:
                         </span>
+                    </p>
 
                         <ul>
                           <li tal:repeat="src breach/sources">
@@ -63,10 +64,8 @@
                             </tal:private>
                           </li>
                         </ul>
-                    </p>
 
                   </article>
-              </div>
 
               <br />
 
@@ -92,6 +91,7 @@
               <input class="standalone" type="submit" name="cancel"
                      value="Cancel" i18n:attributes="value linkintegrity_cancel" />
 
+              </div>
             </form>
         </div>
     </article>
