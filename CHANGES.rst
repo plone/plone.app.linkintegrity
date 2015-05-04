@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1.2 (unreleased)
+2.1.2 (2015-05-04)
 ------------------
 
 - Fix html structure in confirmation.pt
