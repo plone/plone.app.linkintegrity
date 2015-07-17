@@ -4,7 +4,7 @@ from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.utils import getToolByName, _checkPermission
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.linkintegrity.utils import isLinked
+from plone.app.linkintegrity.utils import getIncomingLinks
 from zope.i18n import translate
 
 
@@ -31,7 +31,7 @@ class DeleteConfirmationInfo(BrowserView):
         if not hasattr(self, 'breaches'):
             self.breaches = []
         result = []
-        for element in isLinked(obj):
+        for element in getIncomingLinks(obj):
             result.append(element.from_object)
 
         if len(result):

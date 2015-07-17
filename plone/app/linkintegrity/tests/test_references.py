@@ -1,28 +1,22 @@
 # -*- coding: utf-8 -*-
 from Products.Archetypes.interfaces import IReferenceable
-from plone.app.linkintegrity import testing
-from plone.app.testing import logout
-from plone.app.testing import login
 from plone.app.linkintegrity import exceptions
+from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.app.linkintegrity.utils import hasIncomingLinks
+from plone.app.testing import login
+from plone.app.testing import logout
 
 
 class ReferenceGenerationTestCase:
 
-    def test_notification_exception(self):
-        self._set_text(self.portal['doc3'], '<a href="doc1">doc1</a>')
-        self.assertRaises(
-            exceptions.LinkIntegrityNotificationException,
-            self.portal.manage_delObjects, ['doc1'])
-
     def test_is_linked(self):
-        from Products.CMFPlone.utils import isLinked
         img1 = self.portal['image1']
         doc1 = self.portal['doc1']
         self._set_text(doc1, '<img src="image1"></img>')
-        self.assertTrue(isLinked(img1))
+        self.assertTrue(hasIncomingLinks(img1))
 
     def test_referal_to_private_files(self):
         # This tests the behaviour of the link integrity code when a to
@@ -111,7 +105,7 @@ class ReferenceGenerationTestCase:
     def test_unicode_links(self):
         doc1 = self.portal.doc1
 
-        # This tests checks that isLinked can now be used safely as it
+        # This tests checks that hasIncomingLinks can now be used safely as it
         # eventually plays well with transaction machinery.
         # Add bad link, should not raise exception and there should not
         # be any references added.
