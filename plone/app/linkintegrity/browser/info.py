@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
+from OFS.interfaces import IFolder
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.utils import getToolByName, _checkPermission
 from Products.CMFPlone.interfaces import IEditingSchema
@@ -30,21 +31,40 @@ class DeleteConfirmationInfo(BrowserView):
     def isAccessible(self, obj):
         return _checkPermission(AccessContentsInformation, obj)
 
-    def checkObject(self, obj):
-        if not hasattr(self, 'breaches'):
-            self.breaches = []
+    def shallowCheckObject(self, obj):
         result = []
         for element in getIncomingLinks(obj):
             result.append(element.from_object)
 
         if len(result):
-            self.breaches.append({
+            return {
                 'title': obj.Title(),
                 'url': obj.absolute_url(),
                 'sources': result,
                 'type': obj.getPortalTypeName(),
                 'type_title': self.getPortalTypeTitle(obj)
-            })
+            }
+
+    def checkObject(self, obj):
+        if not hasattr(self, 'breaches'):
+            self.breaches = []
+        check = self.shallowCheckObject(obj)
+        if check:
+            self.breaches.append(check)
+
+        if IFolder.providedBy(obj):
+            # now check if folder and go through children
+            # looking for links....
+            # Unfortunately, there doesn't seem to be a better,
+            # less expensive way to do this. This operation could
+            # potentially cost a lot of cycles...
+            catalog = getToolByName(self.context, 'portal_catalog')
+            folder_path = '/'.join(obj.getPhysicalPath())
+            for brain in catalog(path={'query': folder_path}):
+                ob = brain.getObject()
+                check = self.shallowCheckObject(ob)
+                if check:
+                    self.breaches.append(check)
 
     def linkintegrity_enabled(self):
         reg = getUtility(IRegistry)
