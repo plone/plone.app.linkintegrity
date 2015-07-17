@@ -1,6 +1,16 @@
 from zExceptions import BadRequest
 from base64 import b64encode, b64decode
 from zlib import compress, decompressobj
+from zc.relation.interfaces import ICatalog
+from zope.component import getUtility
+from zope.intid.interfaces import IIntIds
+
+
+def isLinked(obj):
+    catalog = getUtility(ICatalog)
+    intids = getUtility(IIntIds)
+    l = catalog.findRelations({'to_id': intids.getId(obj)})
+    return l
 
 
 def decompress(data, maxsize=262144):

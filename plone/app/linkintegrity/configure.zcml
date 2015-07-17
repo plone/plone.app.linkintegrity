@@ -6,18 +6,7 @@
 
     <includeDependencies package="." />
 
-    <five:registerPackage package="." initialize=".initialize" />
-
     <include package="Products.CMFCore" file="permissions.zcml" />
-
-    <adapter
-        for="zope.publisher.interfaces.browser.IBrowserRequest"
-        provides=".interfaces.ILinkIntegrityInfo"
-        factory=".info.LinkIntegrityInfo" />
-
-    <class class="OFS.Image.Image">
-        <implements interface=".interfaces.IOFSImage" />
-    </class>
 
     <include package=".browser" />
 

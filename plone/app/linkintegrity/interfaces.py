@@ -40,6 +40,3 @@ class ILinkIntegrityInfo(Interface):
         """ return the list of previously confirmed (for removeal) items,
             optionally adding the given items, encoded for usage in a form """
 
-
-class IOFSImage(Interface):
-    """ interface for OFS.Image.Image """

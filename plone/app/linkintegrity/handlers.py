@@ -10,7 +10,7 @@ from OFS.interfaces import IItem
 from ZODB.POSException import ConflictError
 from plone.app.linkintegrity.exceptions \
     import LinkIntegrityNotificationException
-from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
+from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.references import updateReferences
 from zExceptions import NotFound
@@ -24,33 +24,26 @@ from urlparse import urlsplit
 # To support various Plone versions, we need to support various UUID resolvers
 # This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
 # plone.outputfilters.browser.resolveuid
-try:
-    from plone.app.uuid.utils import uuidToObject
-except ImportError:
-    def uuidToObject(uuid):
-        catalog = getToolByName(getSite(), 'portal_catalog', None)
-        res = catalog and catalog.unrestrictedSearchResults(UID=uuid)
-        if res and len(res) == 1:
-            return res[0].getObject()
+from plone.app.uuid.utils import uuidToObject
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 # We try to import dexterity related modules, or modules used just if
 # dexterity is around
-try:
-    from plone.app.textfield import RichText
-    from plone.dexterity.interfaces import IDexterityFTI
-    from plone.dexterity.utils import getAdditionalSchemata
-    HAS_DEXTERITY = True
-except ImportError:
-    HAS_DEXTERITY = False
+from plone.app.textfield import RichText
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.utils import getAdditionalSchemata
+from zope.intid.interfaces import IIntIds
+from z3c.relationfield import RelationValue
+from zope.annotation.interfaces import IAnnotations
+from plone.dexterity.interfaces import IDexterityContent
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from z3c.relationfield.event import _setRelation
 
 
 def _resolveUID(uid):
     res = uuidToObject(uid)
     if res is not None:
         return res
-    kupu_hook = getattr(getSite(), 'kupu_resolveuid_hook', None)
-    if kupu_hook is not None:
-        return kupu_hook(uid)
     return None
 
 
@@ -91,7 +84,9 @@ def findObject(base, path):
         except (AttributeError, KeyError,
                 NotFound, ztkNotFound, UnicodeEncodeError):
             return None, None
-        if not IItem.providedBy(child):
+        if not IDexterityContent.providedBy(child) and \
+                not IBaseObject.providedBy(child) and \
+                not IPloneSiteRoot.providedBy(child):
             break
         obj = child
         components.pop(0)
@@ -100,6 +95,7 @@ def findObject(base, path):
 
 def getObjectsFromLinks(base, links):
     """ determine actual objects refered to by given links """
+    intids = getUtility(IIntIds)
     objects = set()
     url = base.absolute_url()
     scheme, host, path, query, frag = urlsplit(url)
@@ -112,16 +108,10 @@ def getObjectsFromLinks(base, links):
                 path = path.encode('utf-8')
 
             obj, extra = findObject(base, path)
-            if obj:
-                if IOFSImage.providedBy(obj):
-                    # use atimage object for scaled images
-                    obj = aq_parent(obj)
-                if not IReferenceable.providedBy(obj):
-                    try:
-                        obj = IReferenceable(obj)
-                    except:
-                        continue
-                objects.add(obj)
+            if obj and not IPloneSiteRoot.providedBy(obj):
+                objid = intids.getId(obj)
+                relation = RelationValue(objid)
+                objects.add(relation)
     return objects
 
 
@@ -160,11 +150,6 @@ def modifiedDexterity(obj, event):
         # `getObjectFromLinks` is not possible without access
         # to `portal_url`
         return
-    rc = getToolByName(obj, 'reference_catalog', None)
-    if rc is None:
-        # `updateReferences` is not possible without access
-        # to `reference_catalog`
-        return
 
     fti = getUtility(IDexterityFTI, name=obj.portal_type)
     schema = fti.lookupSchema()
@@ -184,8 +169,8 @@ def modifiedDexterity(obj, event):
                     continue
                 links = extractLinks(value.raw)
                 refs |= getObjectsFromLinks(obj, links)
-
-    updateReferences(IReferenceable(obj), referencedRelationship, refs)
+    for ref in refs:
+        _setRelation(obj, referencedRelationship, ref)
 
 
 def referenceRemoved(obj, event):

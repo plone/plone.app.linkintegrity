@@ -8,9 +8,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from plone.app.linkintegrity.handlers import modifiedArchetype
 from plone.app.linkintegrity.handlers import modifiedDexterity
-from plone.app.linkintegrity import HAS_LINGUAPLONE
-from plone.app.linkintegrity import HAS_PAM
-from plone.app.referenceablebehavior.referenceable import IReferenceable
 from plone.dexterity.interfaces import IDexterityContent
 
 
@@ -41,9 +38,6 @@ class UpdateView(BrowserView):
         catalog = getToolByName(self.context, 'portal_catalog')
         count = 0
         kwargs = {}
-
-        if HAS_LINGUAPLONE or HAS_PAM:
-            kwargs['Language'] = 'all'
 
         for brain in catalog(**kwargs):
             obj = brain.getObject()

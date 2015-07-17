@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.1.3.dev0'
+version = '3.0.dev0'
 
 setup(name='plone.app.linkintegrity',
       version=version,
@@ -31,7 +31,6 @@ setup(name='plone.app.linkintegrity',
       include_package_data=True,
       install_requires=[
           'setuptools',
-          'plone.app.referenceablebehavior',  # Requires Products.Archetypes
       ],
       extras_require={
           'test': [

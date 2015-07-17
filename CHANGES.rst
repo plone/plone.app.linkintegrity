@@ -1,10 +1,10 @@
 Changelog
 =========
 
-2.1.3 (unreleased)
+3.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Nothing change.
 
 
 2.1.2 (2015-05-04)

@@ -3,6 +3,13 @@
     xmlns:browser="http://namespaces.zope.org/browser">
 
     <browser:page
+       for="plone.dexterity.interfaces.IDexterityContent"
+       name="delete_confirmation_info"
+       class=".info.DeleteConfirmationInfo"
+       permission="zope2.Public"
+       />
+
+    <browser:page
         name="updateLinkIntegrityInformation"
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
         template="update.pt"
