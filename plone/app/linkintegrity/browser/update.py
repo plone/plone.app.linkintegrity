@@ -45,7 +45,6 @@ class UpdateView(BrowserView):
                 modifiedArchetype(obj, 'dummy event parameter')
                 count += 1
             elif IDexterityContent.providedBy(obj):
-                if IReferenceable.providedBy(obj):
-                    modifiedDexterity(obj, 'dummy event parameter')
+                modifiedDexterity(obj, 'dummy event parameter')
                 count += 1
         return count
