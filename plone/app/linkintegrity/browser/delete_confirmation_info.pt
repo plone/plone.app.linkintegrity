@@ -2,8 +2,8 @@
   xmlns="http://www.w3.org/1999/xhtml" 
   xml:lang="en"
   lang="en"
-  tal:define="breachs view/integrityBreaches"
-  tal:condition="python: len(breachs)>0"
+  tal:define="breaches view/breaches"
+  tal:condition="python: len(breaches)>0"
   i18n:domain="plone">
     <h1 class="documentFirstHeading"
         i18n:translate="linkintegrity_breaches_title">Potential link breakage</h1>
@@ -15,8 +15,8 @@
             these references first.
         </p>
 
-        <div>
-            <article tal:repeat="breach breachs">
+        <div tal:define="token context/@@authenticator/token">
+            <article tal:repeat="breach breaches">
 
               <header>
                 <a tal:attributes="href breach/url"
@@ -33,7 +33,7 @@
                     <li tal:repeat="src python:breach['sources']">
                       <tal:visible condition="python: view.isAccessible(src)">
                         <a tal:attributes="href src/absolute_url" tal:content="src/Title" />
-                        [<a tal:attributes="href string:${src/absolute_url}/edit"
+                        [<a tal:attributes="href string:${src/absolute_url}/edit?_authenticator=${token}"
                           i18n:translate="linkintegrity_edit_in_new_window"
                           target="_blank">Edit in new window</a>]
                       </tal:visible>

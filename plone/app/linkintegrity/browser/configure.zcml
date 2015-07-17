@@ -3,7 +3,7 @@
     xmlns:browser="http://namespaces.zope.org/browser">
 
     <browser:page
-       for="plone.dexterity.interfaces.IDexterityContent"
+       for="*"
        name="delete_confirmation_info"
        class=".info.DeleteConfirmationInfo"
        permission="zope2.Public"

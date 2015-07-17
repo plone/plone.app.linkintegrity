@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
-from Products.Five import BrowserView
-from Products.CMFCore.utils import getToolByName, _checkPermission
 from Products.CMFCore.permissions import AccessContentsInformation
-from plone.app.linkintegrity.utils import encodeRequestData
-from zope.component import getMultiAdapter
-from zope.i18n import translate
+from Products.CMFCore.utils import getToolByName, _checkPermission
+from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.linkintegrity.utils import isLinked
+from zope.i18n import translate
 
 
 class DeleteConfirmationInfo(BrowserView):
@@ -29,21 +27,23 @@ class DeleteConfirmationInfo(BrowserView):
     def isAccessible(self, obj):
         return _checkPermission(AccessContentsInformation, obj)
 
-    def integrityBreaches(self):
+    def checkObject(self, obj):
+        if not hasattr(self, 'breaches'):
+            self.breaches = []
         result = []
-        for element in isLinked(self.context):
+        for element in isLinked(obj):
             result.append(element.from_object)
 
         if len(result):
-            return [{
-                'title': self.context.Title(),
-                'url': self.context.absolute_url(),
+            self.breaches.append({
+                'title': obj.Title(),
+                'url': obj.absolute_url(),
                 'sources': result,
-                'type': self.context.getPortalTypeName(),
-                'type_title': self.getPortalTypeTitle(self.context)
-            }]
-        else:
-            return []
+                'type': obj.getPortalTypeName(),
+                'type_title': self.getPortalTypeTitle(obj)
+            })
 
-    def __call__(self):
+    def __call__(self, skip_context=False):
+        if not skip_context:
+            self.checkObject(self.context)
         return self.template()
