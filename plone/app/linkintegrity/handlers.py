@@ -122,11 +122,6 @@ def modifiedArchetype(obj, event):
         # `getObjectFromLinks` is not possible without access
         # to `portal_url`
         return
-    rc = getToolByName(obj, 'reference_catalog', None)
-    if rc is None:
-        # `updateReferences` is not possible without access
-        # to `reference_catalog`
-        return
     refs = set()
     for field in obj.Schema().fields():
         if isinstance(field, TextField):

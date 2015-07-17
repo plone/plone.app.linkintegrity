@@ -18,6 +18,8 @@ from plone.app.testing import ploneSite
 from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.configuration import xmlconfig
+from plone.app.relationfield.setuphandlers import add_intids
+from plone.app.relationfield.setuphandlers import add_relations
 
 B64_DATA = 'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
 GIF = StringIO(decodestring(B64_DATA))
@@ -99,6 +101,9 @@ class LinkIntegrityATLayer(LinkIntegrityLayer):
     )
 
     def setUp(self):
+        with ploneSite() as portal:
+            add_intids(portal)
+            add_relations(portal)
         self.setUpContent()
 
 PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
@@ -120,19 +125,6 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
     ])
 
     def setUp(self):
-        with ploneSite() as portal:
-            ttool = getToolByName(portal, 'portal_types')
-            for type_info in self.types_providing_referencable_behavior:
-                ttool.getTypeInfo(type_info).behaviors += (
-                    'plone.app.relationfield.behavior.IRelatedItems',
-                    'plone.app.referenceablebehavior.referenceable.IReferenceable',  # noqa
-                )
-
-            # FIXME: we need uid_catalog and referencer_catalog to keep
-            #        plone.app.referencebehavior working. So load Archetypes
-            #        profile to install those tools before we continue
-            applyProfile(portal, 'Products.Archetypes:Archetypes')
-
         self.setUpContent()
 
     def setUpContent(self):
