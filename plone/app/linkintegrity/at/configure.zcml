@@ -16,6 +16,7 @@
              zope.lifecycleevent.interfaces.IObjectModifiedEvent"
         handler="..handlers.modifiedArchetype" />
 
+<!--
     <subscriber
         for="Products.Archetypes.interfaces.IBaseObject
              zope.lifecycleevent.interfaces.IObjectRemovedEvent"
@@ -25,5 +26,6 @@
         for="Products.Archetypes.interfaces.IReference
              zope.lifecycleevent.interfaces.IObjectRemovedEvent"
         handler="..handlers.referenceRemoved" />
+-->
 
 </configure>
