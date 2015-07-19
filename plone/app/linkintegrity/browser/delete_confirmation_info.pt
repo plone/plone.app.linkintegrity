@@ -16,21 +16,21 @@
         </p>
 
         <div tal:define="token context/@@authenticator/token">
-            <article tal:repeat="breach breaches">
+            <article tal:repeat="breach breaches" class="breach-container">
 
               <header>
                 <a tal:attributes="href breach/url"
                     tal:content="breach/title" />
               </header>
               <p>
-                  <span i18n:translate="linkintegrity_is_referenced">
+                  <span i18n:translate="linkintegrity_is_referenced" class="breach-warning">
                       This <span i18n:name="portal_type" tal:content="breach/type_title" />
                       is referenced by the following items:
                   </span>
               </p>
 
                   <ul>
-                    <li tal:repeat="src python:breach['sources']">
+                    <li tal:repeat="src python:breach['sources']" class="breach-item">
                       <tal:visible condition="python: view.isAccessible(src)">
                         <a tal:attributes="href src/absolute_url" tal:content="src/Title" />
                         [<a tal:attributes="href string:${src/absolute_url}/edit?_authenticator=${token}"
