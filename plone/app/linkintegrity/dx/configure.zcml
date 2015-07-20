@@ -8,7 +8,7 @@
 
     <subscriber
         for="plone.app.relationfield.interfaces.IDexterityHasRelations
-             zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+             zope.lifecycleevent.interfaces.IObjectAddedEvent"
         handler="..handlers.modifiedDexterity" />
 
     <subscriber
