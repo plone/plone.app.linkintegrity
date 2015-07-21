@@ -34,7 +34,9 @@ class DeleteConfirmationInfo(BrowserView):
     def shallowCheckObject(self, obj):
         result = []
         for element in getIncomingLinks(obj):
-            result.append(element.from_object)
+            obj = element.from_object
+            if obj:
+                result.append(element.from_object)
 
         if len(result):
             return {

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from Products.Archetypes.interfaces import IReferenceable
 from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.linkintegrity.utils import hasIncomingLinks
+from plone.app.linkintegrity.utils import getIncomingLinks
+from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.testing import login
 from plone.app.testing import logout
 
@@ -48,7 +49,8 @@ class ReferenceGenerationTestCase:
 
         # Throws exception
         view = img.restrictedTraverse('@@object_delete')
-        # self.assertRaises(exceptions.LinkIntegrityNotificationException, view)
+        self.assertEqual('THIS NEEDS TO BE FIXED', 'NEED TO CHECK PERMISSIONS ON REFERENCES')
+        # XXX Need to test this correctly somehow
 
     def test_link_extraction_easy(self):
         doc1 = self.portal.doc1
@@ -77,29 +79,24 @@ class ReferenceGenerationTestCase:
         doc1a = testing.create(self.portal, 'Document', id='doc1a')
         doc1 = self.portal.doc1
 
-        self.assertEqual(len(IReferenceable(doc1).getReferences()), 0)
+        self.assertEqual(len(list(getOutgoingLinks(doc1))), 0)
         self._set_text(doc1, '<a href="doc1a">Doc 1a</a>')
-        self.assertEqual(len(IReferenceable(doc1).getReferences()), 1)
-        self.assertEqual(IReferenceable(doc1).getReferences()[0].id,
-                         self.portal.doc1a.id)
+        self.assertEqual(len(list(getOutgoingLinks(doc1))), 1)
+        self.assertEqual([l.to_object for l in getOutgoingLinks(doc1)],
+                         [self.portal.doc1a])
 
         # Now delete the target item, suppress events and test again,
-        # the reference should be broken now.
+        # the reference should be gone now.
         self.portal._delObject(doc1a.id, suppress_events=True)
-        self.assertEqual(IReferenceable(doc1).getReferences(), [None])
-
-        # If we now try to update the linking document again in order to
-        # remove the link, things used to break raising a
-        # ``ReferenceException``.  This should be handled more
-        # gracefully now:
-        self._set_text(doc1, 'foo!')
-        self.assertEqual(IReferenceable(doc1).getReferences(), [])
+        self.assertEqual([l.to_object for l in getOutgoingLinks(doc1)], [None])
 
     def test_relative_upwards_link_generates_matching_reference(self):
         doc1 = self.portal.doc1
         doc3 = self.portal.folder1.doc3
         self._set_text(doc3, '<a href="../doc1">go!</a>')
-        self.assertEqual(IReferenceable(doc3).getReferences(), [doc1])
+        self.assertEqual(len(list(getOutgoingLinks(doc1))), 0)
+        self.assertEqual([l.to_object for l in getOutgoingLinks(doc3)],
+                         [doc1])
 
     def test_unicode_links(self):
         doc1 = self.portal.doc1
@@ -109,7 +106,7 @@ class ReferenceGenerationTestCase:
         # Add bad link, should not raise exception and there should not
         # be any references added.
         self._set_text(doc1, unicode('<a href="ö?foo=bar&baz=bam">bug</a>', 'utf-8'))
-        self.assertEqual(IReferenceable(doc1).getReferences(), [])
+        self.assertEqual([l for l in getOutgoingLinks(doc1)], [])
 
     def test_reference_orthogonality(self):
         doc = self.portal.doc1
@@ -117,10 +114,10 @@ class ReferenceGenerationTestCase:
         tag = img.restrictedTraverse('@@images').tag()
 
         # This tests the behavior when other references already exist.
-        self.assertEqual(IReferenceable(doc).getReferences(), [])
-        self.assertEqual(IReferenceable(doc).getBackReferences(), [])
-        self.assertEqual(IReferenceable(img).getReferences(), [])
-        self.assertEqual(IReferenceable(img).getBackReferences(), [])
+        self.assertEqual([l for l in getOutgoingLinks(doc)], [])
+        self.assertEqual([l for l in getIncomingLinks(doc)], [])
+        self.assertEqual([l for l in getOutgoingLinks(img)], [])
+        self.assertEqual([l for l in getOutgoingLinks(img)], [])
 
         # Then establish a reference between the document and image as
         # a related item:
@@ -131,9 +128,7 @@ class ReferenceGenerationTestCase:
         # which should trigger the creation of a link integrity reference:
         self._set_text(doc, tag)
 
-        from plone.app.linkintegrity.handlers import referencedRelationship
-        self.assertEqual(IReferenceable(doc).getReferences(
-            relationship=referencedRelationship), [img, ])
+        self.assertEqual([l.to_object for l in getOutgoingLinks(doc)], [img])
 
         # And the related item reference remains in place:
         self.assertEqual(self._get_related_items(doc), [img, ])
@@ -142,8 +137,7 @@ class ReferenceGenerationTestCase:
         # link to the image, which should trigger the removal of the
         # link integrity reference:
         self._set_text(doc, 'where did my link go?')
-        self.assertEqual(IReferenceable(doc).getReferences(
-            relationship=referencedRelationship), [])
+        self.assertEqual([l.to_object for l in getOutgoingLinks(doc)], [])
 
         # And again the related item reference remains in place:
         self.assertEqual(self._get_related_items(doc), [img, ])
