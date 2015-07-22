@@ -17,6 +17,7 @@ from urlparse import urlsplit
 from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
 from zExceptions import NotFound
+from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.publisher.interfaces import NotFound as ztkNotFound
@@ -110,8 +111,7 @@ def modifiedArchetype(obj, event):
                 value = field.get(obj)
             links = extractLinks(value, encoding)
             refs |= getObjectsFromLinks(obj, links)
-    for ref in refs:
-        _setRelation(obj, referencedRelationship, ref)
+    updateReferences(obj, refs)
 
 
 def modifiedDexterity(obj, event):
@@ -140,5 +140,28 @@ def modifiedDexterity(obj, event):
                     continue
                 links = extractLinks(value.raw)
                 refs |= getObjectsFromLinks(obj, links)
+    updateReferences(obj, refs)
+
+
+def updateReferences(obj, refs):
+    """Renew all linkintegritry-references.
+
+    Search the zc.relation catalog for linkintegritry-references for this obj.
+    Drop them all and set the new ones.
+    TODO: Might be improved by not changing anything if the links are the same.
+    """
+    intids = getUtility(IIntIds)
+    try:
+        int_id = intids.getId(obj)
+    except KeyError:
+        # In some cases a object might not be registered by the intid catalog
+        int_id = intids.register(obj)
+    catalog = getUtility(ICatalog)
+    # unpack the rels before deleting
+    old_rels = [i for i in catalog.findRelations(
+        {'from_id': int_id,
+         'from_attribute': referencedRelationship})]
+    for old_rel in old_rels:
+        catalog.unindex(old_rel)
     for ref in refs:
         _setRelation(obj, referencedRelationship, ref)
