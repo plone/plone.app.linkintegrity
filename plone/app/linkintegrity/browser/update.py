@@ -5,10 +5,15 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
-
+from datetime import datetime
+from datetime import timedelta
 from plone.app.linkintegrity.handlers import modifiedArchetype
 from plone.app.linkintegrity.handlers import modifiedDexterity
 from plone.dexterity.interfaces import IDexterityContent
+from zExceptions import NotFound
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class UpdateView(BrowserView):
@@ -18,14 +23,18 @@ class UpdateView(BrowserView):
         request = aq_inner(self.request)
         clicked = request.form.has_key
         if clicked('update') or clicked('delete_all'):
+            starttime = datetime.now()
             count = self.update()
+            duration = timedelta(seconds=(datetime.now() - starttime).seconds)
             msg = _(
                 u'linkintegrity_update_info',
                 default=u'Link integrity information updated for ${count} ' +
-                        u'item(s).',
-                mapping={'count': count},
+                        u'items in {time} seconds.',
+                mapping={'count': count, 'time': str(duration)},
             )
             IStatusMessage(request).add(msg, type='info')
+            msg = 'Updated {} items in {} seconds'.format(count, str(duration))
+            logger.info(msg)
             request.RESPONSE.redirect(getToolByName(context, 'portal_url')())
         elif clicked('cancel'):
             msg = _(u'Update cancelled.')
@@ -40,7 +49,10 @@ class UpdateView(BrowserView):
         kwargs = {}
 
         for brain in catalog(**kwargs):
-            obj = brain.getObject()
+            try:
+                obj = brain.getObject()
+            except NotFound:
+                logger.warn("Object {0} not found".format(brain.getPath()))
             if IBaseObject.providedBy(obj):
                 modifiedArchetype(obj, 'dummy event parameter')
                 count += 1

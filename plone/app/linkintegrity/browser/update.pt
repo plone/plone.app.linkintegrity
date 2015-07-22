@@ -18,7 +18,7 @@
     <div id="content-core">
         <p i18n:translate="linkintegrity_update_instructions">
             Clicking the below button will cause link integrity information to be
-            updated.  This might take a while, especially for bigger sites...
+            updated. This might take a while, especially for bigger sites...
         </p>
 
         <form method="post" action="updateLinkIntegrityInformation"
