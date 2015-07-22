@@ -4,10 +4,13 @@ from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.linkintegrity.utils import hasIncomingLinks
+from plone.app.linkintegrity.utils import hasOutgoingLinks
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.testing import login
 from plone.app.testing import logout
+from plone.app.testing import TEST_USER_NAME
+from zope.lifecycleevent import modified
 
 
 class ReferenceGenerationTestCase:
@@ -44,13 +47,32 @@ class ReferenceGenerationTestCase:
         self.assertTrue(checkPermission('View', img))
         self.assertTrue(checkPermission('Access contents information', img))
 
-        token = self._get_token(img)
-        self.request['_authenticator'] = token
+        # The warning is shown.
+        self.assertTrue(hasOutgoingLinks(doc))
+        view = img.restrictedTraverse('delete_confirmation')
+        results = view()
+        self.assertIn('Potential link breakage', results)
+        self.assertIn('The item is not accessible.', results)
 
-        # Throws exception
-        view = img.restrictedTraverse('@@object_delete')
-        self.assertEqual('THIS NEEDS TO BE FIXED', 'NEED TO CHECK PERMISSIONS ON REFERENCES')
-        # XXX Need to test this correctly somehow
+        # delete linked item and check if the source still has the relation
+
+        # TODO: There is a permission-problem. Deleting the relation
+        # When deleting the linked obj the relation is deleted by
+        # z3c.relationfield.event.breakRelations. That also fires
+        # ObjectModifiedEvent on the linked obj even though the user might not
+        # have the permission to edit that obj.
+        # Here plone.app.versioningbehavior.subscribers.create_version_on_save
+        # for the linked object is triggerted and results in
+        # Unauthorized: You are not allowed to access 'save' in this context
+
+        # self.portal.manage_delObjects(img.id)
+        self.portal._delObject(img.id, suppress_events=True)
+
+        logout()
+        login(self.portal, TEST_USER_NAME)
+        modified(doc)
+        self.assertFalse(hasOutgoingLinks(doc))
+        # doc now has a broken link and no relation :-(
 
     def test_link_extraction_easy(self):
         doc1 = self.portal.doc1
