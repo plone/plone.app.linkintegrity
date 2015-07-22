@@ -1,42 +1,26 @@
 # -*- coding: utf-8 -*-
-from urllib import unquote
-from urlparse import urlsplit
-
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from ZODB.POSException import ConflictError
 from plone.app.linkintegrity.parser import extractLinks
-from zExceptions import NotFound
-from zope.component import getUtility
-from zope.publisher.interfaces import NotFound as ztkNotFound
-from zope.schema import getFieldsInOrder
-
-# To support various Plone versions, we need to support various UUID resolvers
-# This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
-# plone.outputfilters.browser.resolveuid
-from plone.app.uuid.utils import uuidToObject
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-
-# We try to import dexterity related modules, or modules used just if
-# dexterity is around
 from plone.app.textfield import RichText
+from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import getAdditionalSchemata
+from urllib import unquote
+from urlparse import urlsplit
 from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
+from zExceptions import NotFound
+from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
-
-
-def _resolveUID(uid):
-    res = uuidToObject(uid)
-    if res is not None:
-        return res
-    return None
-
+from zope.publisher.interfaces import NotFound as ztkNotFound
+from zope.schema import getFieldsInOrder
 
 referencedRelationship = 'isReferencing'
 
@@ -58,7 +42,7 @@ def findObject(base, path):
     # on a view or skinscript to do this for us.
     if 'resolveuid' in components:
         uid = components[components.index('resolveuid') + 1]
-        obj = _resolveUID(uid)
+        obj = uuidToObject(uid)
         if obj:
             return obj, path
 
