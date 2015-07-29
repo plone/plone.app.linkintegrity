@@ -56,9 +56,17 @@ class UpdateView(BrowserView):
                 logger.error(msg.format(brain.getPath()), exc_info=1)
                 continue
             if IBaseObject.providedBy(obj):
-                modifiedArchetype(obj, 'dummy event parameter')
-                count += 1
+                try:
+                    modifiedArchetype(obj, 'dummy event parameter')
+                    count += 1
+                except Exception:
+                    msg = "Error updating linkintegrity-info for {}."
+                    logger.error(msg.format(obj.absolute_url()), exc_info=1)
             elif IDexterityContent.providedBy(obj):
-                modifiedDexterity(obj, 'dummy event parameter')
-                count += 1
+                try:
+                    modifiedDexterity(obj, 'dummy event parameter')
+                    count += 1
+                except Exception:
+                    msg = "Error updating linkintegrity-info for {}."
+                    logger.error(msg.format(obj.absolute_url()), exc_info=1)
         return count
