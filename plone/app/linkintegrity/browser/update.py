@@ -74,16 +74,14 @@ class UpdateView(BrowserView):
                 msg = "Catalog inconsistency: {} not found!"
                 logger.error(msg.format(brain.getPath()), exc_info=1)
                 continue
+            method = None
             if IBaseObject.providedBy(obj):
-                try:
-                    modifiedArchetype(obj, 'dummy event parameter')
-                    count += 1
-                except Exception:
-                    msg = "Error updating linkintegrity-info for {}."
-                    logger.error(msg.format(obj.absolute_url()), exc_info=1)
+                method = modifiedArchetype
             elif IDexterityContent.providedBy(obj):
+                method = modifiedDexterity
+            if method:
                 try:
-                    modifiedDexterity(obj, 'dummy event parameter')
+                    method(obj, 'dummy event parameter')
                     count += 1
                 except Exception:
                     msg = "Error updating linkintegrity-info for {}."
