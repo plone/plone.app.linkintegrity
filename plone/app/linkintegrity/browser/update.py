@@ -12,6 +12,7 @@ from plone.app.linkintegrity.handlers import modifiedDexterity
 from plone.dexterity.interfaces import IDexterityContent
 from zExceptions import NotFound
 import logging
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -51,8 +52,10 @@ class UpdateView(BrowserView):
         for brain in catalog(**kwargs):
             try:
                 obj = brain.getObject()
-            except NotFound:
-                logger.warn("Object {0} not found".format(brain.getPath()))
+            except (AttributeError, NotFound, KeyError), e:
+                trace = traceback.format_exc()
+                msg = "Catalog inconsistency: {0} not found!: \n{1}\n{2}\n"
+                logger.error(msg.format(brain.getPath(), e, trace))
             if IBaseObject.providedBy(obj):
                 modifiedArchetype(obj, 'dummy event parameter')
                 count += 1
