@@ -46,7 +46,7 @@ class UpdateView(BrowserView):
             msg = _(
                 u'linkintegrity_update_info',
                 default=u'Link integrity information updated for ${count} ' +
-                        u'items in {time} seconds.',
+                        u'items in ${time} seconds.',
                 mapping={'count': count, 'time': str(duration)},
             )
             IStatusMessage(request).add(msg, type='info')
