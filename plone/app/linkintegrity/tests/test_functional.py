@@ -56,6 +56,9 @@ class ReferenceTestCase:
                       self.browser.contents)
 
         # Click cancel button, item should stay in place
+        # FIXME! This fails in Archetypes because the redirect
+        # plone.app.content.browser.actions.DeleteConfirmationForm.handle_cancel
+        # is broken for AT-content.
         self.browser.getControl(name='form.buttons.Cancel').click()
         self.assertEqual(self.browser.url, file2.absolute_url() + '/view')
         self.assertIn('Removal cancelled.', self.browser.contents)
