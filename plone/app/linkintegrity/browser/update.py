@@ -50,7 +50,7 @@ class UpdateView(BrowserView):
                 mapping={'count': count, 'time': str(duration)},
             )
             IStatusMessage(request).add(msg, type='info')
-            msg = 'Updated {} items in {} seconds'.format(count, str(duration))
+            msg = 'Updated {0} items in {1} seconds'.format(count, str(duration))
             logger.info(msg)
             request.RESPONSE.redirect(getToolByName(context, 'portal_url')())
         elif clicked('cancel'):
