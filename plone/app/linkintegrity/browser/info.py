@@ -3,12 +3,10 @@ from Acquisition import aq_inner
 from OFS.interfaces import IFolder
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.utils import getToolByName, _checkPermission
-from Products.CMFPlone.interfaces import IEditingSchema
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.linkintegrity.utils import getIncomingLinks
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
+from plone.app.linkintegrity.utils import linkintegrity_enabled
 from zope.i18n import translate
 
 
@@ -68,13 +66,8 @@ class DeleteConfirmationInfo(BrowserView):
                 if check:
                     self.breaches.append(check)
 
-    def linkintegrity_enabled(self):
-        reg = getUtility(IRegistry)
-        editing_settings = reg.forInterface(IEditingSchema, prefix='plone')
-        return editing_settings.enable_link_integrity_checks
-
     def __call__(self, skip_context=False):
-        if not self.linkintegrity_enabled():
+        if not linkintegrity_enabled():
             self.breaches = []
         elif not skip_context:
             self.checkObject(self.context)

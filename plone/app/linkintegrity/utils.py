@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from Products.CMFPlone.interfaces import IEditingSchema
 from plone.app.linkintegrity.handlers import referencedRelationship
+from plone.registry.interfaces import IRegistry
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
@@ -45,3 +47,9 @@ def hasOutgoingLinks(obj):
     for i in getOutgoingLinks(obj):
         return True
     return False
+
+
+def linkintegrity_enabled():
+    reg = getUtility(IRegistry)
+    editing_settings = reg.forInterface(IEditingSchema, prefix='plone')
+    return editing_settings.enable_link_integrity_checks
