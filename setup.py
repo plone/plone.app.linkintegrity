@@ -31,6 +31,8 @@ setup(name='plone.app.linkintegrity',
       include_package_data=True,
       install_requires=[
           'setuptools',
+          'plone.app.intid',
+          'plone.app.relationfield',
       ],
       extras_require={
           'test': [

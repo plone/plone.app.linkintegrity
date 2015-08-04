@@ -11,15 +11,12 @@ from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
-from plone.app.testing import applyProfile
 from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import ploneSite
 from plone.app.testing import setRoles
 from plone.testing import z2
 from zope.configuration import xmlconfig
-from plone.app.relationfield.setuphandlers import add_intids
-from plone.app.relationfield.setuphandlers import add_relations
 
 B64_DATA = 'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
 GIF = StringIO(decodestring(B64_DATA))
@@ -58,7 +55,6 @@ class LinkIntegrityLayer(z2.Layer):
 
     def setUpContent(self):
         import plone.app.linkintegrity
-
         xmlconfig.file('configure.zcml', plone.app.linkintegrity,
                        context=self['configurationContext'])
 
@@ -101,9 +97,6 @@ class LinkIntegrityATLayer(LinkIntegrityLayer):
     )
 
     def setUp(self):
-        with ploneSite() as portal:
-            add_intids(portal)
-            add_relations(portal)
         self.setUpContent()
 
 PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
