@@ -20,6 +20,7 @@ from zExceptions import NotFound
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
+from zope.keyreference.interfaces import NotYet
 from zope.publisher.interfaces import NotFound as ztkNotFound
 from zope.schema import getFieldsInOrder
 
@@ -154,8 +155,11 @@ def updateReferences(obj, refs):
     try:
         int_id = intids.getId(obj)
     except KeyError:
-        # In some cases a object might not be registered by the intid catalog
-        int_id = intids.register(obj)
+        # In some cases a object is not yet registered by the intid catalog
+        try:
+            int_id = intids.register(obj)
+        except NotYet:
+            return
     catalog = getUtility(ICatalog)
     # unpack the rels before deleting
     old_rels = [i for i in catalog.findRelations(
