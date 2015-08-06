@@ -137,7 +137,7 @@ def modifiedDexterity(obj, event):
             if isinstance(field, RichText):
                 # Only check for "RichText" ?
                 value = getattr(schema(obj), name)
-                if not value:
+                if not value or not getattr(value, 'raw', None):
                     continue
                 links = extractLinks(value.raw)
                 refs |= getObjectsFromLinks(obj, links)
