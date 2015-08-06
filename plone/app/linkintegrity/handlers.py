@@ -19,11 +19,14 @@ from z3c.relationfield.event import _setRelation
 from zExceptions import NotFound
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
+from zope.component import queryUtility
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
 from zope.publisher.interfaces import NotFound as ztkNotFound
 from zope.schema import getFieldsInOrder
+import logging
 
+logger = logging.getLogger(__name__)
 referencedRelationship = 'isReferencing'
 
 
@@ -94,10 +97,7 @@ def getObjectsFromLinks(base, links):
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
-    pu = getToolByName(obj, 'portal_url', None)
-    if pu is None:
-        # `getObjectFromLinks` is not possible without access
-        # to `portal_url`
+    if not check_linkintegrity_dependencies(obj):
         return
     refs = set()
     for field in obj.Schema().fields():
@@ -117,21 +117,14 @@ def modifiedArchetype(obj, event):
 
 def modifiedDexterity(obj, event):
     """ a dexterity based object was modified """
-    pu = getToolByName(obj, 'portal_url', None)
-    if pu is None:
-        # `getObjectFromLinks` is not possible without access
-        # to `portal_url`
+    if not check_linkintegrity_dependencies(obj):
         return
-
     fti = getUtility(IDexterityFTI, name=obj.portal_type)
     schema = fti.lookupSchema()
     additional_schema = getAdditionalSchemata(context=obj,
                                               portal_type=obj.portal_type)
-
     schemas = [i for i in additional_schema] + [schema]
-
     refs = set()
-
     for schema in schemas:
         for name, field in getFieldsInOrder(schema):
             if isinstance(field, RichText):
@@ -169,3 +162,18 @@ def updateReferences(obj, refs):
         catalog.unindex(old_rel)
     for ref in refs:
         _setRelation(obj, referencedRelationship, ref)
+
+
+def check_linkintegrity_dependencies(obj):
+    pu = getToolByName(obj, 'portal_url', None)
+    if pu is None:
+        # `getObjectFromLinks` is not possible without access
+        # to `portal_url`
+        return False
+    if not queryUtility(IIntIds, False):
+        logger.info('Linkintegrity not possible without zope.intid-catalog')
+        return False
+    if not queryUtility(ICatalog, False):
+        logger.info('Linkintegrity not possible without zc.relation-catalog')
+        return False
+    return True
