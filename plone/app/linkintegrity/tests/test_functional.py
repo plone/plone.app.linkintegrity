@@ -17,10 +17,12 @@ from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
 import transaction
+import unittest2 as unittest
 
 
 class ReferenceTestCase:
 
+    @unittest.skip('Re-enable after https://github.com/plone/plone.app.content/issues/38')  # noqa
     def test_file_reference_linkintegrity_page_is_shown(self):
         doc1 = self.portal.doc1
         file2 = testing.create(self.portal, 'File',
