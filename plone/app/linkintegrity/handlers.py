@@ -165,15 +165,14 @@ def updateReferences(obj, refs):
 
 
 def check_linkintegrity_dependencies(obj):
-    pu = getToolByName(obj, 'portal_url', None)
-    if pu is None:
+    if not getToolByName(obj, 'portal_url', None):
         # `getObjectFromLinks` is not possible without access
         # to `portal_url`
         return False
-    if not queryUtility(IIntIds, False):
+    if not queryUtility(IIntIds):
         logger.info('Linkintegrity not possible without zope.intid-catalog')
         return False
-    if not queryUtility(ICatalog, False):
+    if not queryUtility(ICatalog):
         logger.info('Linkintegrity not possible without zc.relation-catalog')
         return False
     return True
