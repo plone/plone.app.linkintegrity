@@ -172,7 +172,7 @@ def check_linkintegrity_dependencies(obj):
     if not queryUtility(IIntIds):
         logger.info('Linkintegrity not possible without zope.intid-catalog')
         return False
-    if not queryUtility(ICatalog):
-        logger.info('Linkintegrity not possible without zc.relation-catalog')
-        return False
+    # if not queryUtility(ICatalog):
+    #     logger.info('Linkintegrity not possible without zc.relation-catalog')
+    #     return False
     return True
