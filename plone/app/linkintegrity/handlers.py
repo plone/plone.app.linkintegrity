@@ -19,7 +19,7 @@ from z3c.relationfield.event import _setRelation
 from zExceptions import NotFound
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
-from zope.component import queryUtility
+from zope.component.interfaces import ComponentLookupError
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
 from zope.publisher.interfaces import NotFound as ztkNotFound
@@ -169,10 +169,11 @@ def check_linkintegrity_dependencies(obj):
         # `getObjectFromLinks` is not possible without access
         # to `portal_url`
         return False
-    if not queryUtility(IIntIds):
-        logger.info('Linkintegrity not possible without zope.intid-catalog')
+    try:
+        getUtility(IIntIds)
+        getUtility(ICatalog)
+    except ComponentLookupError:
+        # Linkintegrity not possible without zope.intid-
+        # and zc.relation-catalog
         return False
-    # if not queryUtility(ICatalog):
-    #     logger.info('Linkintegrity not possible without zc.relation-catalog')
-    #     return False
     return True
