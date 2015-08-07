@@ -34,6 +34,8 @@ logger = logging.getLogger(__name__)
 
 
 class UpdateView(BrowserView):
+    """Iterate over all catalogued items and update linkintegrity-information.
+    """
 
     def __call__(self):
         context = aq_inner(self.context)

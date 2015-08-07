@@ -10,11 +10,39 @@
 
     <include package=".browser" />
 
-    <include package=".at"
-             zcml:condition="installed Products.Archetypes" />
+    <configure zcml:condition="installed Products.Archetypes">
+      <subscriber
+          for="Products.Archetypes.interfaces.IBaseObject
+               OFS.interfaces.IObjectClonedEvent"
+          handler=".handlers.modifiedArchetype" />
 
-    <include package=".dx"
-             zcml:condition="installed plone.dexterity" />
+      <subscriber
+          for="Products.Archetypes.interfaces.IBaseObject
+               zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+          handler=".handlers.modifiedArchetype" />
+
+      <subscriber
+          for="Products.Archetypes.interfaces.IBaseObject
+               zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+          handler=".handlers.modifiedArchetype" />
+    </configure>
+
+    <configure zcml:condition="installed plone.dexterity">
+      <subscriber
+          for="plone.app.relationfield.interfaces.IDexterityHasRelations
+               zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+          handler=".handlers.modifiedDexterity" />
+
+      <subscriber
+          for="plone.app.relationfield.interfaces.IDexterityHasRelations
+               zope.lifecycleevent.interfaces.IObjectAddedEvent"
+          handler=".handlers.modifiedDexterity" />
+
+      <subscriber
+          for="plone.app.relationfield.interfaces.IDexterityHasRelations
+               zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+          handler=".handlers.modifiedDexterity" />
+    </configure>
 
     <genericsetup:registerProfile
         name="default"
