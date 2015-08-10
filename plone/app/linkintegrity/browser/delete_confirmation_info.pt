@@ -1,8 +1,8 @@
-<article id="content" 
-  xmlns="http://www.w3.org/1999/xhtml" 
+<article id="content"
+  xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en"
   lang="en"
-  tal:define="breaches view/breaches"
+  tal:define="breaches python:view.get_breaches() if view.linkintegrity_enabled else []"
   tal:condition="python: len(breaches)>0"
   i18n:domain="plone">
     <h1 class="documentFirstHeading"
@@ -18,31 +18,30 @@
         <div tal:define="token context/@@authenticator/token">
             <article tal:repeat="breach breaches" class="breach-container">
 
-              <header>
-                <a tal:attributes="href breach/url"
-                    tal:content="breach/title" />
-              </header>
-              <p>
-                  <span i18n:translate="linkintegrity_is_referenced" class="breach-warning">
-                      This <span i18n:name="portal_type" tal:content="breach/type_title" />
-                      is referenced by the following items:
-                  </span>
-              </p>
+              <tal:target  tal:define="target breach/target">
+                <header><a href="target/url" tal:content="target/title" /></header>
+                <p>
+                    <span i18n:translate="linkintegrity_is_referenced">
+                        This <span i18n:name="portal_type" tal:content="target/type_title" />
+                        is referenced by the following items:
+                    </span>
+                </p>
+              </tal:target>
 
-                  <ul>
-                    <li tal:repeat="src python:breach['sources']" class="breach-item">
-                      <tal:visible condition="python: view.isAccessible(src)">
-                        <a tal:attributes="href src/absolute_url" tal:content="src/Title" />
-                        [<a tal:attributes="href string:${src/absolute_url}/edit?_authenticator=${token}"
-                          i18n:translate="linkintegrity_edit_in_new_window"
-                          target="_blank">Edit in new window</a>]
-                      </tal:visible>
-                      <tal:private condition="python: not view.isAccessible(src)"
-                                   i18n:translate="linkintegrity_item_not_accessible">
-                        The item is not accessible.
-                      </tal:private>
-                    </li>
-                  </ul>
+              <ul>
+                <li tal:repeat="source python:breach['sources']" class="breach-item">
+                  <tal:visible condition="source/accessible">
+                    <a tal:attributes="href source/url" tal:content="source/title" />
+                    [<a tal:attributes="href string:${source/url}/edit?_authenticator=${token}"
+                      i18n:translate="linkintegrity_edit_in_new_window"
+                      target="_blank">Edit in new window</a>]
+                  </tal:visible>
+                  <tal:private condition="not: source/accessible"
+                               i18n:translate="linkintegrity_item_not_accessible">
+                    The item is not accessible.
+                  </tal:private>
+                </li>
+              </ul>
 
             </article>
 
