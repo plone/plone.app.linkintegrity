@@ -42,7 +42,9 @@ class CircularReferencesTestCase:
         self.assertEqual([r.to_object for r in getOutgoingLinks(doc4)], [doc1])
 
         view = DeleteConfirmationInfo(self.portal, self.request)
-        self.assertEqual(len(view.get_breaches_for_items([folder1])), 1)
+        self.assertEqual(len(view.get_breaches([folder1])), 1)
+        self.assertEqual(len(view.get_breaches([doc1, doc2, doc3, folder1])), 0)
+        self.assertEqual(len(view.get_breaches([doc2, folder1])), 2)
 
         self.assertEqual(
             len(view.get_breaches_for_items([doc1, doc2, doc3, folder1])), 0)

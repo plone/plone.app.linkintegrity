@@ -2,8 +2,8 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en"
   lang="en"
-  tal:define="breaches python:view.get_breaches() if view.linkintegrity_enabled else []"
-  tal:condition="python: len(breaches)>0"
+  tal:define="breaches python:view.breaches"
+  tal:condition="breaches"
   i18n:domain="plone">
     <h1 class="documentFirstHeading"
         i18n:translate="linkintegrity_breaches_title">Potential link breakage</h1>
