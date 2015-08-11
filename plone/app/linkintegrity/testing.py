@@ -110,12 +110,6 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
         PLONE_APP_CONTENTTYPES_FIXTURE,
         PLONE_APP_LINKINTEGRITY_FIXTURE,
     )
-    types_providing_referencable_behavior = set([
-        'Folder',
-        'Image',
-        'File',
-        'Document',
-    ])
 
     def setUp(self):
         self.setUpContent()
