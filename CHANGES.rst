@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.5.6 (unreleased)
+1.5.6 (2015-08-13)
 ------------------
 
 - Backport improvements to ``@@updateLinkIntegrityInformation`` from
