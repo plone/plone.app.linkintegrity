@@ -1,10 +1,14 @@
 Changelog
 =========
 
+
 1.5.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Backport improvements to ``@@updateLinkIntegrityInformation`` from
+  plone5 branch.
+  [pbauer]
+
 
 
 1.5.5 (2014-10-22)
@@ -19,11 +23,13 @@ Changelog
   behind virtual hosting
   [keul]
 
+
 1.5.4 (2014-01-27)
 ------------------
 
 - Added support for sub path after uid of resolveuid
   [hoka]
+
 
 1.5.3 (2013-08-13)
 ------------------
@@ -66,6 +72,7 @@ Changelog
   linkintegritynotificationexception, to return a 200 code.
   [thepjot]
 
+
 1.5.0 (2013-01-17)
 ------------------
 - Fix a remove confirmation view bug.
@@ -98,6 +105,7 @@ Changelog
 - Remove hard dependency on Archetypes.
   [davisagli]
 
+
 1.4.5 - 2012-02-24
 ------------------
 
@@ -120,6 +128,7 @@ Changelog
   This fixes linkintegrity for sites with link-by-uid turned on.
   This closes https://dev.plone.org/ticket/12104
   [mj]
+
 
 1.4.4 - 2011-10-04
 ------------------
@@ -457,6 +466,7 @@ Changelog
 ------------------
 
 - No changes.
+
 
 1.0b2 - 2007-04-30
 ------------------
