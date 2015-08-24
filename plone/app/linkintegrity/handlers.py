@@ -3,57 +3,30 @@ from Acquisition import aq_get
 from Acquisition import aq_parent
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.interfaces import IBaseObject
-from Products.Archetypes.interfaces import IReference
-from Products.Archetypes.interfaces import IReferenceable
 from Products.CMFCore.utils import getToolByName
-from OFS.interfaces import IItem
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from ZODB.POSException import ConflictError
-from plone.app.linkintegrity.exceptions \
-    import LinkIntegrityNotificationException
-from plone.app.linkintegrity.interfaces import ILinkIntegrityInfo, IOFSImage
 from plone.app.linkintegrity.parser import extractLinks
-from plone.app.linkintegrity.references import updateReferences
-from zExceptions import NotFound
-from zope.component import getUtility
-from zope.schema import getFieldsInOrder
-from zope.component.hooks import getSite
-from zope.publisher.interfaces import NotFound as ztkNotFound
+from plone.app.textfield import RichText
+from plone.app.uuid.utils import uuidToObject
+from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.utils import getAdditionalSchemata
 from urllib import unquote
 from urlparse import urlsplit
+from z3c.relationfield import RelationValue
+from z3c.relationfield.event import _setRelation
+from zExceptions import NotFound
+from zc.relation.interfaces import ICatalog
+from zope.component import getUtility
+from zope.component.interfaces import ComponentLookupError
+from zope.intid.interfaces import IIntIds
+from zope.keyreference.interfaces import NotYet
+from zope.publisher.interfaces import NotFound as ztkNotFound
+from zope.schema import getFieldsInOrder
+import logging
 
-# To support various Plone versions, we need to support various UUID resolvers
-# This follows Kupu, TinyMCE and plone.app.uuid methods, in a similar manner to
-# plone.outputfilters.browser.resolveuid
-try:
-    from plone.app.uuid.utils import uuidToObject
-except ImportError:
-    def uuidToObject(uuid):
-        catalog = getToolByName(getSite(), 'portal_catalog', None)
-        res = catalog and catalog.unrestrictedSearchResults(UID=uuid)
-        if res and len(res) == 1:
-            return res[0].getObject()
-
-# We try to import dexterity related modules, or modules used just if
-# dexterity is around
-try:
-    from plone.app.textfield import RichText
-    from plone.dexterity.interfaces import IDexterityFTI
-    from plone.dexterity.utils import getAdditionalSchemata
-    HAS_DEXTERITY = True
-except ImportError:
-    HAS_DEXTERITY = False
-
-
-def _resolveUID(uid):
-    res = uuidToObject(uid)
-    if res is not None:
-        return res
-    kupu_hook = getattr(getSite(), 'kupu_resolveuid_hook', None)
-    if kupu_hook is not None:
-        return kupu_hook(uid)
-    return None
-
-
+logger = logging.getLogger(__name__)
 referencedRelationship = 'isReferencing'
 
 
@@ -74,7 +47,7 @@ def findObject(base, path):
     # on a view or skinscript to do this for us.
     if 'resolveuid' in components:
         uid = components[components.index('resolveuid') + 1]
-        obj = _resolveUID(uid)
+        obj = uuidToObject(uid)
         if obj:
             return obj, path
 
@@ -91,7 +64,9 @@ def findObject(base, path):
         except (AttributeError, KeyError,
                 NotFound, ztkNotFound, UnicodeEncodeError):
             return None, None
-        if not IItem.providedBy(child):
+        if not IDexterityContent.providedBy(child) and \
+                not IBaseObject.providedBy(child) and \
+                not IPloneSiteRoot.providedBy(child):
             break
         obj = child
         components.pop(0)
@@ -100,6 +75,7 @@ def findObject(base, path):
 
 def getObjectsFromLinks(base, links):
     """ determine actual objects refered to by given links """
+    intids = getUtility(IIntIds)
     objects = set()
     url = base.absolute_url()
     scheme, host, path, query, frag = urlsplit(url)
@@ -112,30 +88,16 @@ def getObjectsFromLinks(base, links):
                 path = path.encode('utf-8')
 
             obj, extra = findObject(base, path)
-            if obj:
-                if IOFSImage.providedBy(obj):
-                    # use atimage object for scaled images
-                    obj = aq_parent(obj)
-                if not IReferenceable.providedBy(obj):
-                    try:
-                        obj = IReferenceable(obj)
-                    except:
-                        continue
-                objects.add(obj)
+            if obj and not IPloneSiteRoot.providedBy(obj):
+                objid = intids.getId(obj)
+                relation = RelationValue(objid)
+                objects.add(relation)
     return objects
 
 
 def modifiedArchetype(obj, event):
     """ an archetype based object was modified """
-    pu = getToolByName(obj, 'portal_url', None)
-    if pu is None:
-        # `getObjectFromLinks` is not possible without access
-        # to `portal_url`
-        return
-    rc = getToolByName(obj, 'reference_catalog', None)
-    if rc is None:
-        # `updateReferences` is not possible without access
-        # to `reference_catalog`
+    if not check_linkintegrity_dependencies(obj):
         return
     refs = set()
     for field in obj.Schema().fields():
@@ -150,109 +112,68 @@ def modifiedArchetype(obj, event):
                 value = field.get(obj)
             links = extractLinks(value, encoding)
             refs |= getObjectsFromLinks(obj, links)
-    updateReferences(obj, referencedRelationship, refs)
+    updateReferences(obj, refs)
 
 
 def modifiedDexterity(obj, event):
     """ a dexterity based object was modified """
-    pu = getToolByName(obj, 'portal_url', None)
-    if pu is None:
-        # `getObjectFromLinks` is not possible without access
-        # to `portal_url`
+    if not check_linkintegrity_dependencies(obj):
         return
-    rc = getToolByName(obj, 'reference_catalog', None)
-    if rc is None:
-        # `updateReferences` is not possible without access
-        # to `reference_catalog`
-        return
-
     fti = getUtility(IDexterityFTI, name=obj.portal_type)
     schema = fti.lookupSchema()
     additional_schema = getAdditionalSchemata(context=obj,
                                               portal_type=obj.portal_type)
-
     schemas = [i for i in additional_schema] + [schema]
-
     refs = set()
-
     for schema in schemas:
         for name, field in getFieldsInOrder(schema):
             if isinstance(field, RichText):
                 # Only check for "RichText" ?
                 value = getattr(schema(obj), name)
-                if not value:
+                if not value or not getattr(value, 'raw', None):
                     continue
                 links = extractLinks(value.raw)
                 refs |= getObjectsFromLinks(obj, links)
-
-    updateReferences(IReferenceable(obj), referencedRelationship, refs)
-
-
-def referenceRemoved(obj, event):
-    """ store information about the removed link integrity reference """
-    assert IReference.providedBy(obj)
-    assert obj is event.object          # just making sure...
-    if not obj.relationship == referencedRelationship:
-        return                          # skip for other removed references
-    # if the object the event was fired on doesn't have a `REQUEST` attribute
-    # we can safely assume no direct user action was involved and therefore
-    # never raise a link integrity exception...
-    request = aq_get(obj, 'REQUEST', None)
-    if not request:
-        return
-    storage = ILinkIntegrityInfo(request)
-    source = obj.getSourceObject()
-    if not IBaseObject.providedBy(source) and hasattr(source, 'context'):
-        source = source.context
-    target = obj.getTargetObject()
-    if not IBaseObject.providedBy(target) and hasattr(target, 'context'):
-        target = target.context
-    if source is not None and target is not None:
-        storage.addBreach(source, target)
+    updateReferences(obj, refs)
 
 
-def referencedObjectRemoved(obj, event):
-    """ check if the removal was already confirmed or redirect to the form """
-    # if the object the event was fired on doesn't have a `REQUEST` attribute
-    # we can safely assume no direct user action was involved and therefore
-    # never raise a link integrity exception...
-    request = aq_get(obj, 'REQUEST', None)
-    if not request:
-        return
-    info = ILinkIntegrityInfo(request)
-    # first we check if link integrity checking was enabled
-    if not info.integrityCheckingEnabled():
-        return
+def updateReferences(obj, refs):
+    """Renew all linkintegritry-references.
 
-    # since the event gets called for every subobject before it's
-    # called for the item deleted directly via _delObject (event.object)
-    # itself, but we do not want to present the user with a confirmation
-    # form for every (referred) subobject, so we remember and skip them...
-    info.addDeletedItem(obj)
-    if obj is not event.object:
-        return
+    Search the zc.relation catalog for linkintegritry-references for this obj.
+    Drop them all and set the new ones.
+    TODO: Might be improved by not changing anything if the links are the same.
+    """
+    intids = getUtility(IIntIds)
+    try:
+        int_id = intids.getId(obj)
+    except KeyError:
+        # In some cases a object is not yet registered by the intid catalog
+        try:
+            int_id = intids.register(obj)
+        except NotYet:
+            return
+    catalog = getUtility(ICatalog)
+    # unpack the rels before deleting
+    old_rels = [i for i in catalog.findRelations(
+        {'from_id': int_id,
+         'from_attribute': referencedRelationship})]
+    for old_rel in old_rels:
+        catalog.unindex(old_rel)
+    for ref in refs:
+        _setRelation(obj, referencedRelationship, ref)
 
-    # if the number of expected events has been stored to help us prevent
-    # multiple forms (i.e. in folder_delete), we wait for the next event
-    # if we know there will be another...
-    if info.moreEventsToExpect():
-        return
 
-    # at this point all subobjects have been removed already, so all
-    # link integrity breaches caused by that have been collected as well;
-    # if there aren't any (after things have been cleaned up),
-    # we keep lurking in the shadows...
-    if not info.getIntegrityBreaches():
-        return
-
-    # if the user has confirmed to remove the currently handled item in a
-    # previous confirmation form we won't need it anymore this time around...
-    if info.isConfirmedItem(obj):
-        return
-
-    # otherwise we raise an exception and pass the object that is supposed
-    # to be removed as the exception value so we can use it as the context
-    # for the view triggered by the exception;  this is needed since the
-    # view is an adapter for the exception and a request, so it gets the
-    # exception object as the context, which is not very useful...
-    raise LinkIntegrityNotificationException(obj)
+def check_linkintegrity_dependencies(obj):
+    if not getToolByName(obj, 'portal_url', None):
+        # `getObjectFromLinks` is not possible without access
+        # to `portal_url`
+        return False
+    try:
+        getUtility(IIntIds)
+        getUtility(ICatalog)
+    except ComponentLookupError:
+        # Linkintegrity not possible without zope.intid-
+        # and zc.relation-catalog
+        return False
+    return True

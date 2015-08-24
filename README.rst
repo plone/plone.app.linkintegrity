@@ -4,32 +4,37 @@ plone.app.linkintegrity
 Overview
 --------
 
-This package tries to integrate `PLIP 125`_, link integrity checking,
-into Plone.  It is making use of the zope3 event system in order to modify
-Plone itself as little as possible.
+This package implement link integrity checking in Plone.  It makes use of the
+zope3 event system in order to modify Plone itself as little as possible.
 
-  .. _`PLIP 125`: http://plone.org/products/plone/roadmap/125
-  .. |---| unicode:: U+2014  .. em dash
 
-Status
-------
+Features
+--------
 
-The code handles one of the two use cases of `PLIP 125`_, deleting an item.
+This package handles deleting an item in the Plone-User-interface (i.e.
+deleting items in the view `folder_contents` via Actions / Delete).
+
 Whenever an object that is referred to by another one via an `<a>` or `<img>`
-tag is going to be deleted, Plone's regular flow of actions is "interrupted"
-and a confirmation form is presented to the user.  If they then decide to
-indeed delete the object, the original request will be replayed and this time
-followed through, thereby breaching link integrity of the site.
+tag is going to be deleted, a confirmation form is presented to the user.
+They can then decide to indeed delete the object, breaching link
+integrity of the site or first edit the objects that link to the item in
+question.
 
-This process is implemented independently of how the object is deleted (as
-long as `OFS.ObjectManager`'s `_delObject` is used ultimatively) and what
-request is used to do it.  A more detailed |---| albeit slightly outdated
-|---| explanation of how this works can be found in `NOTES.txt`.
+Changes in 3.0
+--------------
 
-The second use case of `PLIP 125`_, which provides better handling of moved
-items, is implemented by `plone.app.redirector`__.
+- Linkintegrity-relations are no longer stored in reference_catalog of
+  Products.Archetypes. Instead it used zc.relation.
 
-  .. __: http://pypi.python.org/pypi/plone.app.redirector/
+- No longer intercept the request on ``manage_deleteObjects``.
+  This means that deleting with other methods (like manage_deleteObjects,
+  plone.api.content.delete, ttw in the ZMI) no longer warns about
+  linkintegrity-breaches. It now simply adds information about
+  linkintegrity-breaches in the user-interface.
+
+- LinkIntegrityNotificationException is not longer thrown anywhere.
+
+
 
 Refresh the linkintegrity site status
 -------------------------------------
@@ -39,55 +44,48 @@ whole site, you can call the ``@@updateLinkIntegrityInformation`` view.
 
 It can be really slow operation.
 
-Using plone.app.linkintegrity in a WSGI application using repoze.zope2
-----------------------------------------------------------------------
 
-If you are deploying Plone using repoze.zope2 in a WSGI pipeline, then
-the stock LinkIntegrity won't work. To make it work, you need the following:
+API
+---
 
- - repoze.zope2 1.0.2 or later
- - ZODB 3.8.2 or later
+To check if there would be breaches when deleting one or more objects
+you can use the follwing code:
 
-These two will ensure that the "views on exceptions" functionality, which
-plone.app.linkintegrity uses, is available.
+.. code-block:: python
 
-Next, make sure that the repoze.retry#retry middleware is used, and that
-it will handle stock Retry exceptions. With repoze.retry 0.9.3 or later,
-that is the default. With earlier versions, you can configure it explicitly.
-For example::
+    from plone import api
+    portal = api.portal.get()
+    view = api.content.get_view(
+        'delete_confirmation_info',
+        portal,
+        self.request)
+    breaches = view.get_breaches([obj1, obj2])
 
-    [app:zope2]
-    paste.app_factory = repoze.obob.publisher:make_obob
-    repoze.obob.get_root = repoze.zope2.z2bob:get_root
-    repoze.obob.initializer = repoze.zope2.z2bob:initialize
-    repoze.obob.helper_factory = repoze.zope2.z2bob:Zope2ObobHelper
-    zope.conf = /Users/optilude/Development/Plone/Code/Build/uber/plone3.x-repoze/parts/instance-debug/etc/zope.conf
+`get_breaches` ignores breaches originating from any items that would also be
+deleted by deleting the items (and their chidlren if an item is a folder).
 
-    [filter:retry]
-    use = egg:repoze.retry#retry
-    retryable = ZODB.POSException:ConflictError ZPublisher.Publish:Retry
+Each breach in `breaches` is a dictionary with a `target` (a dict with some
+info on the object to be deleted) and a list of `sources`.
+Each source is again a dict with `uid`, `title`, `url` and `accessible`
+(a boolean telling you if the user can access that source).
 
-    [filter:errorlog]
-    use = egg:repoze.errorlog#errorlog
-    path = /__error_log__
-    keep = 50
-    ignore = 
-        paste.httpexceptions:HTTPUnauthorized
-        paste.httpexceptions:HTTPNotFound
-        paste.httpexceptions:HTTPFound
-    
-    [pipeline:main]
-    pipeline =
-        retry
-        egg:repoze.tm#tm
-        egg:repoze.vhm#vhm_xheaders
-        errorlog
-        zope2
 
-    [server:main]
-    use = egg:Paste#http
-    host = 127.0.0.1
-    port = 8080
-    threadpool_workers = 1
-    threadpool_spawn_if_under = 1
+To check items for links in html-fields you can use the methods in
+``plone.app.linkintegrity.utils``:
 
+
+
+``utils.hasIncomingLinks(obj)``
+    Test if an object is linked to by other objects
+
+``utils.hasOutgoingLinks(obj)``
+    Test if an object links to other objects
+
+``utils.getIncomingLinks(obj)``
+    Return a generator of incoming relations
+
+``utils.getOutgoingLinks(obj)``
+    Return a generator of outgoing relations
+
+``utils.linkintegrity_enabled()``
+    Test if linkintegrity-feature is enables for users

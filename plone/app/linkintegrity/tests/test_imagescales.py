@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from Products.Archetypes.interfaces import IReferenceable
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.app.linkintegrity.utils import getOutgoingLinks
+from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.uuid.interfaces import IUUID
 
 
@@ -17,10 +18,10 @@ class ImageReferenceTestCase:
         # should create references between those objects on save.
         self._set_text(doc1, img1.restrictedTraverse('@@images').tag())
 
-        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
-        self.assertEqual(IReferenceable(doc1).getBackReferences(), [])
-        self.assertEqual(IReferenceable(img1).getReferences(), [])
-        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
+        self.assertEqual([r.to_object for r in getOutgoingLinks(doc1)], [img1, ])
+        self.assertEqual([r.to_object for r in getIncomingLinks(doc1)], [])
+        self.assertEqual([r.to_object for r in getOutgoingLinks(img1)], [])
+        self.assertEqual([r.from_object for r in getIncomingLinks(img1)], [doc1])
 
     def test_image_scale_reference_creation(self):
         doc1 = self.portal.doc1
@@ -29,8 +30,8 @@ class ImageReferenceTestCase:
         # Linking image scales should also work:
         self._set_text(
             doc1, '<a href="image1/@@images/image_thumb">an image</a>')
-        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
-        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
+        self.assertEqual([r.to_object for r in getOutgoingLinks(doc1)], [img1, ])
+        self.assertEqual([r.from_object for r in getIncomingLinks(img1)], [doc1, ])
 
     def test_image_resolveuid_reference_creation(self):
         doc1 = self.portal.doc1
@@ -39,9 +40,8 @@ class ImageReferenceTestCase:
         # Linking via the "resolveuid/UID" method should also work:
         self._set_text(doc1, '<a href="resolveuid/{0:s}">an image</a>'.format(
             IUUID(img1)))
-
-        self.assertEqual(IReferenceable(doc1).getReferences(), [img1])
-        self.assertEqual(IReferenceable(img1).getBackReferences(), [doc1])
+        self.assertEqual([r.to_object for r in getOutgoingLinks(doc1)], [img1, ])
+        self.assertEqual([r.from_object for r in getIncomingLinks(img1)], [doc1, ])
 
 
 class ImageReferenceDXTestCase(DXBaseTestCase, ImageReferenceTestCase):

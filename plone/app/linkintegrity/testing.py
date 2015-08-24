@@ -11,7 +11,6 @@ from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
-from plone.app.testing import applyProfile
 from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import ploneSite
@@ -56,7 +55,6 @@ class LinkIntegrityLayer(z2.Layer):
 
     def setUpContent(self):
         import plone.app.linkintegrity
-
         xmlconfig.file('configure.zcml', plone.app.linkintegrity,
                        context=self['configurationContext'])
 
@@ -112,27 +110,8 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
         PLONE_APP_CONTENTTYPES_FIXTURE,
         PLONE_APP_LINKINTEGRITY_FIXTURE,
     )
-    types_providing_referencable_behavior = set([
-        'Folder',
-        'Image',
-        'File',
-        'Document',
-    ])
 
     def setUp(self):
-        with ploneSite() as portal:
-            ttool = getToolByName(portal, 'portal_types')
-            for type_info in self.types_providing_referencable_behavior:
-                ttool.getTypeInfo(type_info).behaviors += (
-                    'plone.app.relationfield.behavior.IRelatedItems',
-                    'plone.app.referenceablebehavior.referenceable.IReferenceable',  # noqa
-                )
-
-            # FIXME: we need uid_catalog and referencer_catalog to keep
-            #        plone.app.referencebehavior working. So load Archetypes
-            #        profile to install those tools before we continue
-            applyProfile(portal, 'Products.Archetypes:Archetypes')
-
         self.setUpContent()
 
     def setUpContent(self):

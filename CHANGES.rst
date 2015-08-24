@@ -1,10 +1,21 @@
 Changelog
 =========
 
-2.1.3 (unreleased)
+3.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Drop the Archetypes-dependency by switching to use zc.relation instead of
+  reference_catalog (Products.Archetypes).
+  [bloodbare, pbauer, vangheem]
+
+- No longer intercept the request on manage_deleteObjects. Instead only
+  inject a warning in delete_confirmation. This means that deleting with
+  other methods (like manage_deleteObjects, plone.api.content.delete, ttw
+  in the ZMI) no longer warns about linkintegrity-breaches.
+  [bloodbare, pbauer, vangheem]
+
+- LinkIntegrityNotificationException is not longer thrown anywhere.
+  [bloodbare, pbauer, vangheem]
 
 
 2.1.2 (2015-05-04)
@@ -47,11 +58,20 @@ Changelog
   [khink, mrtango]
 
 
+1.5.6 (2015-08-13)
+------------------
+
+- Backport improvements to ``@@updateLinkIntegrityInformation`` from
+  plone5 branch.
+  [pbauer]
+
+
 1.5.4 (2014-01-27)
 ------------------
 
 - Added support for sub path after uid of resolveuid
   [hoka]
+
 
 1.5.3 (2013-08-13)
 ------------------
