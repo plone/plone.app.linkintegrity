@@ -44,7 +44,8 @@ class CircularReferencesTestCase:
 
         view = DeleteConfirmationInfo(self.portal, self.request)
         self.assertEqual(len(view.get_breaches([folder1])), 1)
-        self.assertEqual(len(view.get_breaches([doc1, doc2, doc3, folder1])), 0)
+        self.assertEqual(
+            len(view.get_breaches([doc1, doc2, doc3, folder1])), 0)
         self.assertEqual(len(view.get_breaches([doc2, folder1])), 2)
 
     def test_internal_breaches_are_dropped(self):

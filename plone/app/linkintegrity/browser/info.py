@@ -7,7 +7,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from collections import defaultdict
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import linkintegrity_enabled
 from plone.uuid.interfaces import IUUID
@@ -109,7 +108,7 @@ class DeleteConfirmationInfo(BrowserView):
 
         Breaches originating from excluded_path are ignored.
         """
-        breaches = defaultdict(list)
+        breaches = {}
         direct_links = getIncomingLinks(obj)
         has_breaches = False
         for direct_link in direct_links:
@@ -121,6 +120,8 @@ class DeleteConfirmationInfo(BrowserView):
                 # source is in excluded_path
                 continue
             source = direct_link.from_object
+            if not breaches.get('sources'):
+                breaches['sources'] = []
             breaches['sources'].append({
                 'uid': IUUID(source),
                 'title': source.Title(),
@@ -136,7 +137,6 @@ class DeleteConfirmationInfo(BrowserView):
                 'portal_type': obj.portal_type,
                 'type_title': self.get_portal_type_title(obj),
             }
-        if has_breaches:
             return breaches
 
     def get_portal_type_title(self, obj):
