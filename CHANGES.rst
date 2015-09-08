@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.0 (unreleased)
-------------------
+3.0 (2015-09-08)
+----------------
 
 - Drop the Archetypes-dependency by switching to use zc.relation instead of
   reference_catalog (Products.Archetypes).
