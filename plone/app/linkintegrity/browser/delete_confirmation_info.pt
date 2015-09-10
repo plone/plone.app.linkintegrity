@@ -1,12 +1,11 @@
-<article id="content"
+<tal:block
   xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en"
-  lang="en"
   tal:define="breaches python:view.breaches"
   tal:condition="breaches"
   i18n:domain="plone">
-    <h1 class="documentFirstHeading"
-        i18n:translate="linkintegrity_breaches_title">Potential link breakage</h1>
+
+    <h2 i18n:translate="linkintegrity_breaches_title">Potential link breakage</h2>
 
     <div id="content-core">
         <p i18n:translate="linkintegrity_instructions">
@@ -53,4 +52,4 @@
 
         </div>
     </div>
-</article>
+</tal:block>

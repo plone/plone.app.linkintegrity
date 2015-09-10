@@ -4,7 +4,8 @@ Changelog
 3.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Don't show delete_confirmation_info twice in delete_confirmation. Fixes #27
+  [pbauer]
 
 
 3.0 (2015-09-08)
