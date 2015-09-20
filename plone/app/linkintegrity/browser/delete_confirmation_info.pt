@@ -1,5 +1,4 @@
 <tal:block
-  xml:lang="en"
   tal:define="breaches python:view.breaches"
   tal:condition="breaches"
   i18n:domain="plone">
