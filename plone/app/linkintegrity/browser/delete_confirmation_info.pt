@@ -1,5 +1,4 @@
 <tal:block
-  xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en"
   tal:define="breaches python:view.breaches"
   tal:condition="breaches"
