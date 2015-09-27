@@ -4,7 +4,8 @@ Changelog
 3.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove xml:lang and wrong xmlns from delete_confirmation_info.pt.
+  [vincentfrentin]
 
 
 3.0.1 (2015-09-11)
