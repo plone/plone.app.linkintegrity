@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.2 (unreleased)
+3.0.2 (2015-09-27)
 ------------------
 
 - Remove xml:lang and wrong xmlns from delete_confirmation_info.pt.
