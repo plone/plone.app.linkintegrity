@@ -9,10 +9,17 @@ from datetime import datetime
 from datetime import timedelta
 from plone.app.linkintegrity.handlers import modifiedArchetype
 from plone.app.linkintegrity.handlers import modifiedDexterity
-from plone.dexterity.interfaces import IDexterityContent
 from zExceptions import NotFound
 import logging
 import pkg_resources
+
+try:
+    pkg_resources.get_distribution('plone.dexterity')
+except pkg_resources.DistributionNotFound:
+    HAS_DEXTERITY = False
+else:
+    HAS_DEXTERITY = True
+    from plone.dexterity.interfaces import IDexterityContent
 
 # Is there a multilingual addon?
 try:
@@ -77,7 +84,7 @@ class UpdateView(BrowserView):
             method = None
             if IBaseObject.providedBy(obj):
                 method = modifiedArchetype
-            elif IDexterityContent.providedBy(obj):
+            elif HAS_DEXTERITY and IDexterityContent.providedBy(obj):
                 method = modifiedDexterity
             if method:
                 try:
