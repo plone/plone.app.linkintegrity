@@ -5,6 +5,8 @@ Changelog
 1.5.7 (unreleased)
 ------------------
 
+Fixes:
+
 - Make import from Dexterity conditional. Fixes #29.
   [pbauer]
 
