@@ -6,7 +6,7 @@ Changelog
 
 New:
 
-- *add item here*
+- introduce IRetriever adapter for customization flexibility
 
 Fixes:
 
