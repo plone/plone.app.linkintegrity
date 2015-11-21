@@ -96,26 +96,6 @@ def getObjectsFromLinks(base, links):
     return objects
 
 
-#def modifiedArchetype(obj, event):
-#    """ an archetype based object was modified """
-#    if not check_linkintegrity_dependencies(obj):
-#        return
-#    refs = set()
-#    for field in obj.Schema().fields():
-#        if isinstance(field, TextField):
-#            accessor = field.getAccessor(obj)
-#            encoding = field.getRaw(obj, raw=1).original_encoding
-#            if accessor is not None:
-#                value = accessor()
-#            else:
-#                # Fields that have been added via schema extension do
-#                # not have an accessor method.
-#                value = field.get(obj)
-#            links = extractLinks(value, encoding)
-#            refs |= getObjectsFromLinks(obj, links)
-#    updateReferences(obj, refs)
-
-
 def modifiedDexterity(obj, event):
     """ a dexterity based object was modified """
     if not check_linkintegrity_dependencies(obj):
@@ -123,14 +103,8 @@ def modifiedDexterity(obj, event):
     retriever = IRetriever(obj, None)
     if retriever is not None:
         links = retriever.retrieveLinks()
-
-#    fti = getUtility(IDexterityFTI, name=obj.portal_type)
-#    schema = fti.lookupSchema()
-#    additional_schema = getAdditionalSchemata(context=obj,
-#                                              portal_type=obj.portal_type)
-#    schemas = [i for i in additional_schema] + [schema]
-    refs = getObjectsFromLinks(obj, links)
-    updateReferences(obj, refs)
+        refs = getObjectsFromLinks(obj, links)
+        updateReferences(obj, refs)
 
 
 modifiedArchetype = modifiedDexterity

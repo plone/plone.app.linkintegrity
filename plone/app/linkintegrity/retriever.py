@@ -6,10 +6,16 @@ from zope.component import adapter
 from zope.interface import implementer
 from Products.Archetypes.Field import TextField
 from Products.Archetypes.interfaces import IBaseObject
+from plone.dexterity.interfaces import IDexterityContent
+from zope.component import getUtility
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.utils import getAdditionalSchemata
+from zope.schema import getFieldsInOrder
+from plone.app.textfield import RichText
 
 
 @implementer(IRetriever)
-@adapter(IBaseContent)
+@adapter(IBaseObject)
 class ATGeneral(object):
     """General retriever for AT that extracts URLs from (rich) text fields.
     """
@@ -22,21 +28,21 @@ class ATGeneral(object):
 	links = set()
 	for field in self.context.Schema().fields():
 	    if isinstance(field, TextField):
-		accessor = field.getAccessor(obj)
-		encoding = field.getRaw(obj, raw=1).original_encoding
+		accessor = field.getAccessor(self.context)
+		encoding = field.getRaw(self.context, raw=1).original_encoding
 		if accessor is not None:
 		    value = accessor()
 		else:
 		    # Fields that have been added via schema extension do
 		    # not have an accessor method.
-		    value = field.get(obj)
-		links |= extractLinks(value, encoding)
+		    value = field.get(self.context)
+		links |= set(extractLinks(value, encoding))
 	return links
 
 
 @implementer(IRetriever)
 @adapter(IDexterityContent)
-class ATGeneral(object):
+class DXGeneral(object):
     """General retriever for DX that extracts URLs from (rich) text fields.
     """
 
@@ -54,9 +60,9 @@ class ATGeneral(object):
         for schema in schemas:
             for name, field in getFieldsInOrder(schema):
                 if isinstance(field, RichText):
-                   value = getattr(schema(obj), name)
+                   value = getattr(schema(self.context), name)
                    if not value or not getattr(value, 'raw', None):
                       continue
-                   links |= extractLinks(value.raw)
+                   links |= set(extractLinks(value.raw))
         return links
 

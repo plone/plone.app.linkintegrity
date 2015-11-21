@@ -9,6 +9,8 @@
     <include package="Products.CMFCore" file="permissions.zcml" />
 
     <include package=".browser" />
+    <adapter factory=".retriever.ATGeneral" />
+    <adapter factory=".retriever.DXGeneral" />
 
     <configure zcml:condition="installed Products.Archetypes">
       <subscriber
