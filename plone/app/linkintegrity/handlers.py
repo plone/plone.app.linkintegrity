@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_get
 from Acquisition import aq_parent
-from Products.Archetypes.Field import TextField
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from ZODB.POSException import ConflictError
 from plone.app.linkintegrity.interfaces import IRetriever
-from plone.app.linkintegrity.parser import extractLinks
-from plone.app.textfield import RichText
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.utils import getAdditionalSchemata
 from urllib import unquote
 from urlparse import urlsplit
 from z3c.relationfield import RelationValue
@@ -24,7 +19,6 @@ from zope.component.interfaces import ComponentLookupError
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
 from zope.publisher.interfaces import NotFound as ztkNotFound
-from zope.schema import getFieldsInOrder
 import logging
 
 logger = logging.getLogger(__name__)

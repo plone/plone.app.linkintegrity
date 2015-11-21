@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
-from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five import BrowserView
@@ -8,7 +7,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from datetime import timedelta
 from plone.app.linkintegrity.handlers import modifiedContent
-from plone.dexterity.interfaces import IDexterityContent
 from zExceptions import NotFound
 import logging
 import pkg_resources

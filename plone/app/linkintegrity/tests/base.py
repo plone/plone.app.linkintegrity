@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from ZPublisher import HTTPResponse
-from ZPublisher.HTTPRequest import HTTPRequest
-
 from plone.app.linkintegrity import testing
 from plone.app.relationfield.behavior import IRelatedItems
 from plone.app.testing import setRoles
