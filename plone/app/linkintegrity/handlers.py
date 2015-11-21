@@ -96,7 +96,7 @@ def getObjectsFromLinks(base, links):
     return objects
 
 
-def modifiedDexterity(obj, event):
+def modifiedContent(obj, event):
     """ a dexterity based object was modified """
     if not check_linkintegrity_dependencies(obj):
         return
@@ -106,8 +106,9 @@ def modifiedDexterity(obj, event):
         refs = getObjectsFromLinks(obj, links)
         updateReferences(obj, refs)
 
-
-modifiedArchetype = modifiedDexterity
+# BBB
+modifiedArchetype = modifiedContent
+modifiedDexterity = modifiedContent
 
 def updateReferences(obj, refs):
     """Renew all linkintegritry-references.
