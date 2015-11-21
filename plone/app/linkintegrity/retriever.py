@@ -60,9 +60,9 @@ class DXGeneral(object):
         for schema in schemas:
             for name, field in getFieldsInOrder(schema):
                 if isinstance(field, RichText):
-                   value = getattr(schema(self.context), name)
-                   if not value or not getattr(value, 'raw', None):
-                      continue
-                   links |= set(extractLinks(value.raw))
+                    value = getattr(schema(self.context), name)
+                    if not value or not getattr(value, 'raw', None):
+                        continue
+                    links |= set(extractLinks(value.raw))
         return links
 
