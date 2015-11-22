@@ -44,6 +44,15 @@ whole site, you can call the ``@@updateLinkIntegrityInformation`` view.
 
 It can be really slow operation.
 
+Customization
+-------------
+
+On object created, added, modified events the ``modifiedContent`` handler
+is called. This handler adapts an ``IRetriever`` object if found.
+The package comes with two general adapters for Dexterity and Archetypes.
+You can easily write custom adapters implementing the ``IRetriever``
+interface for your contenttype. Look at the ``retriever`` module in this
+package for examples.
 
 API
 ---

@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_get
 from Acquisition import aq_parent
-from Products.Archetypes.Field import TextField
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from ZODB.POSException import ConflictError
-from plone.app.linkintegrity.parser import extractLinks
-from plone.app.textfield import RichText
+from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.utils import getAdditionalSchemata
 from urllib import unquote
 from urlparse import urlsplit
 from z3c.relationfield import RelationValue
@@ -23,7 +19,6 @@ from zope.component.interfaces import ComponentLookupError
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
 from zope.publisher.interfaces import NotFound as ztkNotFound
-from zope.schema import getFieldsInOrder
 import logging
 
 logger = logging.getLogger(__name__)
@@ -95,47 +90,19 @@ def getObjectsFromLinks(base, links):
     return objects
 
 
-def modifiedArchetype(obj, event):
-    """ an archetype based object was modified """
-    if not check_linkintegrity_dependencies(obj):
-        return
-    refs = set()
-    for field in obj.Schema().fields():
-        if isinstance(field, TextField):
-            accessor = field.getAccessor(obj)
-            encoding = field.getRaw(obj, raw=1).original_encoding
-            if accessor is not None:
-                value = accessor()
-            else:
-                # Fields that have been added via schema extension do
-                # not have an accessor method.
-                value = field.get(obj)
-            links = extractLinks(value, encoding)
-            refs |= getObjectsFromLinks(obj, links)
-    updateReferences(obj, refs)
-
-
-def modifiedDexterity(obj, event):
+def modifiedContent(obj, event):
     """ a dexterity based object was modified """
     if not check_linkintegrity_dependencies(obj):
         return
-    fti = getUtility(IDexterityFTI, name=obj.portal_type)
-    schema = fti.lookupSchema()
-    additional_schema = getAdditionalSchemata(context=obj,
-                                              portal_type=obj.portal_type)
-    schemas = [i for i in additional_schema] + [schema]
-    refs = set()
-    for schema in schemas:
-        for name, field in getFieldsInOrder(schema):
-            if isinstance(field, RichText):
-                # Only check for "RichText" ?
-                value = getattr(schema(obj), name)
-                if not value or not getattr(value, 'raw', None):
-                    continue
-                links = extractLinks(value.raw)
-                refs |= getObjectsFromLinks(obj, links)
-    updateReferences(obj, refs)
+    retriever = IRetriever(obj, None)
+    if retriever is not None:
+        links = retriever.retrieveLinks()
+        refs = getObjectsFromLinks(obj, links)
+        updateReferences(obj, refs)
 
+# BBB
+modifiedArchetype = modifiedContent
+modifiedDexterity = modifiedContent
 
 def updateReferences(obj, refs):
     """Renew all linkintegritry-references.

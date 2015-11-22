@@ -9,39 +9,41 @@
     <include package="Products.CMFCore" file="permissions.zcml" />
 
     <include package=".browser" />
+    <adapter factory=".retriever.ATGeneral" />
+    <adapter factory=".retriever.DXGeneral" />
 
     <configure zcml:condition="installed Products.Archetypes">
       <subscriber
           for="Products.Archetypes.interfaces.IBaseObject
                OFS.interfaces.IObjectClonedEvent"
-          handler=".handlers.modifiedArchetype" />
+          handler=".handlers.modifiedContent" />
 
       <subscriber
           for="Products.Archetypes.interfaces.IBaseObject
                zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-          handler=".handlers.modifiedArchetype" />
+          handler=".handlers.modifiedContent" />
 
       <subscriber
           for="Products.Archetypes.interfaces.IBaseObject
                zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-          handler=".handlers.modifiedArchetype" />
+          handler=".handlers.modifiedContent" />
     </configure>
 
     <configure zcml:condition="installed plone.dexterity">
       <subscriber
           for="plone.app.relationfield.interfaces.IDexterityHasRelations
                zope.lifecycleevent.interfaces.IObjectCopiedEvent"
-          handler=".handlers.modifiedDexterity" />
+          handler=".handlers.modifiedContent" />
 
       <subscriber
           for="plone.app.relationfield.interfaces.IDexterityHasRelations
                zope.lifecycleevent.interfaces.IObjectAddedEvent"
-          handler=".handlers.modifiedDexterity" />
+          handler=".handlers.modifiedContent" />
 
       <subscriber
           for="plone.app.relationfield.interfaces.IDexterityHasRelations
                zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-          handler=".handlers.modifiedDexterity" />
+          handler=".handlers.modifiedContent" />
     </configure>
 
     <genericsetup:registerProfile
