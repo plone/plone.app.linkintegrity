@@ -25,19 +25,19 @@ class ATGeneral(object):
 
     def retrieveLinks(self):
         """Finds all links from the object and return them."""
-	links = set()
-	for field in self.context.Schema().fields():
-	    if isinstance(field, TextField):
-		accessor = field.getAccessor(self.context)
-		encoding = field.getRaw(self.context, raw=1).original_encoding
-		if accessor is not None:
-		    value = accessor()
-		else:
-		    # Fields that have been added via schema extension do
-		    # not have an accessor method.
-		    value = field.get(self.context)
-		links |= set(extractLinks(value, encoding))
-	return links
+        links = set()
+        for field in self.context.Schema().fields():
+            if isinstance(field, TextField):
+                accessor = field.getAccessor(self.context)
+                encoding = field.getRaw(self.context, raw=1).original_encoding
+                if accessor is not None:
+                    value = accessor()
+                else:
+                    # Fields that have been added via schema extension do
+                    # not have an accessor method.
+                    value = field.get(self.context)
+                links |= set(extractLinks(value, encoding))
+        return links
 
 
 @implementer(IRetriever)
@@ -65,4 +65,3 @@ class DXGeneral(object):
                         continue
                     links |= set(extractLinks(value.raw))
         return links
-
