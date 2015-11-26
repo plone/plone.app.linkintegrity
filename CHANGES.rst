@@ -6,11 +6,8 @@ Changelog
 
 New:
 
-- introduce IRetriever adapter for customization flexibility
-
-Fixes:
-
-- *add item here*
+- Introduce IRetriever adapter for customization flexibility.
+  [tomgross]
 
 
 3.0.2 (2015-09-27)
