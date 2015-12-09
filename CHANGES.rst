@@ -10,7 +10,9 @@ New:
 
 Fixes:
 
-- *add item here*
+- Handle links that do not have an intid yet. Should help with
+  upgrade issues.
+  [vangheem]
 
 
 3.0.3 (2015-11-26)

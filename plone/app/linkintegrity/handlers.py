@@ -84,7 +84,17 @@ def getObjectsFromLinks(base, links):
 
             obj, extra = findObject(base, path)
             if obj and not IPloneSiteRoot.providedBy(obj):
-                objid = intids.getId(obj)
+                try:
+                    objid = intids.getId(obj)
+                except KeyError:
+                    try:
+                        intids.register(obj)
+                        objid = intids.getId(obj)
+                    except NotYet:
+                        # if we get a NotYet error, the object is not
+                        # attached yet and we will need to get links
+                        # at a later time when the object has an intid
+                        continue
                 relation = RelationValue(objid)
                 objects.add(relation)
     return objects
