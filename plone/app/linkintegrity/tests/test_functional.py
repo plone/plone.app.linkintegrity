@@ -352,6 +352,16 @@ class ReferenceTestCase:
         self.browser.getControl('Delete').click()
         self.assertNotIn('doc2', self.portal.objectIds())
 
+    def test_warn_about_content(self):
+        folder1 = self.portal.folder1
+        doc1 = self.portal.folder1.doc1
+        self.browser.open('{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            folder1.absolute_url(), self._get_token(folder1)))
+        self.assertIn('Number of selected', self.browser.contents)
+        self.assertIn('2 Objects in all', self.browser.contents)
+        self.assertIn('1 Folders', self.browser.contents)
+        self.assertIn('0 Published objects', self.browser.contents)
+
 
 class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
     """Functional reference testcase for dx content types"""
