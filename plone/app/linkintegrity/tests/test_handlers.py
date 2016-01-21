@@ -23,3 +23,14 @@ class FindObjectTests(PloneTestCase.PloneTestCase):
         obj, components = findObject(self.portal.doc1, '/doc2')
         self.assertEqual(obj.absolute_url_path(), '/plone/doc2')
         self.assertEqual(components, '')
+
+    def test_webserver_rewrites_portal_name(self):
+        # test the case where a webserver rewrites the portal name, e.g. for Apache:
+        # RewriteRule ^/wssitename(.*)$ http://localhost:8080/VirtualHostBase/http/my.domain.com:80/plonesitename/VirtualHostRoot/_vh_wssitename$1
+        self.portal.REQUEST.other['VirtualRootPhysicalPath'] = ('', 'plone')
+        self.portal.REQUEST._script = ['plone_foo']
+        obj, components = findObject(self.portal.doc1, '/plone_foo/doc2')
+        self.assertEqual(obj.absolute_url_path(), '/plone_foo/doc2')
+        self.assertEqual(obj.getPhysicalPath(), ('','plone', 'doc2'))
+        self.assertEqual(components, '')
+

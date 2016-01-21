@@ -12,7 +12,8 @@ New:
 Fixes:
 
 - *add item here*
-
+- make handler.findObject() work when the webserver rewrites the portal name
+  [tschorr]
 
 1.5.7 (2015-11-17)
 ------------------

@@ -65,7 +65,7 @@ def findObject(base, path):
     if path.startswith('/'):
         # Make an absolute path relative to the portal root
         obj = getToolByName(base, 'portal_url').getPortalObject()
-        portal_path = '/'.join(obj.getPhysicalPath()) + '/'
+        portal_path = obj.absolute_url_path() + '/'
         if path.startswith(portal_path):
             path = path[len(portal_path):]
         else:
