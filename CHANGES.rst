@@ -14,6 +14,9 @@ Fixes:
   upgrade issues.
   [vangheem]
 
+- make handler.findObject() work when the webserver rewrites the portal name
+  [tschorr]
+
 
 3.0.3 (2015-11-26)
 ------------------
