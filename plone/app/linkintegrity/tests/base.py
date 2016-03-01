@@ -12,7 +12,6 @@ from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
 from zope.lifecycleevent import modified
 
-import transaction
 import unittest
 
 
@@ -22,8 +21,6 @@ class BaseTestCase(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
         alsoProvides(self.request, IFormLayer)
-
-        transaction.commit()
 
         # Get a testbrowser
         self.browser = Browser(self.layer['app'])
@@ -48,7 +45,7 @@ class BaseTestCase(unittest.TestCase):
 class DXBaseTestCase(BaseTestCase):
     """Base testcase for testing Dexterity content types"""
 
-    layer = testing.PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
+    layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
 
     def _set_text(self, obj, text):
         obj.text = RichTextValue(text)
@@ -69,7 +66,7 @@ class DXBaseTestCase(BaseTestCase):
 class ATBaseTestCase(BaseTestCase):
     """Base testcase for testing Archetypes content types"""
 
-    layer = testing.PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING
+    layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING
 
     def _set_text(self, obj, text):
         obj.setText(text, mimetype='text/html')
