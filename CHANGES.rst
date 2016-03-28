@@ -11,15 +11,11 @@ Changelog
 1.5.8 (2016-02-02)
 ------------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
-- *add item here*
 - make handler.findObject() work when the webserver rewrites the portal name
   [tschorr]
+
 
 1.5.7 (2015-11-17)
 ------------------
@@ -36,7 +32,6 @@ Fixes:
 - Backport improvements to ``@@updateLinkIntegrityInformation`` from
   plone5 branch.
   [pbauer]
-
 
 
 1.5.5 (2014-10-22)
