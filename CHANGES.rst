@@ -4,10 +4,6 @@ Changelog
 3.0.5 (unreleased)
 ------------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
 - Fix test isolation problems: if a test calls transaction.commit() directly or
