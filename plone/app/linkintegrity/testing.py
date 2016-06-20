@@ -15,6 +15,7 @@ from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import ploneSite
 from plone.app.testing import setRoles
+from plone.namedfile.file import NamedImage
 from plone.testing import z2
 from zope.configuration import xmlconfig
 
@@ -73,7 +74,9 @@ class LinkIntegrityLayer(z2.Layer):
                 create(portal, **type_data)
 
             create(portal, 'File', id='file1', title='File 1', file=GIF)
-            create(portal, 'Image', id='image1', title='Image 1', image=GIF)
+            portal.invokeFactory('Image', 'image1')
+            portal['image1'].image = NamedImage(
+                GIF, 'image/gif', u'sample.gif')
             create(portal, 'Folder', id='folder1', title='Folder 1')
             subfolder = portal['folder1']
             create(subfolder, 'Document', id='doc4', title='Test Page 4')
