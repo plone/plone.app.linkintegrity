@@ -15,6 +15,7 @@ from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import ploneSite
 from plone.app.testing import setRoles
+from plone.namedfile.file import NamedImage
 from plone.testing import z2
 from zope.configuration import xmlconfig
 
@@ -73,7 +74,6 @@ class LinkIntegrityLayer(z2.Layer):
                 create(portal, **type_data)
 
             create(portal, 'File', id='file1', title='File 1', file=GIF)
-            create(portal, 'Image', id='image1', title='Image 1', image=GIF)
             create(portal, 'Folder', id='folder1', title='Folder 1')
             subfolder = portal['folder1']
             create(subfolder, 'Document', id='doc4', title='Test Page 4')
@@ -99,6 +99,12 @@ class LinkIntegrityATLayer(LinkIntegrityLayer):
     def setUp(self):
         self.setUpContent()
 
+    def setUpContent(self):
+        super(LinkIntegrityATLayer, self).setUpContent()
+
+        with ploneSite() as portal:
+            create(portal, 'Image', id='image1', title='Image 1', image=GIF)
+
 PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
 
 
@@ -120,6 +126,11 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
         with ploneSite() as portal:
             # Create an object that does not provide the behavior to live along
             create(portal, 'News Item', id='news1', title='News 1')
+
+            # create a DX NamedImage
+            portal.invokeFactory('Image', 'image1')
+            portal['image1'].image = NamedImage(GIF, 'image/gif',
+                                                u'sample.gif')
 
 
 PLONE_APP_LINKINTEGRITY_DX_FIXTURE = LinkIntegrityDXLayer()
