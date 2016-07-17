@@ -16,7 +16,7 @@
             <article tal:repeat="breach breaches" class="breach-container">
 
               <tal:target  tal:define="target breach/target">
-                <header><a href="target/url" tal:content="target/title" /></header>
+                <header><a href="${target/url}" tal:content="target/title" /></header>
                 <p>
                     <span i18n:translate="linkintegrity_is_referenced">
                         This <span i18n:name="portal_type" tal:content="target/type_title" />
