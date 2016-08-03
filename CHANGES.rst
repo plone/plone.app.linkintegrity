@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Fix object url in delete confirmation
+  [vangheem]
+
 - Use zope.interface decorator.
   [gforcada]
 
