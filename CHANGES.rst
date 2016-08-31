@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use transaction savepoints while calling @@updateLinkIntegrityInformation
+  to keep memory usage under control.
+  [ale-rt]
 
 
 3.0.6 (2016-08-17)
