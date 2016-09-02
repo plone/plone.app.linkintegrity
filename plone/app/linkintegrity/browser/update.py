@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
+from datetime import datetime
+from datetime import timedelta
+from plone.app.linkintegrity.handlers import modifiedContent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
-from datetime import datetime
-from datetime import timedelta
-from plone.app.linkintegrity.handlers import modifiedContent
+from transaction import savepoint
 from zExceptions import NotFound
 import logging
 import pkg_resources
@@ -73,10 +74,12 @@ class UpdateView(BrowserView):
                 msg = "Catalog inconsistency: {} not found!"
                 logger.error(msg.format(brain.getPath()), exc_info=1)
                 continue
-	    try:
-		modifiedContent(obj, 'dummy event parameter')
-		count += 1
-	    except Exception:
-		msg = "Error updating linkintegrity-info for {}."
-		logger.error(msg.format(obj.absolute_url()), exc_info=1)
+            try:
+                modifiedContent(obj, 'dummy event parameter')
+                count += 1
+            except Exception:
+                msg = "Error updating linkintegrity-info for {}."
+                logger.error(msg.format(obj.absolute_url()), exc_info=1)
+            if count % 1000 == 0:
+                savepoint(optimistic=True)
         return count
