@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.linkintegrity.handlers import findObject
