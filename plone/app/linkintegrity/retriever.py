@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ Link Integrity - link retriever methods """
 
 from plone.app.linkintegrity.interfaces import IRetriever
