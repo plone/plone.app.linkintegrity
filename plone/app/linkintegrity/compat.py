@@ -3,7 +3,7 @@
 
 try:
     from Products.Archetypes.interfaces import IBaseObject
-    from Products.Archtypes.Field import TextField
+    from Products.Archetypes.Field import TextField
 except ImportError:
     from zope.interface import Interface
 
