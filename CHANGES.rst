@@ -17,6 +17,9 @@ Bug fixes:
 - Add coding headers on python files.
   [gforcada]
 
+- Remove hard dependency on Archetypes (again).
+  [davisagli]
+
 
 3.0.7 (2016-09-16)
 ------------------

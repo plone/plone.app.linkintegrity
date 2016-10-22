@@ -5,14 +5,14 @@ from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.linkintegrity.parser import extractLinks
 from zope.component import adapter
 from zope.interface import implementer
-from Products.Archetypes.Field import TextField
-from Products.Archetypes.interfaces import IBaseObject
 from plone.dexterity.interfaces import IDexterityContent
 from zope.component import getUtility
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import getAdditionalSchemata
 from zope.schema import getFieldsInOrder
 from plone.app.textfield import RichText
+from .compat import IBaseObject
+from .compat import TextField
 
 
 @implementer(IRetriever)

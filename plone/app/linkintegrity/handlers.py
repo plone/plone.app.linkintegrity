@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_get
 from Acquisition import aq_parent
-from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from ZODB.POSException import ConflictError
@@ -19,6 +18,7 @@ from zope.component.interfaces import ComponentLookupError
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
 from zope.publisher.interfaces import NotFound as ztkNotFound
+from .compat import IBaseObject
 import logging
 
 logger = logging.getLogger(__name__)
