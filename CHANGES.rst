@@ -10,7 +10,10 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Information about contents within a selected folder for deletion. 
+  This information contains number of deleted objects, 
+  number of subfolders and number of published objects.
+  [karalics]
 
 Bug fixes:
 

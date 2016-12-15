@@ -16,6 +16,7 @@ from zope.i18n import translate
 class DeleteConfirmationInfo(BrowserView):
 
     template = ViewPageTemplateFile('delete_confirmation_info.pt')
+    breach_count = {}
 
     def __init__(self, context, request):
         self.linkintegrity_enabled = linkintegrity_enabled()
@@ -41,26 +42,38 @@ class DeleteConfirmationInfo(BrowserView):
         or their children (if a object is a folder) will be ignored.
         """
         if items is None:
-
             items = [self.context]
         catalog = getToolByName(self.context, 'portal_catalog')
         results = []
         uids_to_ignore = []
+        uids_visited = set()
+        self.breach_count = {}
         for obj in items:
             obj_path = '/'.join(obj.getPhysicalPath())
             brains_to_delete = catalog(path={'query': obj_path})
             # add the current items uid and all its childrens uids to the
             # list of uids that are ignored
             uids_to_ignore.extend([i.UID for i in brains_to_delete])
-            for breach in self.get_breaches_for_item(obj):
-                add_breach = False
-                for source in breach['sources']:
-                    # Only add the breach if one the sources is not in the
-                    # list of items that are to be deleted.
-                    if source['uid'] not in uids_to_ignore:
-                        add_breach = True
-                if add_breach:
-                    results.append(breach)
+            for brain_to_delete in brains_to_delete:
+                obj_to_delete = brain_to_delete.getObject()
+                for breach in self.get_breaches_for_item(obj):
+                    add_breach = False
+                    for source in breach['sources']:
+                        # Only add the breach if one the sources is not in the
+                        # list of items that are to be deleted.
+                        if source['uid'] not in uids_to_ignore and \
+                           source['uid'] not in uids_visited:
+                            add_breach = True
+                            uids_visited.add(source['uid'])
+                            break
+                    if add_breach:
+                        results.append(breach)
+            if IFolder.providedBy(obj):
+                count = len(catalog(path={'query': obj_path}))
+                count_dirs = len(catalog(path={'query': obj_path}, is_folderish=True))
+                count_public = len(catalog(path={'query': obj_path}, review_state='published'))
+                if count:
+                    self.breach_count[obj_path]=[count, count_dirs, count_public]
 
         # Cleanup: Some breaches where added before it was known
         # that their source will be deleted too.
@@ -75,6 +88,7 @@ class DeleteConfirmationInfo(BrowserView):
                         # sources for a breach
                         results.remove(result)
         return results
+
 
     def get_breaches_for_item(self, obj=None):
         """Get breaches for one object and its children.
@@ -153,3 +167,4 @@ class DeleteConfirmationInfo(BrowserView):
 
     def is_accessible(self, obj):
         return _checkPermission(AccessContentsInformation, obj)
+
