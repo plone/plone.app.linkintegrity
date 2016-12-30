@@ -4,20 +4,12 @@ Changelog
 3.1 (unreleased)
 ----------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Information about contents within a selected folder for deletion. 
   This information contains number of deleted objects, 
   number of subfolders and number of published objects.
   [karalics]
-
-Bug fixes:
-
-- *add item here*
 
 
 3.0.8 (2016-11-09)
