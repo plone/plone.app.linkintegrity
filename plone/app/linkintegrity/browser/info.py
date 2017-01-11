@@ -55,7 +55,10 @@ class DeleteConfirmationInfo(BrowserView):
             # list of uids that are ignored
             uids_to_ignore.extend([i.UID for i in brains_to_delete])
             for brain_to_delete in brains_to_delete:
-                obj_to_delete = brain_to_delete.getObject()
+                try:
+                    obj_to_delete = brain_to_delete.getObject()
+                except (AttributeError, KeyError):
+                    continue
                 for breach in self.get_breaches_for_item(obj):
                     add_breach = False
                     for source in breach['sources']:
@@ -108,7 +111,10 @@ class DeleteConfirmationInfo(BrowserView):
         if IFolder.providedBy(obj):
             brains = catalog(path={'query': obj_path})
             for brain in brains:
-                child = brain.getObject()
+                try:
+                    child = brain.getObject()
+                except (AttributeError, KeyError):
+                    continue
                 if child == obj:
                     continue
                 breaches = self.check_object(obj=child, excluded_path=obj_path)
