@@ -10,7 +10,7 @@ def migrate_linkintegrity_relations(context):
     """Migrate linkintegrity-relation from reference_catalog to zc.relation"""
     reference_catalog = getToolByName(context, REFERENCE_CATALOG, None)
     if reference_catalog is not None:
-        for brain in reference_catalog():
+        for brain in catalog_get_all(reference_catalog):
             # only handle linkintegrity-relations ('relatesTo')
             if brain.relationship != referencedRelationship:
                 continue
@@ -24,3 +24,17 @@ def migrate_linkintegrity_relations(context):
             # the relation_catalog (zc.relation)
             modified(source_obj)
             modified(target_obj)
+
+
+def catalog_get_all(catalog, unique_idx='UID'):
+    """Get all brains from the catalog.
+    TODO: Replace with import from CMFPlone after the zope4-branch of
+    CMFPlone is merged.
+    """
+    res = [
+        catalog({
+            unique_idx: catalog._catalog.getIndexDataForRID(it)[unique_idx]
+        })[0]
+        for it in catalog._catalog.data
+    ]
+    return res
