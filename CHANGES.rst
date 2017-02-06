@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.1.1 (unreleased)
+3.2.0 (unreleased)
 ------------------
 
 Breaking changes:
@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Compatibility with ZCatalog 4 (upgrade steps)
+  [pbauer, jensens]
 
 Bug fixes:
 
