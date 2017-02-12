@@ -4,18 +4,10 @@ Changelog
 3.2.0 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Compatibility with ZCatalog 4 (upgrade steps)
   [pbauer, jensens]
-
-Bug fixes:
-
-- *add item here*
 
 
 3.1 (2016-12-30)
