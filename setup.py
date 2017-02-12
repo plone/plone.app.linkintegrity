@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
-version = '3.2.0'
+version = '3.2.1.dev0'
 
 setup(name='plone.app.linkintegrity',
       version=version,
