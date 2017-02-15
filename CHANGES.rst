@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Show breakage info even if catalog is out of sync
+  [tomgross]
 
 
 3.1 (2016-12-30)
