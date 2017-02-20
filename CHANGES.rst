@@ -4,14 +4,6 @@ Changelog
 3.2.1 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Show breakage info even if catalog is out of sync
