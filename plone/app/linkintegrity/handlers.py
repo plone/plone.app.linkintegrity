@@ -41,7 +41,6 @@ try:
     from plone.app.textfield import RichText
     from plone.dexterity.interfaces import IDexterityFTI
     from plone.dexterity.utils import getAdditionalSchemata
-    from plone.directives.form import Schema
     HAS_DEXTERITY = True
 except:
     HAS_DEXTERITY = False
