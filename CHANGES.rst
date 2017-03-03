@@ -5,7 +5,10 @@ Changelog
 1.5.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Don't check if dexterity is present by importing from plone.directives, grok
+  is no longer part of dexterity.
+  [fredvd]
+
 
 
 1.5.8 (2016-02-02)
