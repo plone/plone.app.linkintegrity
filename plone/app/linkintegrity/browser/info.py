@@ -62,7 +62,7 @@ class DeleteConfirmationInfo(BrowserView):
                 try:
                     obj_to_delete = brain_to_delete.getObject()
                 except (AttributeError, KeyError):
-                    logger.excpetion('No object found for %s! Skipping', brain_to_delete)
+                    logger.exception('No object found for %s! Skipping', brain_to_delete)
                     continue
                 for breach in self.get_breaches_for_item(obj):
                     add_breach = False
