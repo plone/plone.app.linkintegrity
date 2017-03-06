@@ -15,7 +15,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix typo in logging method
+  [tomgross]
 
 
 3.2.1 (2017-02-20)
