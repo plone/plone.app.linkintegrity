@@ -15,7 +15,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Rerelease, because one buildout somehow cannot find 1.5.9.
+  [maurits]
 
 
 1.5.9 (2017-03-09)
