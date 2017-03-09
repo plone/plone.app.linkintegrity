@@ -5,14 +5,6 @@ Changelog
 1.5.10 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Rerelease, because one buildout somehow cannot find 1.5.9.
