@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from OFS.interfaces import IFolder
+from plone.app.linkintegrity.utils import getIncomingLinks
+from plone.app.linkintegrity.utils import linkintegrity_enabled
+from plone.uuid.interfaces import IUUID
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.linkintegrity.utils import getIncomingLinks
-from plone.app.linkintegrity.utils import linkintegrity_enabled
-from plone.uuid.interfaces import IUUID
 from zope.i18n import translate
+
 import logging
 
 
@@ -60,9 +61,10 @@ class DeleteConfirmationInfo(BrowserView):
             uids_to_ignore.extend([i.UID for i in brains_to_delete])
             for brain_to_delete in brains_to_delete:
                 try:
-                    obj_to_delete = brain_to_delete.getObject()
+                    obj_to_delete = brain_to_delete.getObject()  # noqa
                 except (AttributeError, KeyError):
-                    logger.exception('No object found for %s! Skipping', brain_to_delete)
+                    logger.exception(
+                        'No object found for %s! Skipping', brain_to_delete)
                     continue
                 for breach in self.get_breaches_for_item(obj):
                     add_breach = False
@@ -77,11 +79,23 @@ class DeleteConfirmationInfo(BrowserView):
                     if add_breach:
                         results.append(breach)
             if IFolder.providedBy(obj):
-                count = len(catalog(path={'query': obj_path}))
-                count_dirs = len(catalog(path={'query': obj_path}, is_folderish=True))
-                count_public = len(catalog(path={'query': obj_path}, review_state='published'))
+                count = len(catalog(
+                    path={'query': obj_path}
+                ))
+                count_dirs = len(catalog(
+                    path={'query': obj_path},
+                    is_folderish=True
+                ))
+                count_public = len(catalog(
+                    path={'query': obj_path},
+                    review_state='published'
+                ))
                 if count:
-                    self.breach_count[obj_path]=[count, count_dirs, count_public]
+                    self.breach_count[obj_path] = [
+                        count,
+                        count_dirs,
+                        count_public
+                    ]
 
         # Cleanup: Some breaches where added before it was known
         # that their source will be deleted too.
@@ -96,7 +110,6 @@ class DeleteConfirmationInfo(BrowserView):
                         # sources for a breach
                         results.remove(result)
         return results
-
 
     def get_breaches_for_item(self, obj=None):
         """Get breaches for one object and its children.
@@ -130,7 +143,6 @@ class DeleteConfirmationInfo(BrowserView):
 
     def check_object(self, obj, excluded_path=None):
         """Check one object for breaches.
-
         Breaches originating from excluded_path are ignored.
         """
         breaches = {}
@@ -165,7 +177,8 @@ class DeleteConfirmationInfo(BrowserView):
             return breaches
 
     def get_portal_type_title(self, obj):
-        """Get the portal type title of the object."""
+        """Get the portal type title of the object.
+        """
         context = aq_inner(self.context)
         portal_types = getToolByName(context, 'portal_types')
         fti = portal_types.get(obj.portal_type)
@@ -178,4 +191,3 @@ class DeleteConfirmationInfo(BrowserView):
 
     def is_accessible(self, obj):
         return _checkPermission(AccessContentsInformation, obj)
-

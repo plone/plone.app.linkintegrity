@@ -1,37 +1,39 @@
- <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      lang="en"
-      metal:use-macro="here/main_template/macros/master"
-      i18n:domain="plone">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="here/main_template/macros/master"
+    i18n:domain="plone"
+    tal:omit-tag="">
 
 <head>
-    <metal:block fill-slot="top_slot"
-                 tal:define="dummy python:request.set('disable_border',1)" />
+  <metal:block
+      fill-slot="top_slot"
+      tal:define="dummy python:request.set('disable_border',1)" />
 </head>
 
 <body>
-
 <metal:main fill-slot="main">
 
-    <h1 class="documentFirstHeading"
-        i18n:translate="linkintegrity_update_title">Update link integrity information</h1>
+  <h1 class="documentFirstHeading"
+      i18n:translate="linkintegrity_update_title">Update link integrity information</h1>
 
-    <div id="content-core">
-        <p i18n:translate="linkintegrity_update_instructions">
-            Clicking the below button will cause link integrity information to be
-            updated. This might take a while, especially for bigger sites...
-        </p>
+  <div id="content-core">
 
-        <form method="post" action="updateLinkIntegrityInformation"
-              tal:attributes="action request/URL">
+    <p i18n:translate="linkintegrity_update_instructions">
+      Clicking the below button will cause link integrity information to be
+      updated. This might take a while, especially for bigger sites...
+    </p>
 
-          <input class="destructive" type="submit" name="update" value="Update" />
+    <form method="post" action="updateLinkIntegrityInformation"
+        tal:attributes="action request/URL">
+      <input class="destructive" type="submit" name="update" value="Update" />
+      <input class="standalone" type="submit" name="cancel" value="Cancel" />
+    </form>
 
-          <input class="standalone" type="submit" name="cancel" value="Cancel" />
-
-        </form>
-    </div>
+  </div>
 
 </metal:main>
-
 </body>
 </html>

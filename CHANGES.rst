@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- PEP8.
+  [thet]
 
 
 3.2.2 (2017-04-02)
@@ -54,8 +55,8 @@ New features:
 
 New features:
 
-- Information about contents within a selected folder for deletion. 
-  This information contains number of deleted objects, 
+- Information about contents within a selected folder for deletion.
+  This information contains number of deleted objects,
   number of subfolders and number of published objects.
   [karalics]
 

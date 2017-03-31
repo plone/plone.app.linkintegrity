@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-""" Link Integrity - link retriever methods """
-
-from plone.app.linkintegrity.interfaces import IRetriever
-from plone.app.linkintegrity.parser import extractLinks
-from zope.component import adapter
-from zope.interface import implementer
-from plone.dexterity.interfaces import IDexterityContent
-from zope.component import getUtility
-from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.utils import getAdditionalSchemata
-from zope.schema import getFieldsInOrder
-from plone.app.textfield import RichText
+"""Link Integrity - link retriever methods.
+"""
 from .compat import IBaseObject
 from .compat import TextField
+from plone.app.linkintegrity.interfaces import IRetriever
+from plone.app.linkintegrity.parser import extractLinks
+from plone.app.textfield import RichText
+from plone.dexterity.interfaces import IDexterityContent
+from plone.dexterity.interfaces import IDexterityFTI
+from plone.dexterity.utils import getAdditionalSchemata
+from zope.component import adapter
+from zope.component import getUtility
+from zope.interface import implementer
+from zope.schema import getFieldsInOrder
 
 
 @implementer(IRetriever)
@@ -25,7 +25,8 @@ class ATGeneral(object):
         self.context = context
 
     def retrieveLinks(self):
-        """Finds all links from the object and return them."""
+        """Finds all links from the object and return them.
+        """
         links = set()
         for field in self.context.Schema().fields():
             if isinstance(field, TextField):
@@ -51,7 +52,8 @@ class DXGeneral(object):
         self.context = context
 
     def retrieveLinks(self):
-        """Finds all links from the object and return them."""
+        """Finds all links from the object and return them.
+        """
         fti = getUtility(IDexterityFTI, name=self.context.portal_type)
         schema = fti.lookupSchema()
         additional_schema = getAdditionalSchemata(
