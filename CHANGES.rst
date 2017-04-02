@@ -4,10 +4,6 @@ Changelog
 3.2.2 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Use plone.namedfile for testing images
