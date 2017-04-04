@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
-from Products.Archetypes.config import REFERENCE_CATALOG
 from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.CMFCore.utils import getToolByName
 from zope.lifecycleevent import modified
 
 
 def migrate_linkintegrity_relations(context):
-    """Migrate linkintegrity-relation from reference_catalog to zc.relation"""
+    """Migrate linkintegrity-relation from reference_catalog to zc.relation.
+    """
     reference_catalog = getToolByName(context, REFERENCE_CATALOG, None)
     if reference_catalog is not None:
         for brain in catalog_get_all(reference_catalog):

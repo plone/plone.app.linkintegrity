@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
-from HTMLParser import HTMLParser, HTMLParseError
+from HTMLParser import HTMLParseError
+from HTMLParser import HTMLParser
 
 
 class LinkParser(HTMLParser):
-    """ a simple html parser for link and image urls """
+    """A simple html parser for link and image urls.
+    """
 
     def __init__(self):
         HTMLParser.__init__(self)
         self.links = []
 
     def getLinks(self):
-        """ return all links found during parsing """
+        """Return all links found during parsing.
+        """
         return tuple(self.links)
 
     def handle_starttag(self, tag, attrs):
-        """ override the method to remember all links """
+        """Override the method to remember all links.
+        """
         if tag == 'a':
             self.links.extend(search_attr('href', attrs))
         if tag == 'img':
@@ -22,7 +26,8 @@ class LinkParser(HTMLParser):
 
 
 def search_attr(name, attrs):
-    """ search named attribute in a list of attributes """
+    """Search named attribute in a list of attributes.
+    """
     for attr, value in attrs:
         if attr == name:
             return [value]
@@ -30,7 +35,8 @@ def search_attr(name, attrs):
 
 
 def extractLinks(data, encoding='utf-8'):
-    """ parse the given html and return all links """
+    """Parse the given html and return all links.
+    """
     if not data:
         return []
     parser = LinkParser()

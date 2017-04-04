@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
-from Products.Archetypes.interfaces import IBaseObject
-from Products.CMFCore.utils import getToolByName
-from StringIO import StringIO
 from base64 import decodestring
-from plone.app.contenttypes.testing import (
-    PLONE_APP_CONTENTTYPES_FIXTURE,
-    PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE
-)
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE  # noqa
+from plone.app.testing import layers
+from plone.app.testing import login
 from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import ploneSite
+from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
-from plone.app.testing import layers
-from plone.app.testing import login
-from plone.app.testing import ploneSite
-from plone.app.testing import setRoles
 from plone.namedfile.file import NamedImage
 from plone.testing import z2
+from Products.Archetypes.interfaces import IBaseObject
+from Products.CMFCore.utils import getToolByName
+from StringIO import StringIO
 from zope.configuration import xmlconfig
+
 
 B64_DATA = 'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
 GIF = StringIO(decodestring(B64_DATA))
@@ -29,7 +28,7 @@ GIF._height = 1
 
 def create(container, type_name, **kwargs):
     """A easy helper method to create some content since we do not have
-       plone.api in core.
+    plone.api in core.
     """
 
     new_id = container.invokeFactory(type_name, **kwargs)
@@ -44,7 +43,8 @@ def create(container, type_name, **kwargs):
 
 
 class LinkIntegrityLayer(z2.Layer):
-    """Base Layer for AT and Dexterity testing"""
+    """Base Layer for AT and Dexterity testing.
+    """
 
     defaultBases = (PLONE_FIXTURE, )
 
@@ -84,11 +84,13 @@ class LinkIntegrityLayer(z2.Layer):
         with z2.zopeApp() as app:
             z2.uninstallProduct(app, 'plone.app.linkintegrity')
 
+
 PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
 
 
 class LinkIntegrityATLayer(LinkIntegrityLayer):
-    """Layer which targets testing with Archetypes and ATContentTypes"""
+    """Layer which targets testing with Archetypes and ATContentTypes.
+    """
 
     directory = 'at'
     defaultBases = (
@@ -105,11 +107,13 @@ class LinkIntegrityATLayer(LinkIntegrityLayer):
         with ploneSite() as portal:
             create(portal, 'Image', id='image1', title='Image 1', image=GIF)
 
+
 PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
 
 
 class LinkIntegrityDXLayer(LinkIntegrityLayer):
-    """Layer which targets testing with Dexterity"""
+    """Layer which targets testing with Dexterity.
+    """
 
     directory = 'dx'
     defaultBases = (

@@ -9,8 +9,10 @@ from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 from transaction import savepoint
 from zExceptions import NotFound
+
 import logging
 import pkg_resources
+
 
 # Is there a multilingual addon?
 try:

@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
+from .compat import IBaseObject
 from Acquisition import aq_get
 from Acquisition import aq_parent
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from ZODB.POSException import ConflictError
 from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from urllib import unquote
 from urlparse import urlsplit
 from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
-from zExceptions import NotFound
 from zc.relation.interfaces import ICatalog
+from zExceptions import NotFound
+from ZODB.POSException import ConflictError
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
 from zope.publisher.interfaces import NotFound as ztkNotFound
-from .compat import IBaseObject
+
 import logging
+
 
 logger = logging.getLogger(__name__)
 referencedRelationship = 'isReferencing'
@@ -110,9 +112,11 @@ def modifiedContent(obj, event):
         refs = getObjectsFromLinks(obj, links)
         updateReferences(obj, refs)
 
+
 # BBB
 modifiedArchetype = modifiedContent
 modifiedDexterity = modifiedContent
+
 
 def updateReferences(obj, refs):
     """Renew all linkintegritry-references.
