@@ -10,7 +10,9 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Support for any ``zc.relation`` refercences being checked by ``delete_confirmation_info`` dialog,
+  not only references linked in text.
+  [thet]
 
 Bug fixes:
 

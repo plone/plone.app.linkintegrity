@@ -7,15 +7,20 @@ from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 
 
-def getIncomingLinks(obj=None, intid=None):
+def getIncomingLinks(
+    obj=None,
+    intid=None,
+    from_attribute=referencedRelationship
+):
     """Return a generator of incoming relations created using
     plone.app.linkintegrity (Links in Richtext-Fields).
     """
     catalog = getUtility(ICatalog)
     intid = intid if intid is not None else getUtility(IIntIds).getId(obj)
-    return catalog.findRelations({
-        'to_id': intid,
-        'from_attribute': referencedRelationship})
+    query = {'to_id': intid}
+    if from_attribute:
+        query['from_attribute'] = from_attribute
+    return catalog.findRelations(query)
 
 
 def hasIncomingLinks(obj=None, intid=None):
@@ -29,15 +34,20 @@ def hasIncomingLinks(obj=None, intid=None):
     return False
 
 
-def getOutgoingLinks(obj=None, intid=None):
+def getOutgoingLinks(
+    obj=None,
+    intid=None,
+    from_attribute=referencedRelationship
+):
     """Return a generator of outgoing relations created using
     plone.app.linkintegrity (Links in Richtext-Fields).
     """
     catalog = getUtility(ICatalog)
     intid = intid if intid is not None else getUtility(IIntIds).getId(obj)
-    return catalog.findRelations({
-        'from_id': intid,
-        'from_attribute': referencedRelationship})
+    query = {'from_id': intid}
+    if from_attribute:
+        query['from_attribute'] = from_attribute
+    return catalog.findRelations(query)
 
 
 def hasOutgoingLinks(obj=None, intid=None):

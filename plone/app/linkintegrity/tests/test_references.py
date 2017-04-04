@@ -3,13 +3,18 @@ from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
-from plone.app.linkintegrity.utils import hasIncomingLinks
-from plone.app.linkintegrity.utils import hasOutgoingLinks
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
+from plone.app.linkintegrity.utils import hasIncomingLinks
+from plone.app.linkintegrity.utils import hasOutgoingLinks
 from plone.app.testing import login
 from plone.app.testing import logout
 from plone.app.testing import TEST_USER_NAME
+from z3c.relationfield import RelationValue
+from z3c.relationfield.event import _setRelation
+from zc.relation.interfaces import ICatalog
+from zope.component import getUtility
+from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import modified
 
 
@@ -163,6 +168,30 @@ class ReferenceGenerationTestCase:
 
         # And again the related item reference remains in place:
         self.assertEqual(self._get_related_items(doc), [img, ])
+
+    def test_delete_confirmation_for_any_reference(self):
+        """Test, if delete confirmation shows also a warning if items are
+        deleted, which are referenced by other items via a reference field.
+        """
+        img1 = self.portal['image1']
+        doc1 = self.portal['doc1']
+
+        intids_tool = getUtility(IIntIds)
+        to_id = intids_tool.getId(img1)
+        rel = RelationValue(to_id)
+        _setRelation(doc1, 'related_image', rel)
+
+        # Test, if relation is present in the relation catalog
+        catalog = getUtility(ICatalog)
+        rels = list(catalog.findRelations({'to_id':  to_id}))
+        self.assertEqual(len(rels), 1)
+
+        # Test, if delete_confirmation_info shows also other relations than
+        # ``isReferencing``.
+        info = img1.restrictedTraverse('@@delete_confirmation_info')
+        breaches = info.get_breaches()
+        self.assertEqual(len(breaches), 1)
+        self.assertEqual(len(info.get_breaches()[0]['sources']), 1)
 
 
 class ReferenceGenerationDXTestCase(DXBaseTestCase, ReferenceGenerationTestCase):
