@@ -146,7 +146,7 @@ class DeleteConfirmationInfo(BrowserView):
         Breaches originating from excluded_path are ignored.
         """
         breaches = {}
-        direct_links = getIncomingLinks(obj)
+        direct_links = getIncomingLinks(obj, from_attribute=None)
         has_breaches = False
         for direct_link in direct_links:
             source_path = direct_link.from_path
