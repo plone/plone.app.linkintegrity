@@ -16,9 +16,16 @@ deleting items in the view `folder_contents` via Actions / Delete).
 
 Whenever an object that is referred to by another one via an `<a>` or `<img>`
 tag is going to be deleted, a confirmation form is presented to the user.
+The same applies to content referenced via a relation field and indexed in the
+``zc.relation`` catalog, like via the related items behavior.
 They can then decide to indeed delete the object, breaching link
 integrity of the site or first edit the objects that link to the item in
 question.
+
+For relations set in a textfield, the ``isRelated`` reference is used.
+For these references, plone.app.linkintegrity also handles modifications, if a content related via ``isRelated`` is modified.
+For all other related content, other mechanisms handle updates.
+One such handler can be found in ``plone.app.relationfield``.
 
 Changes in 3.0
 --------------
@@ -85,16 +92,20 @@ To check items for links in html-fields you can use the methods in
 
 
 ``utils.hasIncomingLinks(obj)``
-    Test if an object is linked to by other objects
+    Test if an object is linked to by other objects.
 
 ``utils.hasOutgoingLinks(obj)``
-    Test if an object links to other objects
+    Test if an object links to other objects.
 
-``utils.getIncomingLinks(obj)``
-    Return a generator of incoming relations
+``utils.getIncomingLinks(obj, from_attribute)``
+    Return a generator of incoming relations.
+    ``from_attribute`` is optional and defaults to ``plone.app.linkintegrity.handlers.referencedRelationship``.
+    Is set to None, all references pointing to the object are searched.
 
-``utils.getOutgoingLinks(obj)``
-    Return a generator of outgoing relations
+``utils.getOutgoingLinks(obj, from_attribute)``
+    Return a generator of outgoing relations.
+    ``from_attribute`` is optional and defaults to ``plone.app.linkintegrity.handlers.referencedRelationship``.
+    Is set to None, all references pointing from the object are searched.
 
 ``utils.linkintegrity_enabled()``
-    Test if linkintegrity-feature is enables for users
+    Test if linkintegrity-feature is enables for users.
