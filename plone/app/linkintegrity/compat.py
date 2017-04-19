@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # If Archetypes is not installed, define dummy objects
 # to replace Archetypes imports.
 try:

@@ -4,4 +4,6 @@
 
 # disable deprecation warnings
 import warnings
-warnings.filterwarnings("ignore", ".*", DeprecationWarning)
+
+
+warnings.filterwarnings('ignore', '.*', DeprecationWarning)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from Products.Archetypes.interfaces import IReferenceable
 from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.upgrades import migrate_linkintegrity_relations
 from plone.app.linkintegrity.utils import hasIncomingLinks
+from Products.Archetypes.interfaces import IReferenceable
 
 
 class ReferenceMigrationATTestCase(ATBaseTestCase):

@@ -132,7 +132,10 @@ class ReferenceGenerationTestCase:
         # eventually plays well with transaction machinery.
         # Add bad link, should not raise exception and there should not
         # be any references added.
-        self._set_text(doc1, unicode('<a href="ö?foo=bar&baz=bam">bug</a>', 'utf-8'))
+        self._set_text(
+            doc1,
+            unicode('<a href="ö?foo=bar&baz=bam">bug</a>', 'utf-8'),
+        )
         self.assertEqual([l for l in getOutgoingLinks(doc1)], [])
 
     def test_reference_orthogonality(self):
@@ -194,9 +197,15 @@ class ReferenceGenerationTestCase:
         self.assertEqual(len(info.get_breaches()[0]['sources']), 1)
 
 
-class ReferenceGenerationDXTestCase(DXBaseTestCase, ReferenceGenerationTestCase):
+class ReferenceGenerationDXTestCase(
+    DXBaseTestCase,
+    ReferenceGenerationTestCase,
+):
     """Reference generation testcase for dx content types"""
 
 
-class ReferenceGenerationATTestCase(ATBaseTestCase, ReferenceGenerationTestCase):
+class ReferenceGenerationATTestCase(
+    ATBaseTestCase,
+    ReferenceGenerationTestCase,
+):
     """Reference generation testcase for at content types"""

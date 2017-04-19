@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
-from Products.CMFPlone.interfaces import IEditingSchema
-
-from zc.relation.interfaces import ICatalog
 from plone.app.linkintegrity import testing
-from plone.app.linkintegrity.utils import getIncomingLinks
-# from plone.app.linkintegrity.utils import hasIncomingLinks
-from plone.app.linkintegrity.utils import getOutgoingLinks
-from plone.app.linkintegrity.utils import hasOutgoingLinks
-
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
+# from plone.app.linkintegrity.utils import hasIncomingLinks
+from plone.app.linkintegrity.utils import getIncomingLinks
+from plone.app.linkintegrity.utils import getOutgoingLinks
+from plone.app.linkintegrity.utils import hasOutgoingLinks
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
-from plone.testing.z2 import Browser
 from plone.registry.interfaces import IRegistry
+from plone.testing.z2 import Browser
+from Products.CMFPlone.interfaces import IEditingSchema
+from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 
 import transaction
@@ -146,8 +144,11 @@ class ReferenceTestCase:
         # throw.
         self.browser.handleErrors = True
 
-        self.browser.open('{0:s}/delete_confirmation?_authenticator={1:s}'.format(
-            folder1.absolute_url(), self._get_token(folder1)))
+        self.browser.open(
+            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+                folder1.absolute_url(), self._get_token(folder1)
+            )
+        )
         self.assertIn('Potential link breakage', self.browser.contents)
         self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
                       self.browser.contents)
@@ -207,8 +208,11 @@ class ReferenceTestCase:
         # the exception we intentionally throw.
         self.browser.handleErrors = True
 
-        self.browser.open('{0:s}/delete_confirmation?_authenticator={1:s}'.format(
-            doc2.absolute_url(), self._get_token(doc2)))
+        self.browser.open(
+            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+                doc2.absolute_url(), self._get_token(doc2)
+            )
+        )
         self.assertIn('Potential link breakage', self.browser.contents)
         self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
                       self.browser.contents)
@@ -253,8 +257,14 @@ class ReferenceTestCase:
 
         # Now the linking documents should hold the correct link integrity
         # references:
-        self.assertEqual([i.to_object for i in getOutgoingLinks(doc1)], [doc2, ])
-        self.assertEqual([i.to_object for i in getOutgoingLinks(doc2)], [doc4, ])
+        self.assertEqual(
+            [i.to_object for i in getOutgoingLinks(doc1)],
+            [doc2, ],
+        )
+        self.assertEqual(
+            [i.to_object for i in getOutgoingLinks(doc2)],
+            [doc4, ],
+        )
 
     def test_references_on_cloned_objects(self):
         doc1 = self.portal.doc1
@@ -281,8 +291,11 @@ class ReferenceTestCase:
 
         # Now we can continue and "click" the "delete" action. The confirmation
         # page should list both documents:
-        self.browser.open('{0:s}/delete_confirmation?_authenticator={1:s}'.format(
-            doc2.absolute_url(), self._get_token(doc2)))
+        self.browser.open(
+            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+                doc2.absolute_url(), self._get_token(doc2)
+            )
+        )
         self.assertIn(
             'is referenced by the following items:', self.browser.contents)
         self.assertIn('Potential link breakage', self.browser.contents)
@@ -318,8 +331,11 @@ class ReferenceTestCase:
         # from choking on the exception we intentionally throw.
         self.browser.handleErrors = True
 
-        self.browser.open('{0:s}/delete_confirmation?_authenticator={1:s}'.format(
-            spaces1.absolute_url(), self._get_token(spaces1)))
+        self.browser.open(
+            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+                spaces1.absolute_url(), self._get_token(spaces1)
+            )
+        )
         self.assertIn('Potential link breakage', self.browser.contents)
         self.assertIn(
             '<a href="http://nohost/plone/doc1">Test Page 1</a>',
@@ -354,9 +370,11 @@ class ReferenceTestCase:
 
     def test_warn_about_content(self):
         folder1 = self.portal.folder1
-        doc1 = self.portal.folder1.doc1
-        self.browser.open('{0:s}/delete_confirmation?_authenticator={1:s}'.format(
-            folder1.absolute_url(), self._get_token(folder1)))
+        self.browser.open(
+            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+                folder1.absolute_url(), self._get_token(folder1)
+            )
+        )
         self.assertIn('Number of selected', self.browser.contents)
         self.assertIn('2 Objects in all', self.browser.contents)
         self.assertIn('1 Folders', self.browser.contents)
