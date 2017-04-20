@@ -4,10 +4,6 @@ Changelog
 3.3 (unreleased)
 ----------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Support for any ``zc.relation`` refercences being checked by ``delete_confirmation_info`` dialog,
