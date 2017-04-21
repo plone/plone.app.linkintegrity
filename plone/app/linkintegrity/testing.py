@@ -15,7 +15,6 @@ from plone.testing import z2
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
 from StringIO import StringIO
-from zope.configuration import xmlconfig
 
 
 B64_DATA = 'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
@@ -56,8 +55,11 @@ class LinkIntegrityLayer(z2.Layer):
 
     def setUpContent(self):
         import plone.app.linkintegrity
-        xmlconfig.file('configure.zcml', plone.app.linkintegrity,
-                       context=self['configurationContext'])
+        self.loadZCML(
+            'configure.zcml',
+            plone.app.linkintegrity,
+            context=self['configurationContext'],
+        )
 
         with z2.zopeApp() as app:
             z2.installProduct(app, 'plone.app.linkintegrity')

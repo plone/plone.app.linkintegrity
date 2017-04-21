@@ -31,6 +31,8 @@ Bug fixes:
 - PEP8.
   [thet]
 
+- Update code to follow Plone styleguide.
+  [gforcada]
 
 3.2.2 (2017-04-02)
 ------------------

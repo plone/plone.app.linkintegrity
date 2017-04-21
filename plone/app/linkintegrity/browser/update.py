@@ -52,7 +52,10 @@ class UpdateView(BrowserView):
                 mapping={'count': count, 'time': str(duration)},
             )
             IStatusMessage(request).add(msg, type='info')
-            msg = 'Updated {} items in {} seconds'.format(count, str(duration))
+            msg = 'Updated {0} items in {1} seconds'.format(
+                count,
+                str(duration),
+            )
             logger.info(msg)
             request.RESPONSE.redirect(getToolByName(context, 'portal_url')())
         elif clicked('cancel'):
@@ -73,14 +76,14 @@ class UpdateView(BrowserView):
             try:
                 obj = brain.getObject()
             except (AttributeError, NotFound, KeyError):
-                msg = "Catalog inconsistency: {} not found!"
+                msg = 'Catalog inconsistency: {0} not found!'
                 logger.error(msg.format(brain.getPath()), exc_info=1)
                 continue
             try:
                 modifiedContent(obj, 'dummy event parameter')
                 count += 1
             except Exception:
-                msg = "Error updating linkintegrity-info for {}."
+                msg = 'Error updating linkintegrity-info for {0}.'
                 logger.error(msg.format(obj.absolute_url()), exc_info=1)
             if count % 1000 == 0:
                 savepoint(optimistic=True)
