@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Improved code quality.  [gforcada]
 
 
 3.3 (2017-04-20)
