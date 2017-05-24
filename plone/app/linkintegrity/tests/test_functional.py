@@ -15,7 +15,7 @@ from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 
 import transaction
-import unittest2 as unittest
+import unittest
 
 
 class ReferenceTestCase:
