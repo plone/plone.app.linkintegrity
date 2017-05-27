@@ -16,6 +16,9 @@ Bug fixes:
 
 - Improved code quality.  [gforcada]
 
+- removed unittest2 dependency
+  [kakshay21]
+
 
 3.3 (2017-04-20)
 ----------------
