@@ -17,6 +17,9 @@ def migrate_linkintegrity_relations(context):
                 continue
             source_obj = uuidToObject(brain.sourceUID)
             target_obj = uuidToObject(brain.targetUID)
+            if source_obj is None or target_obj is None:
+                # reference_catalog my be inconsistent
+                continue
             # Delete old reference
             reference_catalog.deleteReference(
                 source_obj, target_obj, relationship=referencedRelationship)

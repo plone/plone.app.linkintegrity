@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Do not fail on invalid objects in referenec_catalog. Fixes #32 and #48
+  [pbauer]
 
 
 3.3.1 (2017-06-01)
