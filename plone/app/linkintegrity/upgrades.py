@@ -5,6 +5,9 @@ from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
 from zope.lifecycleevent import modified
 
+import logging
+log = logging.getLogger(__name__)
+
 
 def migrate_linkintegrity_relations(context):
     """Migrate linkintegrity-relation from reference_catalog to zc.relation.
@@ -17,6 +20,10 @@ def migrate_linkintegrity_relations(context):
                 continue
             source_obj = uuidToObject(brain.sourceUID)
             target_obj = uuidToObject(brain.targetUID)
+            if source_obj is None or target_obj is None:
+                # reference_catalog may be inconsistent
+                log.info('Cannot delete relation since the relation_catalog is inconsistent.')   # noqa: E501
+                continue
             # Delete old reference
             reference_catalog.deleteReference(
                 source_obj, target_obj, relationship=referencedRelationship)
