@@ -3,12 +3,19 @@ from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.upgrades import migrate_linkintegrity_relations
 from plone.app.linkintegrity.utils import hasIncomingLinks
-from Products.Archetypes.interfaces import IReferenceable
+try:
+    from Products.Archetypes.interfaces import IReferenceable
+    HAS_AT = True
+except ImportError:
+    HAS_AT = False
+import unittest
 
 
 class ReferenceMigrationATTestCase(ATBaseTestCase):
     """Reference migration testcase for at content types"""
 
+    @unittest.skipUnless(
+        HAS_AT, 'Archetypes are not installed. Skipping migration tests')
     def test_upgrade(self):
         doc3 = self.portal['doc3']
         doc1 = self.portal['doc1']
