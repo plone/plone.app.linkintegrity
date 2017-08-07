@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
-from Products.Archetypes.config import REFERENCE_CATALOG
+try:
+    from Products.Archetypes.config import REFERENCE_CATALOG
+except ImportError:
+    REFERENCE_CATALOG = "reference_catalog"
 from Products.CMFCore.utils import getToolByName
 from zope.lifecycleevent import modified
 
