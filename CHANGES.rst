@@ -4,21 +4,16 @@ Changelog
 3.3.2 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
-- Do not fail on invalid objects in referenec_catalog. Fixes #32 and #48
+- Do not fail on invalid objects in reference_catalog.
+  Fixes `issue 32 <https://github.com/plone/plone.app.linkintegrity/issues/32>`_
+  and `48 <https://github.com/plone/plone.app.linkintegrity/issues/48>`_.
   [pbauer]
 
 - Fix undeclared hard dependency on Archetypes
   [tomgross]
+
 
 3.3.1 (2017-06-01)
 ------------------
