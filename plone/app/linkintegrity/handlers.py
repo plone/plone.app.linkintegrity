@@ -2,11 +2,13 @@
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IEditingSchema
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from ZODB.POSException import ConflictError
 from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
+from plone.registry.interfaces import IRegistry
 from urllib import unquote
 from urlparse import urlsplit
 from z3c.relationfield import RelationValue
@@ -104,6 +106,8 @@ def modifiedContent(obj, event):
     """ a dexterity based object was modified """
     if not check_linkintegrity_dependencies(obj):
         return
+    if not linkintegrity_enabled():
+        return
     retriever = IRetriever(obj, None)
     if retriever is not None:
         links = retriever.retrieveLinks()
@@ -154,3 +158,9 @@ def check_linkintegrity_dependencies(obj):
         # and zc.relation-catalog
         return False
     return True
+
+def linkintegrity_enabled():
+    reg = getUtility(IRegistry)
+    editing_settings = reg.forInterface(IEditingSchema, prefix='plone', check=False)
+    return getattr(editing_settings, 'enable_link_integrity_checks', False)
+
