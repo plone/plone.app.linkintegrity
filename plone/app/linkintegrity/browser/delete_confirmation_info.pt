@@ -76,7 +76,7 @@
 
       </div>
 
-      <p i18n:translate="linkintegrity_delete_anyway">
+      <p tal:condition="breaches" i18n:translate="linkintegrity_delete_anyway">
         Would you like to delete it anyway?
       </p>
 
