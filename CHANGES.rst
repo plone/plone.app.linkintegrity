@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix a missing tal condition in `delete_confirmation_info.pt` that caused a
+  paragraph to be always visible, even without link breaches.
+  [arsenico13]
 
 
 3.3.2 (2017-08-14)
