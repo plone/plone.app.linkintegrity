@@ -11,25 +11,6 @@ from transaction import savepoint
 from zExceptions import NotFound
 
 import logging
-import pkg_resources
-
-
-# Is there a multilingual addon?
-try:
-    pkg_resources.get_distribution('Products.LinguaPlone')
-except pkg_resources.DistributionNotFound:
-    HAS_MULTILINGUAL = False
-else:
-    HAS_MULTILINGUAL = True
-
-if not HAS_MULTILINGUAL:
-    try:
-        pkg_resources.get_distribution('plone.app.multilingual')
-    except pkg_resources.DistributionNotFound:
-        HAS_MULTILINGUAL = False
-    else:
-        HAS_MULTILINGUAL = True
-
 logger = logging.getLogger(__name__)
 
 
@@ -69,8 +50,6 @@ class UpdateView(BrowserView):
         catalog = getToolByName(self.context, 'portal_catalog')
         count = 0
         query = {}
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
 
         for brain in catalog(query):
             try:

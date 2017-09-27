@@ -18,6 +18,9 @@ Bug fixes:
   paragraph to be always visible, even without link breaches.
   [arsenico13]
 
+- Fix view @@updateLinkIntegrityInformation after Language='all' no longer works.
+  [pbauer]
+
 
 3.3.2 (2017-08-14)
 ------------------
