@@ -149,10 +149,10 @@ def updateReferences(obj, refs):
 
 def check_linkintegrity_dependencies(obj):
     try:
-        registry = getUtility(IRegistry)
-    except ComponentLookupError:
+        reg = getUtility(IRegistry)
+        editing_settings = reg.forInterface(IEditingSchema, prefix='plone')
+    except (ComponentLookupError, KeyError):
         return False
-    editing_settings = registry.forInterface(IEditingSchema, prefix='plone')
     if not editing_settings.enable_link_integrity_checks:
         return False
     if not getToolByName(obj, 'portal_url', None):
