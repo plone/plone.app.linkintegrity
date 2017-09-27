@@ -49,9 +49,8 @@ class UpdateView(BrowserView):
     def update(self):
         catalog = getToolByName(self.context, 'portal_catalog')
         count = 0
-        query = {}
 
-        for brain in catalog(query):
+        for brain in catalog():
             try:
                 obj = brain.getObject()
             except (AttributeError, NotFound, KeyError):
