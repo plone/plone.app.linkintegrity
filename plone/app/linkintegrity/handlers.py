@@ -5,7 +5,9 @@ from Acquisition import aq_parent
 from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
+from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IEditingSchema
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from urllib import unquote
 from urlparse import urlsplit
@@ -103,7 +105,7 @@ def getObjectsFromLinks(base, links):
 
 
 def modifiedContent(obj, event):
-    """ a dexterity based object was modified """
+    """Object was modified, cloned or created."""
     if not check_linkintegrity_dependencies(obj):
         return
     retriever = IRetriever(obj, None)
@@ -146,6 +148,13 @@ def updateReferences(obj, refs):
 
 
 def check_linkintegrity_dependencies(obj):
+    try:
+        reg = getUtility(IRegistry)
+        editing_settings = reg.forInterface(IEditingSchema, prefix='plone')
+    except (ComponentLookupError, KeyError):
+        return False
+    if not editing_settings.enable_link_integrity_checks:
+        return False
     if not getToolByName(obj, 'portal_url', None):
         # `getObjectFromLinks` is not possible without access
         # to `portal_url`

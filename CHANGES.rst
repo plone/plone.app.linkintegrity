@@ -10,7 +10,9 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Prevent linkintegrity-handler from doing anything when it is switched of in the registry.
+  This change also prevents some issues in migration from AT to DX since linkintegrity is disabled during the migration.
+  [pbauer]
 
 Bug fixes:
 
