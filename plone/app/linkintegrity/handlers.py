@@ -3,10 +3,11 @@ from .compat import IBaseObject
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from plone.app.linkintegrity.interfaces import IRetriever
-from plone.app.linkintegrity.utils import linkintegrity_enabled
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
+from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IEditingSchema
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from urllib import unquote
 from urlparse import urlsplit
@@ -147,7 +148,9 @@ def updateReferences(obj, refs):
 
 
 def check_linkintegrity_dependencies(obj):
-    if not linkintegrity_enabled():
+    reg = getUtility(IRegistry)
+    editing_settings = reg.forInterface(IEditingSchema, prefix='plone')
+    if not editing_settings.enable_link_integrity_checks:
         return False
     if not getToolByName(obj, 'portal_url', None):
         # `getObjectFromLinks` is not possible without access
