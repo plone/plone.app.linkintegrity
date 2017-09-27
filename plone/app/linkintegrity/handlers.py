@@ -3,6 +3,7 @@ from .compat import IBaseObject
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from plone.app.linkintegrity.interfaces import IRetriever
+from plone.app.linkintegrity.utils import linkintegrity_enabled
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from Products.CMFCore.utils import getToolByName
@@ -103,7 +104,7 @@ def getObjectsFromLinks(base, links):
 
 
 def modifiedContent(obj, event):
-    """ a dexterity based object was modified """
+    """Object was modified, cloned or created."""
     if not check_linkintegrity_dependencies(obj):
         return
     retriever = IRetriever(obj, None)
@@ -146,6 +147,8 @@ def updateReferences(obj, refs):
 
 
 def check_linkintegrity_dependencies(obj):
+    if not linkintegrity_enabled():
+        return False
     if not getToolByName(obj, 'portal_url', None):
         # `getObjectFromLinks` is not possible without access
         # to `portal_url`
