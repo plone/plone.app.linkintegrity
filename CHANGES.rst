@@ -4,10 +4,6 @@ Changelog
 3.3.3 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - Prevent linkintegrity-handler from doing anything when it is switched of in the registry.
