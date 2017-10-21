@@ -2,6 +2,7 @@
 from .compat import IBaseObject
 from Acquisition import aq_get
 from Acquisition import aq_parent
+from plone.app.linkintegrity._compat import urlsplit
 from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.linkintegrity.utils import ensure_intid
 from plone.app.linkintegrity.utils import referencedRelationship
@@ -12,7 +13,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IEditingSchema
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from urllib import unquote
-from urlparse import urlsplit
 from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
 from zc.relation.interfaces import ICatalog

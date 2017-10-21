@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from HTMLParser import HTMLParseError
-from HTMLParser import HTMLParser
+from plone.app.linkintegrity._compat import HTMLParseError
+from plone.app.linkintegrity._compat import HTMLParser
 
 
 class LinkParser(HTMLParser):

@@ -2,6 +2,7 @@
 from base64 import decodestring
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE  # noqa
+from plone.app.linkintegrity._compat import StringIO
 from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import PLONE_FIXTURE
@@ -14,7 +15,6 @@ from plone.namedfile.file import NamedImage
 from plone.testing import z2
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
-from StringIO import StringIO
 from zope.configuration import xmlconfig
 
 
