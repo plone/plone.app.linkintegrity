@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from plone.app.linkintegrity.handlers import referencedRelationship
 from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.upgrades import migrate_linkintegrity_relations
 from plone.app.linkintegrity.utils import hasIncomingLinks
+from plone.app.linkintegrity.utils import referencedRelationship
 try:
     from Products.Archetypes.interfaces import IReferenceable
     HAS_AT = True

@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
-from plone.app.linkintegrity.handlers import referencedRelationship
+from plone.app.linkintegrity.utils import ensure_intid
+from plone.app.linkintegrity.utils import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
 try:
     from Products.Archetypes.config import REFERENCE_CATALOG
 except ImportError:
     REFERENCE_CATALOG = "reference_catalog"
 from Products.CMFCore.utils import getToolByName
-from zope.lifecycleevent import modified
+from z3c.relationfield import RelationValue
+from z3c.relationfield.event import _setRelation
+from zope.component import getUtility
+from zope.intid.interfaces import IIntIds
 
 import logging
 log = logging.getLogger(__name__)
@@ -16,13 +20,17 @@ def migrate_linkintegrity_relations(context):
     """Migrate linkintegrity-relation from reference_catalog to zc.relation.
     """
     reference_catalog = getToolByName(context, REFERENCE_CATALOG, None)
+    intids = getUtility(IIntIds)
     if reference_catalog is not None:
-        for brain in catalog_get_all(reference_catalog):
-            # only handle linkintegrity-relations ('relatesTo')
-            if brain.relationship != referencedRelationship:
-                continue
-            source_obj = uuidToObject(brain.sourceUID)
-            target_obj = uuidToObject(brain.targetUID)
+        # Only handle linkintegrity-relations ('isReferencing').
+        # [:] copies the full result list to make sure
+        # it won't change while we delete references below
+        for brain in reference_catalog(relationship=referencedRelationship)[:]:
+            try:
+                source_obj = uuidToObject(brain.sourceUID)
+                target_obj = uuidToObject(brain.targetUID)
+            except AttributeError:
+                source_obj = target_obj = None
             if source_obj is None or target_obj is None:
                 # reference_catalog may be inconsistent
                 log.info('Cannot delete relation since the relation_catalog is inconsistent.')   # noqa: E501
@@ -33,19 +41,8 @@ def migrate_linkintegrity_relations(context):
 
             # Trigger the recreation of linkintegrity-relation in
             # the relation_catalog (zc.relation)
-            modified(source_obj)
-            modified(target_obj)
-
-
-def catalog_get_all(catalog, unique_idx='UID'):
-    """Get all brains from the catalog.
-    TODO: Replace with import from CMFPlone after the zope4-branch of
-    CMFPlone is merged.
-    """
-    res = [
-        catalog({
-            unique_idx: catalog._catalog.getIndexDataForRID(it)[unique_idx]
-        })[0]
-        for it in catalog._catalog.data
-    ]
-    return res
+            target_id = ensure_intid(target_obj, intids)
+            if target_id is None:
+                continue
+            rel = RelationValue(target_id)
+            _setRelation(source_obj, referencedRelationship, rel)
