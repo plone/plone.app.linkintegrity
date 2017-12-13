@@ -3,6 +3,8 @@ from .compat import IBaseObject
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from plone.app.linkintegrity.interfaces import IRetriever
+from plone.app.linkintegrity.utils import ensure_intid
+from plone.app.linkintegrity.utils import referencedRelationship
 from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.interfaces import IDexterityContent
 from plone.registry.interfaces import IRegistry
@@ -19,14 +21,12 @@ from ZODB.POSException import ConflictError
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
 from zope.intid.interfaces import IIntIds
-from zope.keyreference.interfaces import NotYet
 from zope.publisher.interfaces import NotFound as ztkNotFound
 
 import logging
 
 
 logger = logging.getLogger(__name__)
-referencedRelationship = 'isReferencing'
 
 
 def findObject(base, path):
@@ -88,17 +88,12 @@ def getObjectsFromLinks(base, links):
 
             obj, extra = findObject(base, path)
             if obj and not IPloneSiteRoot.providedBy(obj):
-                try:
-                    objid = intids.getId(obj)
-                except KeyError:
-                    try:
-                        intids.register(obj)
-                        objid = intids.getId(obj)
-                    except NotYet:
-                        # if we get a NotYet error, the object is not
-                        # attached yet and we will need to get links
-                        # at a later time when the object has an intid
-                        continue
+                objid = ensure_intid(obj, intids)
+                if objid is None:
+                    # if we get a NotYet error, the object is not
+                    # attached yet and we will need to get links
+                    # at a later time when the object has an intid
+                    continue
                 relation = RelationValue(objid)
                 objects.add(relation)
     return objects
@@ -127,15 +122,9 @@ def updateReferences(obj, refs):
     Drop them all and set the new ones.
     TODO: Might be improved by not changing anything if the links are the same.
     """
-    intids = getUtility(IIntIds)
-    try:
-        int_id = intids.getId(obj)
-    except KeyError:
-        # In some cases a object is not yet registered by the intid catalog
-        try:
-            int_id = intids.register(obj)
-        except NotYet:
-            return
+    int_id = ensure_intid(obj)
+    if int_id is None:
+        return
     catalog = getUtility(ICatalog)
     # unpack the rels before deleting
     old_rels = [i for i in catalog.findRelations(

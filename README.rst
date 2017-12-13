@@ -99,12 +99,12 @@ To check items for links in html-fields you can use the methods in
 
 ``utils.getIncomingLinks(obj, from_attribute)``
     Return a generator of incoming relations.
-    ``from_attribute`` is optional and defaults to ``plone.app.linkintegrity.handlers.referencedRelationship``.
+    ``from_attribute`` is optional and defaults to ``plone.app.linkintegrity.utils.referencedRelationship``.
     Is set to None, all references pointing to the object are searched.
 
 ``utils.getOutgoingLinks(obj, from_attribute)``
     Return a generator of outgoing relations.
-    ``from_attribute`` is optional and defaults to ``plone.app.linkintegrity.handlers.referencedRelationship``.
+    ``from_attribute`` is optional and defaults to ``plone.app.linkintegrity.utils.referencedRelationship``.
     Is set to None, all references pointing from the object are searched.
 
 ``utils.linkintegrity_enabled()``

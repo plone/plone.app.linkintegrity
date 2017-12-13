@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Optimize migration of old Archetypes references.
+  [davisagli]
 
 
 3.3.3 (2017-10-02)
