@@ -17,7 +17,6 @@ from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import modified
 
-
 import six
 
 

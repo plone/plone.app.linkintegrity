@@ -26,7 +26,6 @@ from zope.publisher.interfaces import NotFound as ztkNotFound
 import logging
 import six
 
-
 logger = logging.getLogger(__name__)
 
 
