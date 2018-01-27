@@ -14,7 +14,7 @@ from plone.namedfile.file import NamedImage
 from plone.testing import z2
 from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
-from StringIO import StringIO
+from six import StringIO
 from zope.configuration import xmlconfig
 
 

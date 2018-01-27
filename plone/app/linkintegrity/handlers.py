@@ -11,8 +11,8 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IEditingSchema
 from Products.CMFPlone.interfaces import IPloneSiteRoot
-from urllib import unquote
-from urlparse import urlsplit
+from six.moves.urllib.parse import unquote
+from six.moves.urllib.parse import urlsplit
 from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
 from zc.relation.interfaces import ICatalog
@@ -24,7 +24,7 @@ from zope.intid.interfaces import IIntIds
 from zope.publisher.interfaces import NotFound as ztkNotFound
 
 import logging
-
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ def getObjectsFromLinks(base, links):
         # relative or local url
         if (not s and not h) or (s == scheme and h == host):
             # Paths should always be strings
-            if isinstance(path, unicode):
+            if isinstance(path, six.text_type):
                 path = path.encode('utf-8')
 
             obj, extra = findObject(base, path)

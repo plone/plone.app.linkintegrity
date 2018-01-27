@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from HTMLParser import HTMLParseError
-from HTMLParser import HTMLParser
+from six.moves.html_parser import HTMLParseError
+from six.moves.html_parser import HTMLParser
 
 
 class LinkParser(HTMLParser):

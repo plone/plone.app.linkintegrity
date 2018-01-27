@@ -37,6 +37,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'setuptools',
+        'six',
         'plone.app.intid',
         'plone.app.relationfield',
     ],
