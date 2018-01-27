@@ -17,7 +17,7 @@ Bug fixes:
 - Optimize migration of old Archetypes references.
   [davisagli]
 
-- Imports are Python3 compatible
+- Prepare for Python 2 / 3 compatibility.
   [ale-rt, pbauer]
 
 
