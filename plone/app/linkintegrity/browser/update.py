@@ -21,8 +21,7 @@ class UpdateView(BrowserView):
     def __call__(self):
         context = aq_inner(self.context)
         request = aq_inner(self.request)
-        clicked = request.form.has_key
-        if clicked('update') or clicked('delete_all'):
+        if 'update' in request.form or 'delete_all' in request.form:
             starttime = datetime.now()
             count = self.update()
             duration = timedelta(seconds=(datetime.now() - starttime).seconds)
@@ -39,7 +38,7 @@ class UpdateView(BrowserView):
             )
             logger.info(msg)
             request.RESPONSE.redirect(getToolByName(context, 'portal_url')())
-        elif clicked('cancel'):
+        elif 'cancel' in request.form:
             msg = _(u'Update cancelled.')
             IStatusMessage(request).add(msg, type='info')
             request.RESPONSE.redirect(getToolByName(context, 'portal_url')())

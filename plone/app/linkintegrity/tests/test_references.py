@@ -18,6 +18,9 @@ from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import modified
 
 
+import six
+
+
 class ReferenceGenerationTestCase:
 
     def test_is_linked(self):
@@ -134,7 +137,7 @@ class ReferenceGenerationTestCase:
         # be any references added.
         self._set_text(
             doc1,
-            unicode('<a href="ö?foo=bar&baz=bam">bug</a>', 'utf-8'),
+            six.text_type('<a href="ö?foo=bar&baz=bam">bug</a>', 'utf-8'),
         )
         self.assertEqual([l for l in getOutgoingLinks(doc1)], [])
 
