@@ -64,7 +64,7 @@
               <strong><span tal:replace="content" i18n:name="content" /></strong>  will also be deleted:
             </span><br/>
             <ul>
-              <li tal:define="objects python:['Objects in all', 'Folders', 'Published objects'] "
+              <li tal:define="objects view/objects"
                   tal:repeat="item python:range(3) "
                   i18n:translate="">
                 <span tal:replace="python: breach_count[content][item]" />

@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Mark strings in delete confirmation screen translatable
+  [erral]
 
 
 3.3.4 (2018-02-04)
