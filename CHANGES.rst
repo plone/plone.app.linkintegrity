@@ -4,14 +4,6 @@ Changelog
 3.3.5 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Mark strings in delete confirmation screen translatable
