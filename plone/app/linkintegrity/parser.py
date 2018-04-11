@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
-from six.moves.html_parser import HTMLParseError
 from six.moves.html_parser import HTMLParser
+
+try:
+    from html.parser import HTMLParseError
+except ImportError as e:
+    # HTMLParseError is removed in Python 3.5. Since it can never be
+    # thrown in 3.5, we can just define our own class as a placeholder.
+    class HTMLParseError(Exception):
+        pass
 
 
 class LinkParser(HTMLParser):
