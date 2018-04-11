@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Python 3 compatibility.
+  [pbauer]
+
 - Mark strings in delete confirmation screen translatable
   [erral]
 
