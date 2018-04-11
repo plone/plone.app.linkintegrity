@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.3.5 (unreleased)
+3.3.6 (unreleased)
 ------------------
 
 Breaking changes:
@@ -16,6 +16,12 @@ Bug fixes:
 
 - Python 3 compatibility.
   [pbauer]
+
+
+3.3.5 (2018-04-04)
+------------------
+
+Bug fixes:
 
 - Mark strings in delete confirmation screen translatable
   [erral]

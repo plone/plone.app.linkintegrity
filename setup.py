@@ -3,7 +3,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = '3.3.5.dev0'
+version = '3.3.6.dev0'
 
 setup(
     name='plone.app.linkintegrity',
@@ -18,6 +18,7 @@ setup(
         "Environment :: Web Environment",
         "Framework :: Plone",
         "Framework :: Plone :: 5.1",
+        "Framework :: Plone :: 5.2",
         "Framework :: Zope2",
         "Intended Audience :: Other Audience",
         "Intended Audience :: System Administrators",
