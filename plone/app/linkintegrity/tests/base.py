@@ -12,6 +12,7 @@ from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
 from zope.lifecycleevent import modified
 
+import six
 import unittest
 
 
@@ -63,23 +64,24 @@ class DXBaseTestCase(BaseTestCase):
         return obj.relatedItems
 
 
-class ATBaseTestCase(BaseTestCase):
-    """Base testcase for testing Archetypes content types"""
+if six.PY2:
+    class ATBaseTestCase(BaseTestCase):
+        """Base testcase for testing Archetypes content types"""
 
-    layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING
+        layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING
 
-    def _set_text(self, obj, text):
-        obj.setText(text, mimetype='text/html')
-        modified(obj)
+        def _set_text(self, obj, text):
+            obj.setText(text, mimetype='text/html')
+            modified(obj)
 
-    def _get_text(self, obj):
-        # This is the equivalent to obj.text in dexterity. No transforms,
-        # no rewritten relative urls
-        return obj.getText(raw=1).raw
+        def _get_text(self, obj):
+            # This is the equivalent to obj.text in dexterity. No transforms,
+            # no rewritten relative urls
+            return obj.getText(raw=1).raw
 
-    def _set_related_items(self, obj, items):
-        obj.setRelatedItems(items)
-        modified(obj)
+        def _set_related_items(self, obj, items):
+            obj.setRelatedItems(items)
+            modified(obj)
 
-    def _get_related_items(self, obj):
-        return obj.getRelatedItems()
+        def _get_related_items(self, obj):
+            return obj.getRelatedItems()

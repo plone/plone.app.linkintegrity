@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from plone.app.linkintegrity.browser.info import DeleteConfirmationInfo
 from plone.app.linkintegrity.testing import create
-from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.linkintegrity.utils import hasIncomingLinks
+
+import six
 
 
 class CircularReferencesTestCase:
@@ -86,6 +87,7 @@ class CircularReferencesTestCase:
 class CircularReferencesDXTestCase(DXBaseTestCase, CircularReferencesTestCase):
     """Circular reference testcase for dx content types"""
 
-
-class CircularReferencesATTestCase(ATBaseTestCase, CircularReferencesTestCase):
-    """Circular reference testcase for dx content types"""
+if six.PY2:
+    from plone.app.linkintegrity.tests.base import ATBaseTestCase
+    class CircularReferencesATTestCase(ATBaseTestCase, CircularReferencesTestCase):
+        """Circular reference testcase for dx content types"""

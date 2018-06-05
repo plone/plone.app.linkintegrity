@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.parser import extractLinks
-from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
@@ -136,8 +135,8 @@ class ReferenceGenerationTestCase:
         # be any references added.
         self._set_text(
             doc1,
-            six.text_type('<a href="ö?foo=bar&baz=bam">bug</a>', 'utf-8'),
-        )
+            '<a href="ö?foo=bar&baz=bam">bug</a>')
+
         self.assertEqual([l for l in getOutgoingLinks(doc1)], [])
 
     def test_reference_orthogonality(self):
@@ -205,9 +204,11 @@ class ReferenceGenerationDXTestCase(
 ):
     """Reference generation testcase for dx content types"""
 
+if six.PY2:
+    from plone.app.linkintegrity.tests.base import ATBaseTestCase
 
-class ReferenceGenerationATTestCase(
-    ATBaseTestCase,
-    ReferenceGenerationTestCase,
-):
-    """Reference generation testcase for at content types"""
+    class ReferenceGenerationATTestCase(
+        ATBaseTestCase,
+        ReferenceGenerationTestCase,
+    ):
+        """Reference generation testcase for at content types"""

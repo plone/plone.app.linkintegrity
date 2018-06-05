@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from plone.app.linkintegrity import testing
-from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 # from plone.app.linkintegrity.utils import hasIncomingLinks
 from plone.app.linkintegrity.utils import getIncomingLinks
@@ -14,6 +13,7 @@ from Products.CMFPlone.interfaces import IEditingSchema
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 
+import six
 import transaction
 import unittest
 
@@ -387,7 +387,10 @@ class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
     layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
 
 
-class FunctionalReferenceATTestCase(ATBaseTestCase, ReferenceTestCase):
-    """Functional reference testcase for dx content types"""
+if six.PY2:
+    from plone.app.linkintegrity.tests.base import ATBaseTestCase
 
-    layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING
+    class FunctionalReferenceATTestCase(ATBaseTestCase, ReferenceTestCase):
+        """Functional reference testcase for dx content types"""
+
+        layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING

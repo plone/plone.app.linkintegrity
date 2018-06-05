@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from plone.app.linkintegrity.handlers import findObject
-from plone.app.linkintegrity.tests.base import ATBaseTestCase
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
+
+import six
 
 
 class FindObjectTests:
@@ -34,6 +35,8 @@ class FindObjectTests:
 class ReferenceGenerationDXTestCase(DXBaseTestCase, FindObjectTests):
     """findObject testcase for dx content types"""
 
+if six.PY2:
+    from plone.app.linkintegrity.tests.base import ATBaseTestCase
 
-class ReferenceGenerationATTestCase(ATBaseTestCase, FindObjectTests):
-    """findObject testcase for at content types"""
+    class ReferenceGenerationATTestCase(ATBaseTestCase, FindObjectTests):
+        """findObject testcase for at content types"""

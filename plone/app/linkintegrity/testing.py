@@ -12,14 +12,14 @@ from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.namedfile.file import NamedImage
 from plone.testing import z2
-from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFCore.utils import getToolByName
-from six import StringIO
 from zope.configuration import xmlconfig
 
+import six
 
-B64_DATA = 'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
-GIF = StringIO(decodestring(B64_DATA))
+
+B64_DATA = b'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
+GIF = six.BytesIO(decodestring(B64_DATA))
 GIF.filename = 'sample.gif'
 GIF.contentType = 'image/gif'
 GIF._width = 1
@@ -36,8 +36,10 @@ def create(container, type_name, **kwargs):
 
     # Archetypes specific code was taken from ``plone.api``
     # Switch when api has been merged into core.
-    if IBaseObject.providedBy(content):
-        content.processForm()
+    if six.PY2:
+        from Products.Archetypes.interfaces import IBaseObject
+        if IBaseObject.providedBy(content):
+            content.processForm()
 
     return content
 
@@ -139,21 +141,23 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
 
 PLONE_APP_LINKINTEGRITY_DX_FIXTURE = LinkIntegrityDXLayer()
 
-PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING = layers.IntegrationTesting(
-    bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
-    name='plone.app.linkintegrity:AT:Integration'
-)
-
 PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING = layers.IntegrationTesting(
     bases=(PLONE_APP_LINKINTEGRITY_DX_FIXTURE, ),
     name='plone.app.linkintegrity:DX:Integration'
 )
 
-PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING = layers.FunctionalTesting(
-    bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
-    name='plone.app.linkintegrity:AT:Functional'
-)
 PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING = layers.FunctionalTesting(
     bases=(PLONE_APP_LINKINTEGRITY_DX_FIXTURE, ),
     name='plone.app.linkintegrity:DX:Functional'
 )
+
+if six.PY2:
+    PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING = layers.IntegrationTesting(
+        bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
+        name='plone.app.linkintegrity:AT:Integration'
+    )
+
+    PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING = layers.FunctionalTesting(
+        bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
+        name='plone.app.linkintegrity:AT:Functional'
+    )
