@@ -174,7 +174,7 @@ class ReferenceTestCase:
 
         # At this point we shouldn't be able to look at the folder
         # contents (as an anonymous user):
-        self.assertIn('require_login?came_from', browser.url)
+        self.assertIn('login?came_from', browser.url)
 
         # So we log in via the regular plone login form and additionally check
         # that there is no 'authorization' header set afterwards:
