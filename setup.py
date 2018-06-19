@@ -3,7 +3,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = '3.3.6'
+version = '3.3.7.dev0'
 
 setup(
     name='plone.app.linkintegrity',
