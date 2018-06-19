@@ -4,14 +4,6 @@ Changelog
 3.3.6 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fix test to work with merged plone.login.
