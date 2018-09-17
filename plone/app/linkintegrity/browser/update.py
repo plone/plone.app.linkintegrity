@@ -28,6 +28,7 @@ except pkg_resources.DistributionNotFound:
     HAS_MULTILINGUAL = False
 else:
     HAS_MULTILINGUAL = True
+    ALL_QUERY_MULTILINGUAL = {'Language': 'all'}
 
 if not HAS_MULTILINGUAL:
     try:
@@ -36,6 +37,12 @@ if not HAS_MULTILINGUAL:
         HAS_MULTILINGUAL = False
     else:
         HAS_MULTILINGUAL = True
+        try:
+            from plone.app.multilingual.upgrades import migration_pam_1_to_2
+        except ImportError:
+            ALL_QUERY_MULTILINGUAL = {'Language': 'all'}
+        else:
+            ALL_QUERY_MULTILINGUAL = {'path': '/'}
 
 logger = logging.getLogger(__name__)
 
@@ -70,11 +77,14 @@ class UpdateView(BrowserView):
     def update(self):
         catalog = getToolByName(self.context, 'portal_catalog')
         count = 0
-        query = {}
-        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
-            query['Language'] = 'all'
 
-        for brain in catalog(query):
+        # test if multilingual is indeed installed in the site (not only as a module)
+        if HAS_MULTILINGUAL and 'Language' in catalog.indexes():
+            all_content_query = ALL_QUERY_MULTILINGUAL
+        else:
+            all_content_query = {}
+
+        for brain in catalog(all_content_query):
             try:
                 obj = brain.getObject()
             except (AttributeError, NotFound, KeyError):
