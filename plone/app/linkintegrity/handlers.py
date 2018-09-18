@@ -83,7 +83,7 @@ def getObjectsFromLinks(base, links):
         # relative or local url
         if (not s and not h) or (s == scheme and h == host):
             # Paths should always be strings
-            if isinstance(path, six.text_type):
+            if six.PY2 and isinstance(path, six.text_type):
                 path = path.encode('utf-8')
 
             obj, extra = findObject(base, path)
