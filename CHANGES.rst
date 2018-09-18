@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix tests in Python 3
+  [pbauer]
 
 
 3.3.6 (2018-06-19)
