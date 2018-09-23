@@ -4,14 +4,6 @@ Changelog
 3.3.7 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fix tests in Python 3
