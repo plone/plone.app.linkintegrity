@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from Products.Archetypes.interfaces import IBaseObject
+from Products.Archetypes.interfaces import IReferenceable
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five import BrowserView
@@ -95,7 +96,12 @@ class UpdateView(BrowserView):
             if IBaseObject.providedBy(obj):
                 method = modifiedArchetype
             elif HAS_DEXTERITY and IDexterityContent.providedBy(obj):
-                method = modifiedDexterity
+                try:
+                    IReferenceable(obj)
+                except TypeError:
+                    method = None
+                else:
+                    method = modifiedDexterity
             if method:
                 try:
                     method(obj, 'dummy event parameter')
