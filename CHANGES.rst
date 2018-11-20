@@ -14,8 +14,7 @@ New features:
 
 Bug fixes:
 
-- Remove wrong i18n:translate in delete_confirmation_info.pt
-  [vincentfretin]
+- *add item here*
 
 
 3.3.7 (2018-09-23)
