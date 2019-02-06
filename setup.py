@@ -20,6 +20,7 @@ setup(
         "Framework :: Plone :: 5.1",
         "Framework :: Plone :: 5.2",
         "Framework :: Zope2",
+        "Framework :: Zope :: 4",
         "Intended Audience :: Other Audience",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
