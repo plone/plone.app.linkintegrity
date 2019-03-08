@@ -65,10 +65,8 @@
             </span><br/>
             <ul>
               <li tal:define="objects view/objects"
-                  tal:repeat="item python:range(3) "
-                  i18n:translate="">
-                <span tal:replace="python: breach_count[content][item]" />
-                <span i18n:translate="" tal:replace="python: objects[item]" />
+                  tal:repeat="item python:range(3) ">
+                <span tal:replace="python: breach_count[content][item]" /> <span tal:replace="python: objects[item]" />
               </li>
             </ul>
           </li>
