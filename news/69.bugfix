@@ -1,0 +1,2 @@
+Fix wrong i18n:translate to avoid ${DYNAMIC_CONTENT} in translation files
+[erral]
