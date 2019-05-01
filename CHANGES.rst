@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.3.9 (2019-05-01)
+------------------
+
+Bug fixes:
+
+
+- Fix wrong i18n:translate to avoid ${DYNAMIC_CONTENT} in translation files
+  [erral] (#69)
+
+
 3.3.8 (2019-02-08)
 ------------------
 
