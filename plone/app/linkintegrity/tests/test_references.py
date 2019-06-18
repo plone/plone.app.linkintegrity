@@ -114,9 +114,18 @@ class ReferenceGenerationTestCase:
                          [self.portal.doc1a])
 
         # Now delete the target item, suppress events and test again,
-        # the reference should be gone now.
+        # The reference should be a ghost not in any folder anymore.
+        # check if it has no acquition parent!
         self.portal._delObject(doc1a.id, suppress_events=True)
-        self.assertEqual([l.to_object for l in getOutgoingLinks(doc1)], [None])
+        objs = [l.to_object for l in getOutgoingLinks(doc1)]
+        self.assertEqual(len(objs), 1)
+        obj = objs[0]
+        if obj is not None:
+            # Plone with fixed five.intid
+            # if object is None: all fine as well.
+            self.assertEqual(obj.portal_type, 'Document')
+            _marker = dict()
+            self.assertEqual(getattr(obj, 'aq_parent', _marker), _marker)
 
     def test_relative_upwards_link_generates_matching_reference(self):
         doc1 = self.portal.doc1
@@ -187,7 +196,7 @@ class ReferenceGenerationTestCase:
 
         # Test, if relation is present in the relation catalog
         catalog = getUtility(ICatalog)
-        rels = list(catalog.findRelations({'to_id':  to_id}))
+        rels = list(catalog.findRelations({'to_id': to_id}))
         self.assertEqual(len(rels), 1)
 
         # Test, if delete_confirmation_info shows also other relations than
@@ -203,6 +212,7 @@ class ReferenceGenerationDXTestCase(
     ReferenceGenerationTestCase,
 ):
     """Reference generation testcase for dx content types"""
+
 
 if six.PY2:
     from plone.app.linkintegrity.tests.base import ATBaseTestCase
