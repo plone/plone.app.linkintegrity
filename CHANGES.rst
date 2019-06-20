@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.3.10 (2019-06-19)
+-------------------
+
+Bug fixes:
+
+
+- Accept to have a broken object w/o aq_parent in test.
+  [jensens] (#72)
+
+
 3.3.9 (2019-05-01)
 ------------------
 
