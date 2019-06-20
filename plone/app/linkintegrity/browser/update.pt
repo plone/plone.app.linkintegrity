@@ -28,8 +28,8 @@
 
     <form method="post" action="updateLinkIntegrityInformation"
         tal:attributes="action request/URL">
-      <input class="destructive" type="submit" name="update" value="Update" />
-      <input class="standalone" type="submit" name="cancel" value="Cancel" />
+      <input class="destructive" type="submit" name="update" i18n:attributes="value" value="Update" />
+      <input class="standalone" type="submit" name="cancel" i18n:attributes="value" value="Cancel" />
     </form>
 
   </div>
