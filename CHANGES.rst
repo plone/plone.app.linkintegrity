@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.3.11 (2019-06-27)
+-------------------
+
+Bug fixes:
+
+
+- Add missing i18n:translate calls
+  [erral] (#73)
+
+
 3.3.10 (2019-06-19)
 -------------------
 
