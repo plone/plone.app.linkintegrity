@@ -4,7 +4,8 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:zcml="http://namespaces.zope.org/zcml">
 
-  <includeDependencies package="." />
+  <include package="plone.app.intid" />
+  <include package="plone.app.relationfield" />
   <include package="Products.CMFCore" file="permissions.zcml" />
 
   <include package=".browser" />
