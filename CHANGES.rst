@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.3.12 (2019-10-12)
+-------------------
+
+Bug fixes:
+
+
+- Explicitly load zcml of dependencies, instead of using ``includeDependencies``.
+  [maurits] (#2952)
+
+
 3.3.11 (2019-06-27)
 -------------------
 
