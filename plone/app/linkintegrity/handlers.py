@@ -19,7 +19,7 @@ from zc.relation.interfaces import ICatalog
 from zExceptions import NotFound
 from ZODB.POSException import ConflictError
 from zope.component import getUtility
-from zope.component.interfaces import ComponentLookupError
+from zope.interface.interfaces import ComponentLookupError
 from zope.intid.interfaces import IIntIds
 from zope.publisher.interfaces import NotFound as ztkNotFound
 
