@@ -1,3 +1,0 @@
-Fix Unauthorized exception when you edit a page that links to another page that you are not allowed to see.
-Fixes `issue 79 <https://github.com/plone/plone.app.linkintegrity/issues/79>`_.
-[maurits]

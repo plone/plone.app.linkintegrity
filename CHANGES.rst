@@ -8,6 +8,24 @@ Changelog
 
 .. towncrier release notes start
 
+3.4.0 (2021-02-23)
+------------------
+
+New features:
+
+
+- Drop Plone 5.1 support, due to possible incompatibility with older plone.app.uuid.
+  [maurits] (#79)
+
+
+Bug fixes:
+
+
+- Fix Unauthorized exception when you edit a page that links to another page that you are not allowed to see.
+  Fixes `issue 79 <https://github.com/plone/plone.app.linkintegrity/issues/79>`_.
+  [maurits] (#79)
+
+
 3.3.14 (2020-09-07)
 -------------------
 
