@@ -5,7 +5,7 @@ from Acquisition import aq_parent
 from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.linkintegrity.utils import ensure_intid
 from plone.app.linkintegrity.utils import referencedRelationship
-from plone.app.uuid.utils import uuidToObject
+from plone.app.uuid.utils import uuidToCatalogBrain
 from plone.dexterity.interfaces import IDexterityContent
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
@@ -46,9 +46,17 @@ def findObject(base, path):
     # on a view or skinscript to do this for us.
     if 'resolveuid' in components:
         uid = components[components.index('resolveuid') + 1]
-        obj = uuidToObject(uid)
-        if obj:
-            return obj, path
+        # This may be a link to a page that once was published but not anymore,
+        # or the current editor does not have View permission.
+        # In that case uuidToObject(uid) could fail with Unauthorized.
+        brain = uuidToCatalogBrain(uid)
+        if brain is not None:
+            # Note: _unrestrictedGetObject starts with an underscore,
+            # but it is documented in ZCatalog.interfaces,
+            # so should be safe to rely on.
+            obj = brain._unrestrictedGetObject()
+            if obj:
+                return obj, path
 
     while components:
         child_id = unquote(components[0])

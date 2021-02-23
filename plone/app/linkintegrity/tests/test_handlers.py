@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from plone.app.linkintegrity.handlers import findObject
+from plone.app.linkintegrity.testing import create
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.app.testing import logout
 
 import six
 
@@ -30,6 +32,24 @@ class FindObjectTests:
         self.assertEqual(obj.absolute_url_path(), '/plone_foo/doc2')
         self.assertEqual(obj.getPhysicalPath(), ('', 'plone', 'doc2'))
         self.assertEqual(components, '')
+
+    def test_uuid_link(self):
+        # Test that objects can be found from uuid links.
+        create(self.portal, 'Document', id='target', title='Target')
+        target = self.portal.target
+        target_uid = target.UID()
+        path = "../resolveuid/{}".format(target_uid)
+
+        # We logout.  This is to check that findObject also finds objects
+        # that are not visible to the current user, like a private page.
+        # See https://github.com/plone/plone.app.linkintegrity/issues/79
+        # Note that in the Archetypes tests this is no problem,
+        # but for Dexterity it is.  Likely they use a different workflow.
+        logout()
+
+        obj, components = findObject(self.portal.doc1, path)
+        self.assertEqual(obj.absolute_url_path(), '/plone/target')
+        self.assertEqual(components, path)
 
 
 class ReferenceGenerationDXTestCase(DXBaseTestCase, FindObjectTests):
