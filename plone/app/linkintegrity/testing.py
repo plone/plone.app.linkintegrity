@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from base64 import decodestring
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE  # noqa
 from plone.app.testing import layers
@@ -17,9 +16,15 @@ from zope.configuration import xmlconfig
 
 import six
 
+try:
+    from base64 import decodebytes
+except ImportError:
+    # BBB for Python 2
+    from base64 import decodestring as decodebytes
+
 
 B64_DATA = b'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
-GIF = six.BytesIO(decodestring(B64_DATA))
+GIF = six.BytesIO(decodebytes(B64_DATA))
 GIF.filename = 'sample.gif'
 GIF.contentType = 'image/gif'
 GIF._width = 1

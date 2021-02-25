@@ -1,0 +1,3 @@
+Use base64.decodebytes instead of decodestring when possible.
+Fixes Python 3.9 compatibility in the tests.
+[maurits]
