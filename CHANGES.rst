@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+3.4.1 (2021-03-02)
+------------------
+
+Bug fixes:
+
+
+- Use base64.decodebytes instead of decodestring when possible.
+  Fixes Python 3.9 compatibility in the tests.
+  [maurits] (#81)
+
+
 3.4.0 (2021-02-23)
 ------------------
 
