@@ -30,6 +30,9 @@ class LinkParser(HTMLParser):
             self.links.extend(search_attr('href', attrs))
         if tag == 'img':
             self.links.extend(search_attr('src', attrs))
+        if tag == 'source':
+            self.links.extend(search_attr('src', attrs))
+            self.links.extend(search_attr('srcset', attrs))
 
 
 def search_attr(name, attrs):
