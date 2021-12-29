@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.5.0 (2021-12-29)
+------------------
+
+New features:
+
+
+- Track integrity of video and audio files in HTML source tags. (#77)
+
+
 3.4.1 (2021-03-02)
 ------------------
 
