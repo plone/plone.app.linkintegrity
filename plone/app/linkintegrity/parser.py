@@ -30,9 +30,21 @@ class LinkParser(HTMLParser):
             self.links.extend(search_attr('href', attrs))
         if tag == 'img':
             self.links.extend(search_attr('src', attrs))
+            self.links.extend(search_attr('srcset', attrs))
         if tag == 'source':
+            # Used within img/picture/audio/video tags
+            # to embed various sources of media.
             self.links.extend(search_attr('src', attrs))
             self.links.extend(search_attr('srcset', attrs))
+        if tag == 'audio':
+            # Embeds audio recordings.
+            self.links.extend(search_attr('src', attrs))
+        if tag == 'video':
+            # Embeds videos.
+            self.links.extend(search_attr('src', attrs))
+        if tag == 'iframe':
+            # Used to embed PDFs.
+            self.links.extend(search_attr('src', attrs))
 
 
 def search_attr(name, attrs):
@@ -40,7 +52,12 @@ def search_attr(name, attrs):
     """
     for attr, value in attrs:
         if attr == name:
-            return [value]
+            if name == "srcset":
+                # SRCSET is split by commas, and each line's first
+                # element is the URL in question.
+                return [x.strip().split()[0] for x in value.split(",")]
+            else:
+                return [value]
     return []
 
 
