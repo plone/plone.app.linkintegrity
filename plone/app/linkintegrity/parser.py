@@ -55,7 +55,7 @@ def search_attr(name, attrs):
             if name == "srcset":
                 # SRCSET is split by commas, and each line's first
                 # element is the URL in question.
-                return [x.strip().split()[0] for x in value.split(",")]
+                return [src.strip().split()[0] for src in value.split(",")]
             else:
                 return [value]
     return []
