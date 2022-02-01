@@ -41,7 +41,7 @@ class LinkParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         """Override the method to remember all links."""
         for at in TAG_ATTRS_TO_TRACK.get(tag.lower(), []):
-            self.links.extend(search_attr(at), attrs)
+            self.links.extend(search_attr(at, attrs))
 
 
 def links_in_srcset(attrval):
