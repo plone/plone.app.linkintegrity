@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.6.0 (2022-02-23)
+------------------
+
+New features:
+
+
+- Track link integrity of referenced PDFs and other site objects in IFRAME SRC references. (#84)
+
+
 3.5.0 (2021-12-29)
 ------------------
 
