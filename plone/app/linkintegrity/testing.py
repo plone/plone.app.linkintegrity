@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
-from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE  # noqa
 from plone.app.testing import layers
 from plone.app.testing import login
 from plone.app.testing import PLONE_FIXTURE
@@ -95,29 +94,6 @@ class LinkIntegrityLayer(z2.Layer):
 PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
 
 
-class LinkIntegrityATLayer(LinkIntegrityLayer):
-    """Layer which targets testing with Archetypes and ATContentTypes.
-    """
-
-    directory = 'at'
-    defaultBases = (
-        PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
-        PLONE_APP_LINKINTEGRITY_FIXTURE,
-    )
-
-    def setUp(self):
-        self.setUpContent()
-
-    def setUpContent(self):
-        super(LinkIntegrityATLayer, self).setUpContent()
-
-        with ploneSite() as portal:
-            create(portal, 'Image', id='image1', title='Image 1', image=GIF)
-
-
-PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
-
-
 class LinkIntegrityDXLayer(LinkIntegrityLayer):
     """Layer which targets testing with Dexterity.
     """
@@ -157,6 +133,31 @@ PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING = layers.FunctionalTesting(
 )
 
 if six.PY2:
+    from plone.app.contenttypes.testing import (
+        PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
+    )
+
+    class LinkIntegrityATLayer(LinkIntegrityLayer):
+        """Layer which targets testing with Archetypes and ATContentTypes.
+        """
+
+        directory = 'at'
+        defaultBases = (
+            PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
+            PLONE_APP_LINKINTEGRITY_FIXTURE,
+        )
+
+        def setUp(self):
+            self.setUpContent()
+
+        def setUpContent(self):
+            super(LinkIntegrityATLayer, self).setUpContent()
+
+            with ploneSite() as portal:
+                create(portal, 'Image', id='image1', title='Image 1', image=GIF)
+
+    PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
+
     PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING = layers.IntegrationTesting(
         bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
         name='plone.app.linkintegrity:AT:Integration'

@@ -1,0 +1,2 @@
+Test fix: only load plone.app.contenttypes migration layer on Python 2.
+[maurits]
