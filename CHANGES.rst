@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.6.1 (2022-04-28)
+------------------
+
+Bug fixes:
+
+
+- Test fix: only load plone.app.contenttypes migration layer on Python 2.
+  [maurits] (#641)
+
+
 3.6.0 (2022-02-23)
 ------------------
 
