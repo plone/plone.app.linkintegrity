@@ -9,7 +9,7 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.namedfile.file import NamedImage
-from plone.testing import z2
+from plone.testing import zope
 from Products.CMFCore.utils import getToolByName
 from zope.configuration import xmlconfig
 
@@ -33,7 +33,7 @@ def create(container, type_name, **kwargs):
     return content
 
 
-class LinkIntegrityLayer(z2.Layer):
+class LinkIntegrityLayer(zope.Layer):
     """Base Layer for Dexterity testing.
     """
 
@@ -50,8 +50,8 @@ class LinkIntegrityLayer(z2.Layer):
         xmlconfig.file('configure.zcml', plone.app.linkintegrity,
                        context=self['configurationContext'])
 
-        with z2.zopeApp() as app:
-            z2.installProduct(app, 'plone.app.linkintegrity')
+        with zope.zopeApp() as app:
+            zope.installProduct(app, 'plone.app.linkintegrity')
 
         with ploneSite() as portal:
             setRoles(portal, TEST_USER_ID, ['Manager', ])
@@ -72,8 +72,8 @@ class LinkIntegrityLayer(z2.Layer):
             self.setUpMembers(portal)
 
     def tearDown(self):
-        with z2.zopeApp() as app:
-            z2.uninstallProduct(app, 'plone.app.linkintegrity')
+        with zope.zopeApp() as app:
+            zope.uninstallProduct(app, 'plone.app.linkintegrity')
 
 
 PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()

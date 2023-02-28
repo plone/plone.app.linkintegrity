@@ -5,7 +5,7 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.textfield import RichTextValue
-from plone.testing.z2 import Browser
+from plone.testing.zope import Browser
 from z3c.form.interfaces import IFormLayer
 from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
