@@ -15,6 +15,9 @@ import unittest
 
 
 class BaseTestCase(unittest.TestCase):
+    """Base testcase for testing Dexterity content types"""
+
+    layer = testing.PLONE_APP_LINKINTEGRITY_FUNCTIONAL_TESTING
 
     def setUp(self):
         self.portal = self.layer['portal']
@@ -39,12 +42,6 @@ class BaseTestCase(unittest.TestCase):
     def _get_token(self, obj):
         return getMultiAdapter(
             (obj, self.request), name='authenticator').token()
-
-
-class DXBaseTestCase(BaseTestCase):
-    """Base testcase for testing Dexterity content types"""
-
-    layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
 
     def _set_text(self, obj, text):
         obj.text = RichTextValue(text)

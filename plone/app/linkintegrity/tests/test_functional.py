@@ -1,5 +1,5 @@
 from plone.app.linkintegrity import testing
-from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.app.linkintegrity.tests.base import BaseTestCase
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.linkintegrity.utils import hasOutgoingLinks
@@ -15,7 +15,10 @@ import transaction
 import unittest
 
 
-class ReferenceTestCase:
+class FunctionalReferenceTestCase(BaseTestCase):
+    """functional reference testcase"""
+
+    layer = testing.PLONE_APP_LINKINTEGRITY_FUNCTIONAL_TESTING
 
     @unittest.skip('Re-enable after https://github.com/plone/plone.app.content/issues/38')  # noqa
     def test_file_reference_linkintegrity_page_is_shown(self):
@@ -375,9 +378,3 @@ class ReferenceTestCase:
         self.assertIn('2 Objects in all', self.browser.contents)
         self.assertIn('1 Folders', self.browser.contents)
         self.assertIn('0 Published objects', self.browser.contents)
-
-
-class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
-    """Functional reference testcase for dx content types"""
-
-    layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING

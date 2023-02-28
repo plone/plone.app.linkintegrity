@@ -2,7 +2,6 @@ from base64 import decodebytes
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import layers
 from plone.app.testing import login
-from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import ploneSite
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
@@ -37,7 +36,13 @@ class LinkIntegrityLayer(zope.Layer):
     """Base Layer for Dexterity testing.
     """
 
-    defaultBases = (PLONE_FIXTURE, )
+    # defaultBases = (PLONE_FIXTURE, )
+    defaultBases = (
+        PLONE_APP_CONTENTTYPES_FIXTURE,
+    )
+
+    def setUp(self):
+        self.setUpContent()
 
     def setUpMembers(self, portal):
         pm = getToolByName(portal, 'portal_membership')
@@ -47,6 +52,7 @@ class LinkIntegrityLayer(zope.Layer):
 
     def setUpContent(self):
         import plone.app.linkintegrity
+
         xmlconfig.file('configure.zcml', plone.app.linkintegrity,
                        context=self['configurationContext'])
 
@@ -71,31 +77,6 @@ class LinkIntegrityLayer(zope.Layer):
 
             self.setUpMembers(portal)
 
-    def tearDown(self):
-        with zope.zopeApp() as app:
-            zope.uninstallProduct(app, 'plone.app.linkintegrity')
-
-
-PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
-
-
-class LinkIntegrityDXLayer(LinkIntegrityLayer):
-    """Layer which targets testing with Dexterity.
-    """
-
-    directory = 'dx'
-    defaultBases = (
-        PLONE_APP_CONTENTTYPES_FIXTURE,
-        PLONE_APP_LINKINTEGRITY_FIXTURE,
-    )
-
-    def setUp(self):
-        self.setUpContent()
-
-    def setUpContent(self):
-        super(LinkIntegrityDXLayer, self).setUpContent()
-
-        with ploneSite() as portal:
             # Create an object that does not provide the behavior to live along
             create(portal, 'News Item', id='news1', title='News 1')
 
@@ -104,15 +85,19 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
             portal['image1'].image = NamedImage(GIF, 'image/gif',
                                                 u'sample.gif')
 
+    def tearDown(self):
+        with zope.zopeApp() as app:
+            zope.uninstallProduct(app, 'plone.app.linkintegrity')
 
-PLONE_APP_LINKINTEGRITY_DX_FIXTURE = LinkIntegrityDXLayer()
 
-PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING = layers.IntegrationTesting(
-    bases=(PLONE_APP_LINKINTEGRITY_DX_FIXTURE, ),
-    name='plone.app.linkintegrity:DX:Integration'
+PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
+
+PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING = layers.IntegrationTesting(
+    bases=(PLONE_APP_LINKINTEGRITY_FIXTURE, ),
+    name='plone.app.linkintegrity:Integration'
 )
 
-PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING = layers.FunctionalTesting(
-    bases=(PLONE_APP_LINKINTEGRITY_DX_FIXTURE, ),
-    name='plone.app.linkintegrity:DX:Functional'
+PLONE_APP_LINKINTEGRITY_FUNCTIONAL_TESTING = layers.FunctionalTesting(
+    bases=(PLONE_APP_LINKINTEGRITY_FIXTURE, ),
+    name='plone.app.linkintegrity:Functional'
 )

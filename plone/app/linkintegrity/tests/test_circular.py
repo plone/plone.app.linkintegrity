@@ -1,6 +1,6 @@
 from plone.app.linkintegrity.browser.info import DeleteConfirmationInfo
 from plone.app.linkintegrity.testing import create
-from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.app.linkintegrity.tests.base import BaseTestCase
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.linkintegrity.utils import hasIncomingLinks
 
@@ -81,5 +81,5 @@ class CircularReferencesTestCase:
         self.assertNotIn('Potential link breakage', view())
 
 
-class CircularReferencesDXTestCase(DXBaseTestCase, CircularReferencesTestCase):
+class CircularReferencesDXTestCase(BaseTestCase, CircularReferencesTestCase):
     """Circular reference testcase for dx content types"""

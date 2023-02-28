@@ -1,10 +1,10 @@
 from plone.app.linkintegrity.handlers import findObject
 from plone.app.linkintegrity.testing import create
-from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.app.linkintegrity.tests.base import BaseTestCase
 from plone.app.testing import logout
 
 
-class FindObjectTests:
+class ReferenceGenerationTestCase(BaseTestCase):
     """ testing the handlers.findObject function """
 
     def test_relative_to_portal_root_1(self):
@@ -45,7 +45,3 @@ class FindObjectTests:
         obj, components = findObject(self.portal.doc1, path)
         self.assertEqual(obj.absolute_url_path(), '/plone/target')
         self.assertEqual(components, path)
-
-
-class ReferenceGenerationDXTestCase(DXBaseTestCase, FindObjectTests):
-    """findObject testcase for dx content types"""
