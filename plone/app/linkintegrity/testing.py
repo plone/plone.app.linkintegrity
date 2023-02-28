@@ -56,9 +56,6 @@ class LinkIntegrityLayer(zope.Layer):
         xmlconfig.file('configure.zcml', plone.app.linkintegrity,
                        context=self['configurationContext'])
 
-        with zope.zopeApp() as app:
-            zope.installProduct(app, 'plone.app.linkintegrity')
-
         with ploneSite() as portal:
             setRoles(portal, TEST_USER_ID, ['Manager', ])
             login(portal, TEST_USER_NAME)
