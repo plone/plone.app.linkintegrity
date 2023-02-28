@@ -7,7 +7,7 @@ from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.registry.interfaces import IRegistry
 from plone.testing.zope import Browser
-from Products.CMFPlone.interfaces import IEditingSchema
+from plone.base.interfaces import IEditingSchema
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 

@@ -7,8 +7,8 @@ from plone.app.uuid.utils import uuidToCatalogBrain
 from plone.dexterity.interfaces import IDexterityContent
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IEditingSchema
-from Products.CMFPlone.interfaces import IPloneSiteRoot
+from plone.base.interfaces import IEditingSchema
+from plone.base.interfaces import IPloneSiteRoot
 from urllib.parse import unquote
 from urllib.parse import urlsplit
 from z3c.relationfield import RelationValue

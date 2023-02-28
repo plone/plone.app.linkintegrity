@@ -44,6 +44,7 @@ setup(
         'setuptools',
         'plone.app.intid',
         'plone.app.relationfield',
+        'plone.base',
         'plone.dexterity',
     ],
     extras_require={
