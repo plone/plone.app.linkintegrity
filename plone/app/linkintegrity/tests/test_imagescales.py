@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.uuid.interfaces import IUUID
-
-import six
 
 
 class ImageReferenceTestCase:
@@ -65,9 +62,3 @@ class ImageReferenceTestCase:
 
 class ImageReferenceDXTestCase(DXBaseTestCase, ImageReferenceTestCase):
     """Image reference testcase for dx content types"""
-
-if six.PY2:
-    from plone.app.linkintegrity.tests.base import ATBaseTestCase
-
-    class ImageReferenceATTestCase(ATBaseTestCase, ImageReferenceTestCase):
-        """Image reference testcase for dx content types"""

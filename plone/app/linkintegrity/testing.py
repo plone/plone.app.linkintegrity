@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+from base64 import decodebytes
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import layers
 from plone.app.testing import login
@@ -13,17 +13,11 @@ from plone.testing import z2
 from Products.CMFCore.utils import getToolByName
 from zope.configuration import xmlconfig
 
-import six
-
-try:
-    from base64 import decodebytes
-except ImportError:
-    # BBB for Python 2
-    from base64 import decodestring as decodebytes
+import io
 
 
 B64_DATA = b'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
-GIF = six.BytesIO(decodebytes(B64_DATA))
+GIF = io.BytesIO(decodebytes(B64_DATA))
 GIF.filename = 'sample.gif'
 GIF.contentType = 'image/gif'
 GIF._width = 1
@@ -34,22 +28,13 @@ def create(container, type_name, **kwargs):
     """A easy helper method to create some content since we do not have
     plone.api in core.
     """
-
     new_id = container.invokeFactory(type_name, **kwargs)
     content = container[new_id]
-
-    # Archetypes specific code was taken from ``plone.api``
-    # Switch when api has been merged into core.
-    if six.PY2:
-        from Products.Archetypes.interfaces import IBaseObject
-        if IBaseObject.providedBy(content):
-            content.processForm()
-
     return content
 
 
 class LinkIntegrityLayer(z2.Layer):
-    """Base Layer for AT and Dexterity testing.
+    """Base Layer for Dexterity testing.
     """
 
     defaultBases = (PLONE_FIXTURE, )
@@ -131,39 +116,3 @@ PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING = layers.FunctionalTesting(
     bases=(PLONE_APP_LINKINTEGRITY_DX_FIXTURE, ),
     name='plone.app.linkintegrity:DX:Functional'
 )
-
-if six.PY2:
-    from plone.app.contenttypes.testing import (
-        PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
-    )
-
-    class LinkIntegrityATLayer(LinkIntegrityLayer):
-        """Layer which targets testing with Archetypes and ATContentTypes.
-        """
-
-        directory = 'at'
-        defaultBases = (
-            PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
-            PLONE_APP_LINKINTEGRITY_FIXTURE,
-        )
-
-        def setUp(self):
-            self.setUpContent()
-
-        def setUpContent(self):
-            super(LinkIntegrityATLayer, self).setUpContent()
-
-            with ploneSite() as portal:
-                create(portal, 'Image', id='image1', title='Image 1', image=GIF)
-
-    PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
-
-    PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING = layers.IntegrationTesting(
-        bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
-        name='plone.app.linkintegrity:AT:Integration'
-    )
-
-    PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING = layers.FunctionalTesting(
-        bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
-        name='plone.app.linkintegrity:AT:Functional'
-    )

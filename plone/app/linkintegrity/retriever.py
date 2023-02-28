@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
 """Link Integrity - link retriever methods.
 """
-from .compat import IBaseObject
-from .compat import TextField
 from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.textfield import RichText
@@ -13,33 +10,6 @@ from zope.component import adapter
 from zope.component import getUtility
 from zope.interface import implementer
 from zope.schema import getFieldsInOrder
-
-
-@implementer(IRetriever)
-@adapter(IBaseObject)
-class ATGeneral(object):
-    """General retriever for AT that extracts URLs from (rich) text fields.
-    """
-
-    def __init__(self, context):
-        self.context = context
-
-    def retrieveLinks(self):
-        """Finds all links from the object and return them.
-        """
-        links = set()
-        for field in self.context.Schema().fields():
-            if isinstance(field, TextField):
-                accessor = field.getAccessor(self.context)
-                encoding = field.getRaw(self.context, raw=1).original_encoding
-                if accessor is not None:
-                    value = accessor()
-                else:
-                    # Fields that have been added via schema extension do
-                    # not have an accessor method.
-                    value = field.get(self.context)
-                links |= set(extractLinks(value, encoding))
-        return links
 
 
 @implementer(IRetriever)

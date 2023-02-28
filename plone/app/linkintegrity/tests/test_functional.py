@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
-# from plone.app.linkintegrity.utils import hasIncomingLinks
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.linkintegrity.utils import hasOutgoingLinks
@@ -13,7 +11,6 @@ from Products.CMFPlone.interfaces import IEditingSchema
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 
-import six
 import transaction
 import unittest
 
@@ -56,9 +53,8 @@ class ReferenceTestCase:
                       self.browser.contents)
 
         # Click cancel button, item should stay in place
-        # FIXME! This fails in Archetypes because the redirect
-        # plone.app.content.browser.actions.DeleteConfirmationForm.handle_cancel
-        # is broken for AT-content.
+        # FIXME! This fails in Plone 6 with an internal server error,
+        # but maybe no longer for the original reasons for which we skip this test.
         self.browser.getControl(name='form.buttons.Cancel').click()
         self.assertEqual(self.browser.url, file2.absolute_url() + '/view')
         self.assertIn('Removal cancelled.', self.browser.contents)
@@ -385,12 +381,3 @@ class FunctionalReferenceDXTestCase(DXBaseTestCase, ReferenceTestCase):
     """Functional reference testcase for dx content types"""
 
     layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
-
-
-if six.PY2:
-    from plone.app.linkintegrity.tests.base import ATBaseTestCase
-
-    class FunctionalReferenceATTestCase(ATBaseTestCase, ReferenceTestCase):
-        """Functional reference testcase for dx content types"""
-
-        layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING

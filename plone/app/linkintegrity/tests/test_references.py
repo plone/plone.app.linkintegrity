@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
@@ -15,8 +14,6 @@ from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import modified
-
-import six
 
 
 class ReferenceGenerationTestCase:
@@ -212,13 +209,3 @@ class ReferenceGenerationDXTestCase(
     ReferenceGenerationTestCase,
 ):
     """Reference generation testcase for dx content types"""
-
-
-if six.PY2:
-    from plone.app.linkintegrity.tests.base import ATBaseTestCase
-
-    class ReferenceGenerationATTestCase(
-        ATBaseTestCase,
-        ReferenceGenerationTestCase,
-    ):
-        """Reference generation testcase for at content types"""

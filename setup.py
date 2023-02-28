@@ -42,9 +42,9 @@ setup(
     python_requires='>=3.8',
     install_requires=[
         'setuptools',
-        'six',
         'plone.app.intid',
         'plone.app.relationfield',
+        'plone.dexterity',
     ],
     extras_require={
         'test': [

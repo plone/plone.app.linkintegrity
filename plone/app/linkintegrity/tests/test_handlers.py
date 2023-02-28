@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
 from plone.app.linkintegrity.handlers import findObject
 from plone.app.linkintegrity.testing import create
 from plone.app.linkintegrity.tests.base import DXBaseTestCase
 from plone.app.testing import logout
-
-import six
 
 
 class FindObjectTests:
@@ -43,8 +40,6 @@ class FindObjectTests:
         # We logout.  This is to check that findObject also finds objects
         # that are not visible to the current user, like a private page.
         # See https://github.com/plone/plone.app.linkintegrity/issues/79
-        # Note that in the Archetypes tests this is no problem,
-        # but for Dexterity it is.  Likely they use a different workflow.
         logout()
 
         obj, components = findObject(self.portal.doc1, path)
@@ -54,9 +49,3 @@ class FindObjectTests:
 
 class ReferenceGenerationDXTestCase(DXBaseTestCase, FindObjectTests):
     """findObject testcase for dx content types"""
-
-if six.PY2:
-    from plone.app.linkintegrity.tests.base import ATBaseTestCase
-
-    class ReferenceGenerationATTestCase(ATBaseTestCase, FindObjectTests):
-        """findObject testcase for at content types"""

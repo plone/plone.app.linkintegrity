@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
-from six.moves.html_parser import HTMLParser
-
-try:
-    from html.parser import HTMLParseError
-except ImportError as e:
-    # HTMLParseError is removed in Python 3.5. Since it can never be
-    # thrown in 3.5, we can just define our own class as a placeholder.
-    class HTMLParseError(Exception):
-        pass
+from html.parser import HTMLParser
 
 
 TAG_ATTRS_TO_TRACK = {
@@ -73,7 +64,7 @@ def extractLinks(data, encoding="utf-8"):
         parser = LinkParser()
         parser.feed(data.decode(encoding))
         parser.close()
-    except (HTMLParseError, TypeError):
+    except TypeError:
         pass
 
     return parser.getLinks()
