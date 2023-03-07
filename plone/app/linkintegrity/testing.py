@@ -1,29 +1,22 @@
-# -*- coding: utf-8 -*-
+from base64 import decodebytes
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import layers
 from plone.app.testing import login
-from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import ploneSite
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.namedfile.file import NamedImage
-from plone.testing import z2
+from plone.testing import zope
 from Products.CMFCore.utils import getToolByName
 from zope.configuration import xmlconfig
 
-import six
-
-try:
-    from base64 import decodebytes
-except ImportError:
-    # BBB for Python 2
-    from base64 import decodestring as decodebytes
+import io
 
 
 B64_DATA = b'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs='
-GIF = six.BytesIO(decodebytes(B64_DATA))
+GIF = io.BytesIO(decodebytes(B64_DATA))
 GIF.filename = 'sample.gif'
 GIF.contentType = 'image/gif'
 GIF._width = 1
@@ -34,25 +27,22 @@ def create(container, type_name, **kwargs):
     """A easy helper method to create some content since we do not have
     plone.api in core.
     """
-
     new_id = container.invokeFactory(type_name, **kwargs)
     content = container[new_id]
-
-    # Archetypes specific code was taken from ``plone.api``
-    # Switch when api has been merged into core.
-    if six.PY2:
-        from Products.Archetypes.interfaces import IBaseObject
-        if IBaseObject.providedBy(content):
-            content.processForm()
-
     return content
 
 
-class LinkIntegrityLayer(z2.Layer):
-    """Base Layer for AT and Dexterity testing.
+class LinkIntegrityLayer(zope.Layer):
+    """Base Layer for Dexterity testing.
     """
 
-    defaultBases = (PLONE_FIXTURE, )
+    # defaultBases = (PLONE_FIXTURE, )
+    defaultBases = (
+        PLONE_APP_CONTENTTYPES_FIXTURE,
+    )
+
+    def setUp(self):
+        self.setUpContent()
 
     def setUpMembers(self, portal):
         pm = getToolByName(portal, 'portal_membership')
@@ -62,11 +52,9 @@ class LinkIntegrityLayer(z2.Layer):
 
     def setUpContent(self):
         import plone.app.linkintegrity
+
         xmlconfig.file('configure.zcml', plone.app.linkintegrity,
                        context=self['configurationContext'])
-
-        with z2.zopeApp() as app:
-            z2.installProduct(app, 'plone.app.linkintegrity')
 
         with ploneSite() as portal:
             setRoles(portal, TEST_USER_ID, ['Manager', ])
@@ -86,31 +74,6 @@ class LinkIntegrityLayer(z2.Layer):
 
             self.setUpMembers(portal)
 
-    def tearDown(self):
-        with z2.zopeApp() as app:
-            z2.uninstallProduct(app, 'plone.app.linkintegrity')
-
-
-PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
-
-
-class LinkIntegrityDXLayer(LinkIntegrityLayer):
-    """Layer which targets testing with Dexterity.
-    """
-
-    directory = 'dx'
-    defaultBases = (
-        PLONE_APP_CONTENTTYPES_FIXTURE,
-        PLONE_APP_LINKINTEGRITY_FIXTURE,
-    )
-
-    def setUp(self):
-        self.setUpContent()
-
-    def setUpContent(self):
-        super(LinkIntegrityDXLayer, self).setUpContent()
-
-        with ploneSite() as portal:
             # Create an object that does not provide the behavior to live along
             create(portal, 'News Item', id='news1', title='News 1')
 
@@ -119,51 +82,19 @@ class LinkIntegrityDXLayer(LinkIntegrityLayer):
             portal['image1'].image = NamedImage(GIF, 'image/gif',
                                                 u'sample.gif')
 
+    def tearDown(self):
+        with zope.zopeApp() as app:
+            zope.uninstallProduct(app, 'plone.app.linkintegrity')
 
-PLONE_APP_LINKINTEGRITY_DX_FIXTURE = LinkIntegrityDXLayer()
 
-PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING = layers.IntegrationTesting(
-    bases=(PLONE_APP_LINKINTEGRITY_DX_FIXTURE, ),
-    name='plone.app.linkintegrity:DX:Integration'
+PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()
+
+PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING = layers.IntegrationTesting(
+    bases=(PLONE_APP_LINKINTEGRITY_FIXTURE, ),
+    name='plone.app.linkintegrity:Integration'
 )
 
-PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING = layers.FunctionalTesting(
-    bases=(PLONE_APP_LINKINTEGRITY_DX_FIXTURE, ),
-    name='plone.app.linkintegrity:DX:Functional'
+PLONE_APP_LINKINTEGRITY_FUNCTIONAL_TESTING = layers.FunctionalTesting(
+    bases=(PLONE_APP_LINKINTEGRITY_FIXTURE, ),
+    name='plone.app.linkintegrity:Functional'
 )
-
-if six.PY2:
-    from plone.app.contenttypes.testing import (
-        PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
-    )
-
-    class LinkIntegrityATLayer(LinkIntegrityLayer):
-        """Layer which targets testing with Archetypes and ATContentTypes.
-        """
-
-        directory = 'at'
-        defaultBases = (
-            PLONE_APP_CONTENTTYPES_MIGRATION_FIXTURE,
-            PLONE_APP_LINKINTEGRITY_FIXTURE,
-        )
-
-        def setUp(self):
-            self.setUpContent()
-
-        def setUpContent(self):
-            super(LinkIntegrityATLayer, self).setUpContent()
-
-            with ploneSite() as portal:
-                create(portal, 'Image', id='image1', title='Image 1', image=GIF)
-
-    PLONE_APP_LINKINTEGRITY_AT_FIXTURE = LinkIntegrityATLayer()
-
-    PLONE_APP_LINKINTEGRITY_AT_INTEGRATION_TESTING = layers.IntegrationTesting(
-        bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
-        name='plone.app.linkintegrity:AT:Integration'
-    )
-
-    PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING = layers.FunctionalTesting(
-        bases=(PLONE_APP_LINKINTEGRITY_AT_FIXTURE, ),
-        name='plone.app.linkintegrity:AT:Functional'
-    )

@@ -4,7 +4,7 @@ from datetime import datetime
 from datetime import timedelta
 from plone.app.linkintegrity.handlers import modifiedContent
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
+from plone.base import PloneMessageFactory as _
 from Products.Five import BrowserView
 from Products.statusmessages.interfaces import IStatusMessage
 from transaction import savepoint

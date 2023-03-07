@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.linkintegrity import testing
 from plone.app.relationfield.behavior import IRelatedItems
 from plone.app.testing import setRoles
@@ -6,17 +5,19 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.textfield import RichTextValue
-from plone.testing.z2 import Browser
+from plone.testing.zope import Browser
 from z3c.form.interfaces import IFormLayer
 from zope.component import getMultiAdapter
 from zope.interface import alsoProvides
 from zope.lifecycleevent import modified
 
-import six
 import unittest
 
 
 class BaseTestCase(unittest.TestCase):
+    """Base testcase for testing Dexterity content types"""
+
+    layer = testing.PLONE_APP_LINKINTEGRITY_FUNCTIONAL_TESTING
 
     def setUp(self):
         self.portal = self.layer['portal']
@@ -42,12 +43,6 @@ class BaseTestCase(unittest.TestCase):
         return getMultiAdapter(
             (obj, self.request), name='authenticator').token()
 
-
-class DXBaseTestCase(BaseTestCase):
-    """Base testcase for testing Dexterity content types"""
-
-    layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
-
     def _set_text(self, obj, text):
         obj.text = RichTextValue(text)
         modified(obj)
@@ -62,26 +57,3 @@ class DXBaseTestCase(BaseTestCase):
 
     def _get_related_items(self, obj):
         return obj.relatedItems
-
-
-if six.PY2:
-    class ATBaseTestCase(BaseTestCase):
-        """Base testcase for testing Archetypes content types"""
-
-        layer = testing.PLONE_APP_LINKINTEGRITY_AT_FUNCTIONAL_TESTING
-
-        def _set_text(self, obj, text):
-            obj.setText(text, mimetype='text/html')
-            modified(obj)
-
-        def _get_text(self, obj):
-            # This is the equivalent to obj.text in dexterity. No transforms,
-            # no rewritten relative urls
-            return obj.getText(raw=1).raw
-
-        def _set_related_items(self, obj, items):
-            obj.setRelatedItems(items)
-            modified(obj)
-
-        def _get_related_items(self, obj):
-            return obj.getRelatedItems()

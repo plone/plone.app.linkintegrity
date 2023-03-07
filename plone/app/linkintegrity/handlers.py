@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from .compat import IBaseObject
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from plone.app.linkintegrity.interfaces import IRetriever
@@ -9,10 +7,10 @@ from plone.app.uuid.utils import uuidToCatalogBrain
 from plone.dexterity.interfaces import IDexterityContent
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IEditingSchema
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from six.moves.urllib.parse import unquote
-from six.moves.urllib.parse import urlsplit
+from plone.base.interfaces import IEditingSchema
+from plone.base.interfaces import IPloneSiteRoot
+from urllib.parse import unquote
+from urllib.parse import urlsplit
 from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
 from zc.relation.interfaces import ICatalog
@@ -24,7 +22,7 @@ from zope.intid.interfaces import IIntIds
 from zope.publisher.interfaces import NotFound as ztkNotFound
 
 import logging
-import six
+
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +70,6 @@ def findObject(base, path):
                 NotFound, ztkNotFound, UnicodeEncodeError):
             return None, None
         if not IDexterityContent.providedBy(child) and \
-                not IBaseObject.providedBy(child) and \
                 not IPloneSiteRoot.providedBy(child):
             break
         obj = child
@@ -90,10 +87,6 @@ def getObjectsFromLinks(base, links):
         s, h, path, q, f = urlsplit(link)
         # relative or local url
         if (not s and not h) or (s == scheme and h == host):
-            # Paths should always be strings
-            if six.PY2 and isinstance(path, six.text_type):
-                path = path.encode('utf-8')
-
             obj, extra = findObject(base, path)
             if obj and not IPloneSiteRoot.providedBy(obj):
                 objid = ensure_intid(obj, intids)

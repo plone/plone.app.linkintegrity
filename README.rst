@@ -56,7 +56,7 @@ Customization
 
 On object created, added, modified events the ``modifiedContent`` handler
 is called. This handler adapts an ``IRetriever`` object if found.
-The package comes with two general adapters for Dexterity and Archetypes.
+The package comes with one general adapter for Dexterity content.
 You can easily write custom adapters implementing the ``IRetriever``
 interface for your contenttype. Look at the ``retriever`` module in this
 package for examples.

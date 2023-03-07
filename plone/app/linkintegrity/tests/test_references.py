@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.parser import extractLinks
-from plone.app.linkintegrity.tests.base import DXBaseTestCase
+from plone.app.linkintegrity.tests.base import BaseTestCase
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.linkintegrity.utils import hasIncomingLinks
@@ -16,10 +15,9 @@ from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import modified
 
-import six
 
-
-class ReferenceGenerationTestCase:
+class ReferenceGenerationTestCase(BaseTestCase):
+    """reference generation testcase"""
 
     def test_is_linked(self):
         img1 = self.portal['image1']
@@ -205,20 +203,3 @@ class ReferenceGenerationTestCase:
         breaches = info.get_breaches()
         self.assertEqual(len(breaches), 1)
         self.assertEqual(len(info.get_breaches()[0]['sources']), 1)
-
-
-class ReferenceGenerationDXTestCase(
-    DXBaseTestCase,
-    ReferenceGenerationTestCase,
-):
-    """Reference generation testcase for dx content types"""
-
-
-if six.PY2:
-    from plone.app.linkintegrity.tests.base import ATBaseTestCase
-
-    class ReferenceGenerationATTestCase(
-        ATBaseTestCase,
-        ReferenceGenerationTestCase,
-    ):
-        """Reference generation testcase for at content types"""

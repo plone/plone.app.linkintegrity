@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone.registry.interfaces import IRegistry
-from Products.CMFPlone.interfaces import IEditingSchema
+from plone.base.interfaces import IEditingSchema
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds

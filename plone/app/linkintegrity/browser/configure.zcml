@@ -11,7 +11,7 @@
 
   <browser:page
         name="updateLinkIntegrityInformation"
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        for="plone.base.interfaces.IPloneSiteRoot"
         template="update.pt"
         class=".update.UpdateView"
         permission="cmf.ManagePortal"
