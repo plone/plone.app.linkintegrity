@@ -1,11 +1,27 @@
+from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.browser.info import DeleteConfirmationInfo
 from plone.app.linkintegrity.testing import create
-from plone.app.linkintegrity.tests.base import BaseTestCase
+from plone.app.linkintegrity.tests.utils import set_text
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.linkintegrity.utils import hasIncomingLinks
+from plone.app.textfield import RichTextValue
+from zope.lifecycleevent import modified
+
+import unittest
 
 
-class CircularReferencesTestCase:
+class CircularReferencesTestCase(unittest.TestCase):
+    """Circular reference testcase"""
+
+    layer = testing.PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+
+    def _set_text(self, obj, text):
+        obj.text = RichTextValue(text)
+        modified(obj)
 
     def test_circular_reference_manages_relations(self):
         doc1 = self.portal['doc1']
@@ -14,9 +30,9 @@ class CircularReferencesTestCase:
         self.assertFalse(hasIncomingLinks(doc1))
         self.assertFalse(hasIncomingLinks(doc2))
         self.assertFalse(hasIncomingLinks(doc3))
-        self._set_text(doc1, '<a href="doc2">doc2</a>')
-        self._set_text(doc2, '<a href="doc3">doc3</a>')
-        self._set_text(doc3, '<a href="doc1">doc1</a>')
+        set_text(doc1, '<a href="doc2">doc2</a>')
+        set_text(doc2, '<a href="doc3">doc3</a>')
+        set_text(doc3, '<a href="doc1">doc1</a>')
         self.assertTrue(hasIncomingLinks(doc1))
         self.assertTrue(hasIncomingLinks(doc2))
         self.assertTrue(hasIncomingLinks(doc3))
@@ -30,10 +46,10 @@ class CircularReferencesTestCase:
 
         # This tests the behaviour when removing objects
         # referencing each other in a circle.
-        self._set_text(doc1, '<a href="doc2">documents...</a>')
-        self._set_text(doc2, '<a href="doc3">go round...</a>')
-        self._set_text(doc3, '<a href="folder1/doc4">and round.</a>')
-        self._set_text(doc4, '<a href="../doc1">in circles.</a>')
+        set_text(doc1, '<a href="doc2">documents...</a>')
+        set_text(doc2, '<a href="doc3">go round...</a>')
+        set_text(doc3, '<a href="folder1/doc4">and round.</a>')
+        set_text(doc4, '<a href="../doc1">in circles.</a>')
 
         self.assertEqual([r.to_object for r in getOutgoingLinks(doc1)], [doc2])
         self.assertEqual([r.to_object for r in getOutgoingLinks(doc2)], [doc3])
@@ -52,9 +68,9 @@ class CircularReferencesTestCase:
         doc1 = self.portal.doc1
         doc4 = self.portal.folder1.doc4
         doc5 = self.portal.folder1.doc5
-        self._set_text(doc1, '<a href="folder1">f1</a>')
-        self._set_text(doc4, '<a href="doc5">d5</a><a href="../doc1">d1</a>')
-        self._set_text(doc5, '<a href="../folder1">f1</a>')
+        set_text(doc1, '<a href="folder1">f1</a>')
+        set_text(doc4, '<a href="doc5">d5</a><a href="../doc1">d1</a>')
+        set_text(doc5, '<a href="../folder1">f1</a>')
 
         doc4_breaches = set([r.to_object for r in getOutgoingLinks(doc4)])
         # the order of breaches is non-deterministic
@@ -79,7 +95,3 @@ class CircularReferencesTestCase:
         self.assertNotIn('Potential link breakage', view())
         view = doc4.restrictedTraverse('delete_confirmation_info')
         self.assertNotIn('Potential link breakage', view())
-
-
-class CircularReferencesDXTestCase(BaseTestCase, CircularReferencesTestCase):
-    """Circular reference testcase for dx content types"""
