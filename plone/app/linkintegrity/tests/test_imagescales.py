@@ -1,11 +1,19 @@
-from plone.app.linkintegrity.tests.base import BaseTestCase
+from plone.app.linkintegrity import testing
+from plone.app.linkintegrity.tests.utils import set_text
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.uuid.interfaces import IUUID
 
+import unittest
 
-class ImageReferenceTestCase(BaseTestCase):
+
+class ImageReferenceTestCase(unittest.TestCase):
     """image reference testcase"""
+
+    layer = testing.PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
 
     def test_image_tag_reference_creation(self):
         doc1 = self.portal.doc1
@@ -15,7 +23,7 @@ class ImageReferenceTestCase(BaseTestCase):
         # ensuring link integrity. Any archetype-based content object
         # which refers to other (local) objects by `<img>` or `<a>` tags
         # should create references between those objects on save.
-        self._set_text(doc1, img1.restrictedTraverse('@@images').tag())
+        set_text(doc1, img1.restrictedTraverse('@@images').tag())
 
         self.assertEqual(
             [r.to_object for r in getOutgoingLinks(doc1)],
@@ -33,7 +41,7 @@ class ImageReferenceTestCase(BaseTestCase):
         img1 = self.portal.image1
 
         # Linking image scales should also work:
-        self._set_text(
+        set_text(
             doc1, '<a href="image1/@@images/image_thumb">an image</a>')
         self.assertEqual(
             [r.to_object for r in getOutgoingLinks(doc1)],
@@ -49,7 +57,7 @@ class ImageReferenceTestCase(BaseTestCase):
         img1 = self.portal.image1
 
         # Linking via the "resolveuid/UID" method should also work:
-        self._set_text(doc1, '<a href="resolveuid/{0:s}">an image</a>'.format(
+        set_text(doc1, '<a href="resolveuid/{0:s}">an image</a>'.format(
             IUUID(img1)))
         self.assertEqual(
             [r.to_object for r in getOutgoingLinks(doc1)],

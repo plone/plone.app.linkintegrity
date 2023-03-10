@@ -1,14 +1,13 @@
 from base64 import decodebytes
-from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import layers
 from plone.app.testing import login
-from plone.app.testing import ploneSite
+from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.namedfile.file import NamedImage
-from plone.testing import zope
 from Products.CMFCore.utils import getToolByName
 from zope.configuration import xmlconfig
 
@@ -32,59 +31,47 @@ def create(container, type_name, **kwargs):
     return content
 
 
-class LinkIntegrityLayer(zope.Layer):
+class LinkIntegrityLayer(PloneSandboxLayer):
     """Base Layer for Dexterity testing.
     """
 
-    # defaultBases = (PLONE_FIXTURE, )
-    defaultBases = (
-        PLONE_APP_CONTENTTYPES_FIXTURE,
-    )
+    defaultBases = (PLONE_FIXTURE, )
 
-    def setUp(self):
-        self.setUpContent()
+    def setUpZope(self, app, configurationContext):
+        import plone.app.linkintegrity
 
-    def setUpMembers(self, portal):
+        xmlconfig.file('configure.zcml', plone.app.linkintegrity,
+                       context=configurationContext)
+
+    def setUpPloneSite(self, portal):
+        setRoles(portal, TEST_USER_ID, ['Manager', ])
+        login(portal, TEST_USER_NAME)
+
+        # Create sample documents
+        type_data = dict(type_name='Document')
+        for i in range(1, 4):
+            type_data['id'] = 'doc{0:d}'.format(i)
+            type_data['title'] = 'Test Page {0:d}'.format(i)
+            create(portal, **type_data)
+
+        create(portal, 'File', id='file1', title='File 1', file=GIF)
+        create(portal, 'Folder', id='folder1', title='Folder 1')
+        subfolder = portal['folder1']
+        create(subfolder, 'Document', id='doc4', title='Test Page 4')
+
+        # setup members
         pm = getToolByName(portal, 'portal_membership')
         pm.addMember('editor', TEST_USER_PASSWORD, ['Editor'], [])
         pm.addMember('member', TEST_USER_PASSWORD, ['Member'], [])
         pm.addMember('authenticated', TEST_USER_PASSWORD, [], [])
 
-    def setUpContent(self):
-        import plone.app.linkintegrity
+        # Create an object that does not provide the behavior to live along
+        create(portal, 'News Item', id='news1', title='News 1')
 
-        xmlconfig.file('configure.zcml', plone.app.linkintegrity,
-                       context=self['configurationContext'])
-
-        with ploneSite() as portal:
-            setRoles(portal, TEST_USER_ID, ['Manager', ])
-            login(portal, TEST_USER_NAME)
-
-            # Create sample documents
-            type_data = dict(type_name='Document')
-            for i in range(1, 4):
-                type_data['id'] = 'doc{0:d}'.format(i)
-                type_data['title'] = 'Test Page {0:d}'.format(i)
-                create(portal, **type_data)
-
-            create(portal, 'File', id='file1', title='File 1', file=GIF)
-            create(portal, 'Folder', id='folder1', title='Folder 1')
-            subfolder = portal['folder1']
-            create(subfolder, 'Document', id='doc4', title='Test Page 4')
-
-            self.setUpMembers(portal)
-
-            # Create an object that does not provide the behavior to live along
-            create(portal, 'News Item', id='news1', title='News 1')
-
-            # create a DX NamedImage
-            portal.invokeFactory('Image', 'image1')
-            portal['image1'].image = NamedImage(GIF, 'image/gif',
-                                                u'sample.gif')
-
-    def tearDown(self):
-        with zope.zopeApp() as app:
-            zope.uninstallProduct(app, 'plone.app.linkintegrity')
+        # create a NamedImage
+        portal.invokeFactory('Image', 'image1')
+        portal['image1'].image = NamedImage(GIF, 'image/gif',
+                                            u'sample.gif')
 
 
 PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()

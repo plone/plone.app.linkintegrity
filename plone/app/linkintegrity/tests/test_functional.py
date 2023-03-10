@@ -1,24 +1,51 @@
 from plone.app.linkintegrity import testing
-from plone.app.linkintegrity.tests.base import BaseTestCase
+from plone.app.linkintegrity.tests.utils import set_text
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.linkintegrity.utils import hasOutgoingLinks
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.registry.interfaces import IRegistry
 from plone.testing.zope import Browser
 from plone.base.interfaces import IEditingSchema
 from zc.relation.interfaces import ICatalog
+from zope.component import getMultiAdapter
 from zope.component import getUtility
 
 import transaction
 import unittest
 
 
-class FunctionalReferenceTestCase(BaseTestCase):
+class FunctionalReferenceTestCase(unittest.TestCase):
     """functional reference testcase"""
 
     layer = testing.PLONE_APP_LINKINTEGRITY_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
+        # alsoProvides(self.request, IFormLayer)
+
+        # Get a testbrowser
+        self.browser = Browser(self.layer['app'])
+        self.browser.handleErrors = False
+        self.browser.addHeader('Referer', self.portal.absolute_url())
+        self.browser.addHeader(
+            'Authorization',
+            'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
+
+        # Do an initial page load to make sure the bundles get compiled
+        # (which currently commits a transaction)
+        # before we render exception views
+        self.browser.open(self.portal.absolute_url())
+
+        setRoles(self.portal, TEST_USER_ID, ['Manager', ])
+
+    def _get_token(self, obj):
+        return getMultiAdapter(
+            (obj, self.request), name='authenticator').token()
 
     @unittest.skip('Re-enable after https://github.com/plone/plone.app.content/issues/38')  # noqa
     def test_file_reference_linkintegrity_page_is_shown(self):
@@ -27,7 +54,7 @@ class FunctionalReferenceTestCase(BaseTestCase):
                                id='file2', file=testing.GIF)
 
         self.assertFalse(hasOutgoingLinks(doc1))
-        self._set_text(doc1, '<a href="file2">A File</a>')
+        set_text(doc1, '<a href="file2">A File</a>')
         self.assertTrue(hasOutgoingLinks(doc1))
         self.assertIn('file2', self.portal.objectIds())
 
@@ -90,7 +117,7 @@ class FunctionalReferenceTestCase(BaseTestCase):
         # This tests makes sure items that are linked to can still be
         # renamed (see the related bug report in #6608).  First we need
         # to create the necessary links:
-        self._set_text(doc1, '<a href="doc2">doc2</a>')
+        set_text(doc1, '<a href="doc2">doc2</a>')
         self.assertEqual(
             [i.from_object for i in getIncomingLinks(doc2)], [doc1])
 
@@ -131,8 +158,8 @@ class FunctionalReferenceTestCase(BaseTestCase):
 
         # This tests ensuring link integrity when removing an referenced
         # object contained in a folder that is removed.
-        self._set_text(doc1, '<a href="folder1/doc4">a document</a>')
-        self._set_text(doc2, '<a href="folder1/doc4">a document</a>')
+        set_text(doc1, '<a href="folder1/doc4">a document</a>')
+        set_text(doc2, '<a href="folder1/doc4">a document</a>')
 
         # Make changes visible to testbrowseropen
         transaction.commit()
@@ -162,7 +189,7 @@ class FunctionalReferenceTestCase(BaseTestCase):
 
         # This tests ensures link integrity working correctly without
         # http basic authentication (see the bug report in #6607).
-        self._set_text(doc1, '<a href="doc2">doc2</a>')
+        set_text(doc1, '<a href="doc2">doc2</a>')
         transaction.commit()
 
         browser = Browser(self.layer['app'])
@@ -198,7 +225,7 @@ class FunctionalReferenceTestCase(BaseTestCase):
         doc2 = self.portal.doc2
 
         # This tests switching link integrity checking on and off.
-        self._set_text(doc1, '<a href="doc2">a document</a>')
+        set_text(doc1, '<a href="doc2">a document</a>')
         transaction.commit()
 
         # This should lead us back to the "folder contents" listing,
@@ -232,8 +259,8 @@ class FunctionalReferenceTestCase(BaseTestCase):
 
         # This tests updating link integrity information for all site content,
         # i.e. after migrating from a previous version.
-        self._set_text(doc1, '<a href="doc2">a document</a>')
-        self._set_text(doc2, '<a href="folder1/doc4">a document</a>')
+        set_text(doc1, '<a href="doc2">a document</a>')
+        set_text(doc2, '<a href="folder1/doc4">a document</a>')
 
         catalog = getUtility(ICatalog)
         rels = [i for i in catalog.findRelations()]
@@ -271,7 +298,7 @@ class FunctionalReferenceTestCase(BaseTestCase):
 
         # This tests ensures that link integrity is correctly setup when
         # cloning an object.
-        self._set_text(doc1, '<a href="doc2">a document</a>')
+        set_text(doc1, '<a href="doc2">a document</a>')
 
         # Next we clone the document:
         token = self._get_token(doc1)
@@ -318,7 +345,7 @@ class FunctionalReferenceTestCase(BaseTestCase):
         self.assertIn('some spaces.doc', self.portal.objectIds())
         spaces1 = self.portal['some spaces.doc']
 
-        self._set_text(doc1, '<a href="some spaces.doc">a document</a>')
+        set_text(doc1, '<a href="some spaces.doc">a document</a>')
 
         # The document should now have a reference to the file:
         self.assertEqual(
@@ -350,7 +377,7 @@ class FunctionalReferenceTestCase(BaseTestCase):
 
         # This tests ensuring link integrity when removing an object via
         # the ZMI.
-        self._set_text(doc1, '<a href="doc2">a document</a>')
+        set_text(doc1, '<a href="doc2">a document</a>')
         self.assertEqual([i.to_object for i in getOutgoingLinks(doc1)], [doc2])
 
         transaction.commit()

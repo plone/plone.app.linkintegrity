@@ -1,10 +1,11 @@
 from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.parser import extractLinks
-from plone.app.linkintegrity.tests.base import BaseTestCase
+from plone.app.linkintegrity.tests.utils import set_text
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import getOutgoingLinks
 from plone.app.linkintegrity.utils import hasIncomingLinks
 from plone.app.linkintegrity.utils import hasOutgoingLinks
+from plone.app.relationfield.behavior import IRelatedItems
 from plone.app.testing import login
 from plone.app.testing import logout
 from plone.app.testing import TEST_USER_NAME
@@ -12,17 +13,32 @@ from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
-from zope.intid.interfaces import IIntIds
 from zope.lifecycleevent import modified
+from zope.intid.interfaces import IIntIds
+
+import unittest
 
 
-class ReferenceGenerationTestCase(BaseTestCase):
+class ReferenceGenerationTestCase(unittest.TestCase):
     """reference generation testcase"""
+
+    layer = testing.PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+
+    def _set_related_items(self, obj, items):
+        assert IRelatedItems.providedBy(obj)
+        setattr(obj, 'relatedItems', items)
+        modified(obj)
+
+    def _get_related_items(self, obj):
+        return obj.relatedItems
 
     def test_is_linked(self):
         img1 = self.portal['image1']
         doc1 = self.portal['doc1']
-        self._set_text(doc1, '<img src="image1"></img>')
+        set_text(doc1, '<img src="image1"></img>')
         self.assertTrue(hasIncomingLinks(img1))
 
     def test_referal_to_private_files(self):
@@ -34,7 +50,7 @@ class ReferenceGenerationTestCase(BaseTestCase):
         # the link in question and set up the permissions accordingly.
         doc = self.portal.doc1
         img = self.portal.image1
-        self._set_text(doc, '<a href="image1">Image 1</a>')
+        set_text(doc, '<a href="image1">Image 1</a>')
 
         roles = ('Member', )
         self.portal.manage_permission('List folder contents', roles=roles)
@@ -80,21 +96,21 @@ class ReferenceGenerationTestCase(BaseTestCase):
 
     def test_link_extraction_easy(self):
         doc1 = self.portal.doc1
-        self._set_text(doc1, '<a href="doc2">Doc 2</a>')
+        set_text(doc1, '<a href="doc2">Doc 2</a>')
         self.assertEqual(
-            extractLinks(self._get_text(doc1)),
+            extractLinks(doc1.text.raw),
             ('doc2', )
         )
 
     def test_link_extraction_more_complex(self):
         doc2 = self.portal.doc2
-        self._set_text(
+        set_text(
             doc2,
             '<a href="doc1">Doc 2</a>' +
             '<a href="folder1/doc3"><img src="image1" /></a>',
         )
         self.assertEqual(
-            extractLinks(self._get_text(doc2)),
+            extractLinks(doc2.text.raw),
             ('doc1',
              'folder1/doc3',
              'image1')
@@ -106,16 +122,16 @@ class ReferenceGenerationTestCase(BaseTestCase):
         doc1 = self.portal.doc1
 
         self.assertEqual(len(list(getOutgoingLinks(doc1))), 0)
-        self._set_text(doc1, '<a href="doc1a">Doc 1a</a>')
+        set_text(doc1, '<a href="doc1a">Doc 1a</a>')
         self.assertEqual(len(list(getOutgoingLinks(doc1))), 1)
-        self.assertEqual([l.to_object for l in getOutgoingLinks(doc1)],
+        self.assertEqual([link.to_object for link in getOutgoingLinks(doc1)],
                          [self.portal.doc1a])
 
         # Now delete the target item, suppress events and test again,
         # The reference should be a ghost not in any folder anymore.
         # check if it has no acquition parent!
         self.portal._delObject(doc1a.id, suppress_events=True)
-        objs = [l.to_object for l in getOutgoingLinks(doc1)]
+        objs = [link.to_object for link in getOutgoingLinks(doc1)]
         self.assertEqual(len(objs), 1)
         obj = objs[0]
         if obj is not None:
@@ -128,9 +144,9 @@ class ReferenceGenerationTestCase(BaseTestCase):
     def test_relative_upwards_link_generates_matching_reference(self):
         doc1 = self.portal.doc1
         doc3 = self.portal.folder1.doc3
-        self._set_text(doc3, '<a href="../doc1">go!</a>')
+        set_text(doc3, '<a href="../doc1">go!</a>')
         self.assertEqual(len(list(getOutgoingLinks(doc1))), 0)
-        self.assertEqual([l.to_object for l in getOutgoingLinks(doc3)],
+        self.assertEqual([link.to_object for link in getOutgoingLinks(doc3)],
                          [doc1])
 
     def test_unicode_links(self):
@@ -140,11 +156,11 @@ class ReferenceGenerationTestCase(BaseTestCase):
         # eventually plays well with transaction machinery.
         # Add bad link, should not raise exception and there should not
         # be any references added.
-        self._set_text(
+        set_text(
             doc1,
             '<a href="ö?foo=bar&baz=bam">bug</a>')
 
-        self.assertEqual([l for l in getOutgoingLinks(doc1)], [])
+        self.assertEqual([link for link in getOutgoingLinks(doc1)], [])
 
     def test_reference_orthogonality(self):
         doc = self.portal.doc1
@@ -152,10 +168,10 @@ class ReferenceGenerationTestCase(BaseTestCase):
         tag = img.restrictedTraverse('@@images').tag()
 
         # This tests the behavior when other references already exist.
-        self.assertEqual([l for l in getOutgoingLinks(doc)], [])
-        self.assertEqual([l for l in getIncomingLinks(doc)], [])
-        self.assertEqual([l for l in getOutgoingLinks(img)], [])
-        self.assertEqual([l for l in getOutgoingLinks(img)], [])
+        self.assertEqual([link for link in getOutgoingLinks(doc)], [])
+        self.assertEqual([link for link in getIncomingLinks(doc)], [])
+        self.assertEqual([link for link in getOutgoingLinks(img)], [])
+        self.assertEqual([link for link in getOutgoingLinks(img)], [])
 
         # Then establish a reference between the document and image as
         # a related item:
@@ -164,9 +180,9 @@ class ReferenceGenerationTestCase(BaseTestCase):
 
         # Next edit the document body and insert a link to the image,
         # which should trigger the creation of a link integrity reference:
-        self._set_text(doc, tag)
+        set_text(doc, tag)
 
-        self.assertEqual([l.to_object for l in getOutgoingLinks(doc)], [img])
+        self.assertEqual([link.to_object for link in getOutgoingLinks(doc)], [img])
 
         # And the related item reference remains in place:
         self.assertEqual(self._get_related_items(doc), [img, ])
@@ -174,8 +190,8 @@ class ReferenceGenerationTestCase(BaseTestCase):
         # Finally, edit the document body again, this time removing the
         # link to the image, which should trigger the removal of the
         # link integrity reference:
-        self._set_text(doc, 'where did my link go?')
-        self.assertEqual([l.to_object for l in getOutgoingLinks(doc)], [])
+        set_text(doc, 'where did my link go?')
+        self.assertEqual([link.to_object for link in getOutgoingLinks(doc)], [])
 
         # And again the related item reference remains in place:
         self.assertEqual(self._get_related_items(doc), [img, ])

@@ -1,11 +1,18 @@
+from plone.app.linkintegrity import testing
 from plone.app.linkintegrity.handlers import findObject
 from plone.app.linkintegrity.testing import create
-from plone.app.linkintegrity.tests.base import BaseTestCase
 from plone.app.testing import logout
 
+import unittest
 
-class ReferenceGenerationTestCase(BaseTestCase):
+
+class ReferenceGenerationTestCase(unittest.TestCase):
     """ testing the handlers.findObject function """
+
+    layer = testing.PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
 
     def test_relative_to_portal_root_1(self):
         obj, components = findObject(self.portal.doc1, '/plone/doc2')
