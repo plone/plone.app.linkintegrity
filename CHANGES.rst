@@ -8,6 +8,24 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.0 (2023-03-13)
+------------------
+
+Breaking changes:
+
+
+- Drop compatibility for Plone 5.2.  Support Plone 6 only.
+  [maurits] (#60)
+
+
+Bug fixes:
+
+
+- Fixed test layer setup.
+  Created content was bleeding into layers from other packages.
+  [maurits] (#846)
+
+
 3.6.1 (2022-04-28)
 ------------------
 
