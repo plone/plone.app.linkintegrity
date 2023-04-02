@@ -290,7 +290,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         # by browsing a specific url:
         transaction.commit()
         self.browser.open(
-            "{:s}/updateLinkIntegrityInformation".format(self.portal.absolute_url())
+            f"{self.portal.absolute_url():s}/updateLinkIntegrityInformation"
         )
         self.browser.getControl("Update").click()
         self.assertIn("Link integrity information updated for", self.browser.contents)
