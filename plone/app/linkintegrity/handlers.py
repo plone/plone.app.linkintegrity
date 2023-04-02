@@ -4,11 +4,11 @@ from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.linkintegrity.utils import ensure_intid
 from plone.app.linkintegrity.utils import referencedRelationship
 from plone.app.uuid.utils import uuidToCatalogBrain
+from plone.base.interfaces import IEditingSchema
+from plone.base.interfaces import IPloneSiteRoot
 from plone.dexterity.interfaces import IDexterityContent
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
-from plone.base.interfaces import IEditingSchema
-from plone.base.interfaces import IPloneSiteRoot
 from urllib.parse import unquote
 from urllib.parse import urlsplit
 from z3c.relationfield import RelationValue

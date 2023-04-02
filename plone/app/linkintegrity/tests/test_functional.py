@@ -7,9 +7,9 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
+from plone.base.interfaces import IEditingSchema
 from plone.registry.interfaces import IRegistry
 from plone.testing.zope import Browser
-from plone.base.interfaces import IEditingSchema
 from zc.relation.interfaces import ICatalog
 from zope.component import getMultiAdapter
 from zope.component import getUtility

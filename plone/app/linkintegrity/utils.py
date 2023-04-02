@@ -1,9 +1,10 @@
-from plone.registry.interfaces import IRegistry
 from plone.base.interfaces import IEditingSchema
+from plone.registry.interfaces import IRegistry
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
+
 
 referencedRelationship = 'isReferencing'
 

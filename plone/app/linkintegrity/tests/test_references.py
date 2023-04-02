@@ -13,8 +13,8 @@ from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
-from zope.lifecycleevent import modified
 from zope.intid.interfaces import IIntIds
+from zope.lifecycleevent import modified
 
 import unittest
 
