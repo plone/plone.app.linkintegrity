@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from datetime import datetime
 from datetime import timedelta
@@ -26,20 +25,20 @@ class UpdateView(BrowserView):
             count = self.update()
             duration = timedelta(seconds=(datetime.now() - starttime).seconds)
             msg = _(
-                u'linkintegrity_update_info',
-                default=u'Link integrity information updated for ${count} ' +
-                        u'items in ${time} seconds.',
+                'linkintegrity_update_info',
+                default='Link integrity information updated for ${count} ' +
+                        'items in ${time} seconds.',
                 mapping={'count': count, 'time': str(duration)},
             )
             IStatusMessage(request).add(msg, type='info')
-            msg = 'Updated {0} items in {1} seconds'.format(
+            msg = 'Updated {} items in {} seconds'.format(
                 count,
                 str(duration),
             )
             logger.info(msg)
             request.RESPONSE.redirect(getToolByName(context, 'portal_url')())
         elif 'cancel' in request.form:
-            msg = _(u'Update cancelled.')
+            msg = _('Update cancelled.')
             IStatusMessage(request).add(msg, type='info')
             request.RESPONSE.redirect(getToolByName(context, 'portal_url')())
         else:

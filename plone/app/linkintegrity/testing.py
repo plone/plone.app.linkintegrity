@@ -50,8 +50,8 @@ class LinkIntegrityLayer(PloneSandboxLayer):
         # Create sample documents
         type_data = dict(type_name='Document')
         for i in range(1, 4):
-            type_data['id'] = 'doc{0:d}'.format(i)
-            type_data['title'] = 'Test Page {0:d}'.format(i)
+            type_data['id'] = f'doc{i:d}'
+            type_data['title'] = f'Test Page {i:d}'
             create(portal, **type_data)
 
         create(portal, 'File', id='file1', title='File 1', file=GIF)
@@ -71,7 +71,7 @@ class LinkIntegrityLayer(PloneSandboxLayer):
         # create a NamedImage
         portal.invokeFactory('Image', 'image1')
         portal['image1'].image = NamedImage(GIF, 'image/gif',
-                                            u'sample.gif')
+                                            'sample.gif')
 
 
 PLONE_APP_LINKINTEGRITY_FIXTURE = LinkIntegrityLayer()

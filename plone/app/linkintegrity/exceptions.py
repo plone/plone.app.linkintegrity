@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from OFS.ObjectManager import BeforeDeleteException
 from zope.interface import implementer
 from zope.interface import Interface
@@ -18,4 +17,4 @@ class LinkIntegrityNotificationException(BeforeDeleteException):
         args = self.args
         if args and isinstance(args, tuple):
             return repr(args[0])
-        return super(LinkIntegrityNotificationException, self).__str__()
+        return super().__str__()

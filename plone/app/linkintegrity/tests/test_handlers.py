@@ -42,7 +42,7 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         create(self.portal, 'Document', id='target', title='Target')
         target = self.portal.target
         target_uid = target.UID()
-        path = "../resolveuid/{}".format(target_uid)
+        path = f"../resolveuid/{target_uid}"
 
         # We logout.  This is to check that findObject also finds objects
         # that are not visible to the current user, like a private page.

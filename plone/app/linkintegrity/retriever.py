@@ -14,7 +14,7 @@ from zope.schema import getFieldsInOrder
 
 @implementer(IRetriever)
 @adapter(IDexterityContent)
-class DXGeneral(object):
+class DXGeneral:
     """General retriever for DX that extracts URLs from (rich) text fields.
     """
 

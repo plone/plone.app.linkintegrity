@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from OFS.interfaces import IFolder
 from plone.app.linkintegrity.utils import getIncomingLinks

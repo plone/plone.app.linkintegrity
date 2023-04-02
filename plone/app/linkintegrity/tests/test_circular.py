@@ -72,9 +72,9 @@ class CircularReferencesTestCase(unittest.TestCase):
         set_text(doc4, '<a href="doc5">d5</a><a href="../doc1">d1</a>')
         set_text(doc5, '<a href="../folder1">f1</a>')
 
-        doc4_breaches = set([r.to_object for r in getOutgoingLinks(doc4)])
+        doc4_breaches = {r.to_object for r in getOutgoingLinks(doc4)}
         # the order of breaches is non-deterministic
-        self.assertEqual(set([doc1, doc5]), doc4_breaches)
+        self.assertEqual({doc1, doc5}, doc4_breaches)
         self.assertEqual(
             [r.to_object for r in getOutgoingLinks(doc5)], [folder1])
         self.assertEqual(

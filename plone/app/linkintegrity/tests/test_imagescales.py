@@ -57,7 +57,7 @@ class ImageReferenceTestCase(unittest.TestCase):
         img1 = self.portal.image1
 
         # Linking via the "resolveuid/UID" method should also work:
-        set_text(doc1, '<a href="resolveuid/{0:s}">an image</a>'.format(
+        set_text(doc1, '<a href="resolveuid/{:s}">an image</a>'.format(
             IUUID(img1)))
         self.assertEqual(
             [r.to_object for r in getOutgoingLinks(doc1)],

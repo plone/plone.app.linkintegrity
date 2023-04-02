@@ -34,7 +34,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.addHeader('Referer', self.portal.absolute_url())
         self.browser.addHeader(
             'Authorization',
-            'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
+            f'Basic {TEST_USER_NAME:s}:{TEST_USER_PASSWORD:s}')
 
         # Do an initial page load to make sure the bundles get compiled
         # (which currently commits a transaction)
@@ -67,9 +67,9 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.handleErrors = True
         self.browser.addHeader(
             'Authorization',
-            'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
+            f'Basic {TEST_USER_NAME:s}:{TEST_USER_PASSWORD:s}')
 
-        delete_url = '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+        delete_url = '{:s}/delete_confirmation?_authenticator={:s}'.format(
             file2.absolute_url(), token)
 
         # Try to remove but cancel
@@ -126,7 +126,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
 
         # Then we use a browser to rename the referenced image:
         self.browser.handleErrors = True
-        self.browser.open('{0:s}/object_rename?_authenticator={1:s}'.format(
+        self.browser.open('{:s}/object_rename?_authenticator={:s}'.format(
             doc1.absolute_url(), self._get_token(doc1)))
 
         self.browser.getControl(name='form.widgets.new_id').value = 'nuname'
@@ -171,7 +171,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.handleErrors = True
 
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            '{:s}/delete_confirmation?_authenticator={:s}'.format(
                 folder1.absolute_url(), self._get_token(folder1)
             )
         )
@@ -196,7 +196,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         browser.handleErrors = True
         browser.addHeader('Referer', self.portal.absolute_url())
         browser.open(
-            '{0:s}/folder_contents'.format(self.portal.absolute_url()))
+            f'{self.portal.absolute_url():s}/folder_contents')
 
         # At this point we shouldn't be able to look at the folder
         # contents (as an anonymous user):
@@ -212,7 +212,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
 
         # This should lead us back to the "folder contents" listing,
         # where we try to delete the referenced document.
-        browser.open('{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+        browser.open('{:s}/delete_confirmation?_authenticator={:s}'.format(
             doc2.absolute_url(), self._get_token(doc2)))
         self.assertIn('Potential link breakage', browser.contents)
         self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
@@ -235,7 +235,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.handleErrors = True
 
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            '{:s}/delete_confirmation?_authenticator={:s}'.format(
                 doc2.absolute_url(), self._get_token(doc2)
             )
         )
@@ -275,7 +275,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         # An update of link integrity information for all content is triggered
         # by browsing a specific url:
         transaction.commit()
-        self.browser.open('{0:s}/updateLinkIntegrityInformation'.format(
+        self.browser.open('{:s}/updateLinkIntegrityInformation'.format(
             self.portal.absolute_url()))
         self.browser.getControl('Update').click()
         self.assertIn('Link integrity information updated for',
@@ -318,7 +318,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         # Now we can continue and "click" the "delete" action. The confirmation
         # page should list both documents:
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            '{:s}/delete_confirmation?_authenticator={:s}'.format(
                 doc2.absolute_url(), self._get_token(doc2)
             )
         )
@@ -358,7 +358,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.handleErrors = True
 
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            '{:s}/delete_confirmation?_authenticator={:s}'.format(
                 spaces1.absolute_url(), self._get_token(spaces1)
             )
         )
@@ -397,7 +397,7 @@ class FunctionalReferenceTestCase(unittest.TestCase):
     def test_warn_about_content(self):
         folder1 = self.portal.folder1
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            '{:s}/delete_confirmation?_authenticator={:s}'.format(
                 folder1.absolute_url(), self._get_token(folder1)
             )
         )

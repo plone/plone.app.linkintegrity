@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.registry.interfaces import IRegistry
 from plone.base.interfaces import IEditingSchema
 from zc.relation.interfaces import ICatalog
