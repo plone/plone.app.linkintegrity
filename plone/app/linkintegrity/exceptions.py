@@ -4,14 +4,12 @@ from zope.interface import Interface
 
 
 class ILinkIntegrityNotificationException(Interface):
-    """An exception indicating a prevented link integrity breach.
-    """
+    """An exception indicating a prevented link integrity breach."""
 
 
 @implementer(ILinkIntegrityNotificationException)
 class LinkIntegrityNotificationException(BeforeDeleteException):
-    """An exception indicating a prevented link integrity breach.
-    """
+    """An exception indicating a prevented link integrity breach."""
 
     def __str__(self):
         args = self.args

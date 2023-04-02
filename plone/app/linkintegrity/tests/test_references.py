@@ -25,19 +25,19 @@ class ReferenceGenerationTestCase(unittest.TestCase):
     layer = testing.PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING
 
     def setUp(self):
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
 
     def _set_related_items(self, obj, items):
         assert IRelatedItems.providedBy(obj)
-        setattr(obj, 'relatedItems', items)
+        setattr(obj, "relatedItems", items)
         modified(obj)
 
     def _get_related_items(self, obj):
         return obj.relatedItems
 
     def test_is_linked(self):
-        img1 = self.portal['image1']
-        doc1 = self.portal['doc1']
+        img1 = self.portal["image1"]
+        doc1 = self.portal["doc1"]
         set_text(doc1, '<img src="image1"></img>')
         self.assertTrue(hasIncomingLinks(img1))
 
@@ -52,27 +52,28 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         img = self.portal.image1
         set_text(doc, '<a href="image1">Image 1</a>')
 
-        roles = ('Member', )
-        self.portal.manage_permission('List folder contents', roles=roles)
-        self.portal.manage_permission('Delete objects', roles=roles)
-        doc.manage_permission('View', roles=('Manager',), acquire=0)
-        doc.manage_permission('Access contents information',
-                              roles=('Manager', ), acquire=0)
+        roles = ("Member",)
+        self.portal.manage_permission("List folder contents", roles=roles)
+        self.portal.manage_permission("Delete objects", roles=roles)
+        doc.manage_permission("View", roles=("Manager",), acquire=0)
+        doc.manage_permission(
+            "Access contents information", roles=("Manager",), acquire=0
+        )
 
         logout()
-        login(self.portal, 'member')
+        login(self.portal, "member")
         checkPermission = self.portal.portal_membership.checkPermission
-        self.assertFalse(checkPermission('View', doc))
-        self.assertFalse(checkPermission('Access contents information', doc))
-        self.assertTrue(checkPermission('View', img))
-        self.assertTrue(checkPermission('Access contents information', img))
+        self.assertFalse(checkPermission("View", doc))
+        self.assertFalse(checkPermission("Access contents information", doc))
+        self.assertTrue(checkPermission("View", img))
+        self.assertTrue(checkPermission("Access contents information", img))
 
         # The warning is shown.
         self.assertTrue(hasOutgoingLinks(doc))
-        view = img.restrictedTraverse('delete_confirmation')
+        view = img.restrictedTraverse("delete_confirmation")
         results = view()
-        self.assertIn('Potential link breakage', results)
-        self.assertIn('The item is not accessible.', results)
+        self.assertIn("Potential link breakage", results)
+        self.assertIn("The item is not accessible.", results)
 
         # delete linked item and check if the source still has the relation
 
@@ -97,35 +98,30 @@ class ReferenceGenerationTestCase(unittest.TestCase):
     def test_link_extraction_easy(self):
         doc1 = self.portal.doc1
         set_text(doc1, '<a href="doc2">Doc 2</a>')
-        self.assertEqual(
-            extractLinks(doc1.text.raw),
-            ('doc2', )
-        )
+        self.assertEqual(extractLinks(doc1.text.raw), ("doc2",))
 
     def test_link_extraction_more_complex(self):
         doc2 = self.portal.doc2
         set_text(
             doc2,
-            '<a href="doc1">Doc 2</a>' +
-            '<a href="folder1/doc3"><img src="image1" /></a>',
+            '<a href="doc1">Doc 2</a>'
+            + '<a href="folder1/doc3"><img src="image1" /></a>',
         )
         self.assertEqual(
-            extractLinks(doc2.text.raw),
-            ('doc1',
-             'folder1/doc3',
-             'image1')
+            extractLinks(doc2.text.raw), ("doc1", "folder1/doc3", "image1")
         )
 
     def test_broken_references(self):
         # create a temporary document to test with
-        doc1a = testing.create(self.portal, 'Document', id='doc1a')
+        doc1a = testing.create(self.portal, "Document", id="doc1a")
         doc1 = self.portal.doc1
 
         self.assertEqual(len(list(getOutgoingLinks(doc1))), 0)
         set_text(doc1, '<a href="doc1a">Doc 1a</a>')
         self.assertEqual(len(list(getOutgoingLinks(doc1))), 1)
-        self.assertEqual([link.to_object for link in getOutgoingLinks(doc1)],
-                         [self.portal.doc1a])
+        self.assertEqual(
+            [link.to_object for link in getOutgoingLinks(doc1)], [self.portal.doc1a]
+        )
 
         # Now delete the target item, suppress events and test again,
         # The reference should be a ghost not in any folder anymore.
@@ -137,17 +133,16 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         if obj is not None:
             # Plone with fixed five.intid
             # if object is None: all fine as well.
-            self.assertEqual(obj.portal_type, 'Document')
+            self.assertEqual(obj.portal_type, "Document")
             _marker = dict()
-            self.assertEqual(getattr(obj, 'aq_parent', _marker), _marker)
+            self.assertEqual(getattr(obj, "aq_parent", _marker), _marker)
 
     def test_relative_upwards_link_generates_matching_reference(self):
         doc1 = self.portal.doc1
         doc3 = self.portal.folder1.doc3
         set_text(doc3, '<a href="../doc1">go!</a>')
         self.assertEqual(len(list(getOutgoingLinks(doc1))), 0)
-        self.assertEqual([link.to_object for link in getOutgoingLinks(doc3)],
-                         [doc1])
+        self.assertEqual([link.to_object for link in getOutgoingLinks(doc3)], [doc1])
 
     def test_unicode_links(self):
         doc1 = self.portal.doc1
@@ -156,16 +151,14 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         # eventually plays well with transaction machinery.
         # Add bad link, should not raise exception and there should not
         # be any references added.
-        set_text(
-            doc1,
-            '<a href="ö?foo=bar&baz=bam">bug</a>')
+        set_text(doc1, '<a href="ö?foo=bar&baz=bam">bug</a>')
 
         self.assertEqual([link for link in getOutgoingLinks(doc1)], [])
 
     def test_reference_orthogonality(self):
         doc = self.portal.doc1
         img = self.portal.image1
-        tag = img.restrictedTraverse('@@images').tag()
+        tag = img.restrictedTraverse("@@images").tag()
 
         # This tests the behavior when other references already exist.
         self.assertEqual([link for link in getOutgoingLinks(doc)], [])
@@ -175,8 +168,18 @@ class ReferenceGenerationTestCase(unittest.TestCase):
 
         # Then establish a reference between the document and image as
         # a related item:
-        self._set_related_items(doc, [img, ])
-        self.assertEqual(self._get_related_items(doc), [img, ])
+        self._set_related_items(
+            doc,
+            [
+                img,
+            ],
+        )
+        self.assertEqual(
+            self._get_related_items(doc),
+            [
+                img,
+            ],
+        )
 
         # Next edit the document body and insert a link to the image,
         # which should trigger the creation of a link integrity reference:
@@ -185,37 +188,47 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         self.assertEqual([link.to_object for link in getOutgoingLinks(doc)], [img])
 
         # And the related item reference remains in place:
-        self.assertEqual(self._get_related_items(doc), [img, ])
+        self.assertEqual(
+            self._get_related_items(doc),
+            [
+                img,
+            ],
+        )
 
         # Finally, edit the document body again, this time removing the
         # link to the image, which should trigger the removal of the
         # link integrity reference:
-        set_text(doc, 'where did my link go?')
+        set_text(doc, "where did my link go?")
         self.assertEqual([link.to_object for link in getOutgoingLinks(doc)], [])
 
         # And again the related item reference remains in place:
-        self.assertEqual(self._get_related_items(doc), [img, ])
+        self.assertEqual(
+            self._get_related_items(doc),
+            [
+                img,
+            ],
+        )
 
     def test_delete_confirmation_for_any_reference(self):
         """Test, if delete confirmation shows also a warning if items are
         deleted, which are referenced by other items via a reference field.
         """
-        img1 = self.portal['image1']
-        doc1 = self.portal['doc1']
+        img1 = self.portal["image1"]
+        doc1 = self.portal["doc1"]
 
         intids_tool = getUtility(IIntIds)
         to_id = intids_tool.getId(img1)
         rel = RelationValue(to_id)
-        _setRelation(doc1, 'related_image', rel)
+        _setRelation(doc1, "related_image", rel)
 
         # Test, if relation is present in the relation catalog
         catalog = getUtility(ICatalog)
-        rels = list(catalog.findRelations({'to_id': to_id}))
+        rels = list(catalog.findRelations({"to_id": to_id}))
         self.assertEqual(len(rels), 1)
 
         # Test, if delete_confirmation_info shows also other relations than
         # ``isReferencing``.
-        info = img1.restrictedTraverse('@@delete_confirmation_info')
+        info = img1.restrictedTraverse("@@delete_confirmation_info")
         breaches = info.get_breaches()
         self.assertEqual(len(breaches), 1)
-        self.assertEqual(len(info.get_breaches()[0]['sources']), 1)
+        self.assertEqual(len(info.get_breaches()[0]["sources"]), 1)
