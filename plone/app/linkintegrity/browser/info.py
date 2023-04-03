@@ -55,7 +55,7 @@ class DeleteConfirmationInfo(BrowserView):
         for obj in items:
             obj_path = "/".join(obj.getPhysicalPath())
             brains_to_delete = catalog(path={"query": obj_path})
-            # add the current items uid and all its childrens uids to the
+            # add the current items uid and all its children's uids to the
             # list of uids that are ignored
             uids_to_ignore.extend([i.UID for i in brains_to_delete])
             for brain_to_delete in brains_to_delete:

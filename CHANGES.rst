@@ -538,7 +538,7 @@ New:
   for fields which have been added via schema extension.
   [malthe]
 
-- Support resolveuid/UID references explicitely, by parsing and resolving
+- Support resolveuid/UID references explicitly, by parsing and resolving
   these ourselves instead of relying on a view or script (which doesn't work).
   This fixes linkintegrity for sites with link-by-uid turned on.
   This closes https://dev.plone.org/ticket/12104

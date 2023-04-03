@@ -125,7 +125,7 @@ class ReferenceGenerationTestCase(unittest.TestCase):
 
         # Now delete the target item, suppress events and test again,
         # The reference should be a ghost not in any folder anymore.
-        # check if it has no acquition parent!
+        # check if it has no acquisition parent!
         self.portal._delObject(doc1a.id, suppress_events=True)
         objs = [link.to_object for link in getOutgoingLinks(doc1)]
         self.assertEqual(len(objs), 1)

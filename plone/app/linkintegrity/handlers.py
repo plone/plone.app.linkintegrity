@@ -40,7 +40,7 @@ def findObject(base, path):
 
     components = path.split("/")
 
-    # Support resolveuid/UID paths explicitely, without relying
+    # Support resolveuid/UID paths explicitly, without relying
     # on a view or skinscript to do this for us.
     if "resolveuid" in components:
         uid = components[components.index("resolveuid") + 1]
@@ -78,7 +78,7 @@ def findObject(base, path):
 
 
 def getObjectsFromLinks(base, links):
-    """determine actual objects refered to by given links"""
+    """determine actual objects referred to by given links"""
     intids = getUtility(IIntIds)
     objects = set()
     url = base.absolute_url()
