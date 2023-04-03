@@ -14,6 +14,7 @@ from zc.relation.interfaces import ICatalog
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 
+import re
 import transaction
 import unittest
 
@@ -416,6 +417,6 @@ class FunctionalReferenceTestCase(unittest.TestCase):
             )
         )
         self.assertIn("Number of selected", self.browser.contents)
-        self.assertIn("2 Objects in all", self.browser.contents)
-        self.assertIn("1 Folders", self.browser.contents)
-        self.assertIn("0 Published objects", self.browser.contents)
+        self.assertTrue(re.search(r"2\s+Objects in all", self.browser.contents))
+        self.assertTrue(re.search(r"1\s+Folders", self.browser.contents))
+        self.assertTrue(re.search(r"0\s+Published objects", self.browser.contents))
