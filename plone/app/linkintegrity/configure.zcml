@@ -6,7 +6,10 @@
 
   <include package="plone.app.intid" />
   <include package="plone.app.relationfield" />
-  <include package="Products.CMFCore" file="permissions.zcml" />
+  <include
+      package="Products.CMFCore"
+      file="permissions.zcml"
+      />
 
   <include package=".browser" />
 
@@ -14,25 +17,28 @@
 
   <subscriber
       for="plone.app.relationfield.interfaces.IDexterityHasRelations
-            zope.lifecycleevent.interfaces.IObjectCopiedEvent"
-      handler=".handlers.modifiedContent" />
+           zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+      handler=".handlers.modifiedContent"
+      />
 
   <subscriber
       for="plone.app.relationfield.interfaces.IDexterityHasRelations
-            zope.lifecycleevent.interfaces.IObjectAddedEvent"
-      handler=".handlers.modifiedContent" />
+           zope.lifecycleevent.interfaces.IObjectAddedEvent"
+      handler=".handlers.modifiedContent"
+      />
 
   <subscriber
       for="plone.app.relationfield.interfaces.IDexterityHasRelations
-            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      handler=".handlers.modifiedContent" />
+           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".handlers.modifiedContent"
+      />
 
   <genericsetup:registerProfile
       name="default"
       title="plone.app.linkintegrity"
-      directory="profiles/default"
       description="Installs the plone.app.linkintegrity add-on."
       provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/default"
       />
 
 </configure>

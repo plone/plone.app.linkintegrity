@@ -1,27 +1,23 @@
-# -*- coding: utf-8 -*-
-from plone.registry.interfaces import IRegistry
 from plone.base.interfaces import IEditingSchema
+from plone.registry.interfaces import IRegistry
 from zc.relation.interfaces import ICatalog
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
 
-referencedRelationship = 'isReferencing'
+
+referencedRelationship = "isReferencing"
 
 
-def getIncomingLinks(
-    obj=None,
-    intid=None,
-    from_attribute=referencedRelationship
-):
+def getIncomingLinks(obj=None, intid=None, from_attribute=referencedRelationship):
     """Return a generator of incoming relations created using
     plone.app.linkintegrity (Links in Richtext-Fields).
     """
     catalog = getUtility(ICatalog)
     intid = intid if intid is not None else getUtility(IIntIds).getId(obj)
-    query = {'to_id': intid}
+    query = {"to_id": intid}
     if from_attribute:
-        query['from_attribute'] = from_attribute
+        query["from_attribute"] = from_attribute
     return catalog.findRelations(query)
 
 
@@ -36,19 +32,15 @@ def hasIncomingLinks(obj=None, intid=None):
     return False
 
 
-def getOutgoingLinks(
-    obj=None,
-    intid=None,
-    from_attribute=referencedRelationship
-):
+def getOutgoingLinks(obj=None, intid=None, from_attribute=referencedRelationship):
     """Return a generator of outgoing relations created using
     plone.app.linkintegrity (Links in Richtext-Fields).
     """
     catalog = getUtility(ICatalog)
     intid = intid if intid is not None else getUtility(IIntIds).getId(obj)
-    query = {'from_id': intid}
+    query = {"from_id": intid}
     if from_attribute:
-        query['from_attribute'] = from_attribute
+        query["from_attribute"] = from_attribute
     return catalog.findRelations(query)
 
 
@@ -63,7 +55,7 @@ def hasOutgoingLinks(obj=None, intid=None):
 
 def linkintegrity_enabled():
     reg = getUtility(IRegistry)
-    editing_settings = reg.forInterface(IEditingSchema, prefix='plone')
+    editing_settings = reg.forInterface(IEditingSchema, prefix="plone")
     return editing_settings.enable_link_integrity_checks
 
 

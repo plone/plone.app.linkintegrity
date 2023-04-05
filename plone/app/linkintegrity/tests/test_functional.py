@@ -7,13 +7,14 @@ from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
+from plone.base.interfaces import IEditingSchema
 from plone.registry.interfaces import IRegistry
 from plone.testing.zope import Browser
-from plone.base.interfaces import IEditingSchema
 from zc.relation.interfaces import ICatalog
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 
+import re
 import transaction
 import unittest
 
@@ -24,76 +25,83 @@ class FunctionalReferenceTestCase(unittest.TestCase):
     layer = testing.PLONE_APP_LINKINTEGRITY_FUNCTIONAL_TESTING
 
     def setUp(self):
-        self.portal = self.layer['portal']
-        self.request = self.layer['request']
+        self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
         # alsoProvides(self.request, IFormLayer)
 
         # Get a testbrowser
-        self.browser = Browser(self.layer['app'])
+        self.browser = Browser(self.layer["app"])
         self.browser.handleErrors = False
-        self.browser.addHeader('Referer', self.portal.absolute_url())
+        self.browser.addHeader("Referer", self.portal.absolute_url())
         self.browser.addHeader(
-            'Authorization',
-            'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
+            "Authorization", f"Basic {TEST_USER_NAME:s}:{TEST_USER_PASSWORD:s}"
+        )
 
         # Do an initial page load to make sure the bundles get compiled
         # (which currently commits a transaction)
         # before we render exception views
         self.browser.open(self.portal.absolute_url())
 
-        setRoles(self.portal, TEST_USER_ID, ['Manager', ])
+        setRoles(
+            self.portal,
+            TEST_USER_ID,
+            [
+                "Manager",
+            ],
+        )
 
     def _get_token(self, obj):
-        return getMultiAdapter(
-            (obj, self.request), name='authenticator').token()
+        return getMultiAdapter((obj, self.request), name="authenticator").token()
 
-    @unittest.skip('Re-enable after https://github.com/plone/plone.app.content/issues/38')  # noqa
+    @unittest.skip(
+        "Re-enable after https://github.com/plone/plone.app.content/issues/38"
+    )  # noqa
     def test_file_reference_linkintegrity_page_is_shown(self):
         doc1 = self.portal.doc1
-        file2 = testing.create(self.portal, 'File',
-                               id='file2', file=testing.GIF)
+        file2 = testing.create(self.portal, "File", id="file2", file=testing.GIF)
 
         self.assertFalse(hasOutgoingLinks(doc1))
         set_text(doc1, '<a href="file2">A File</a>')
         self.assertTrue(hasOutgoingLinks(doc1))
-        self.assertIn('file2', self.portal.objectIds())
+        self.assertIn("file2", self.portal.objectIds())
 
         token = self._get_token(file2)
-        self.request['_authenticator'] = token
+        self.request["_authenticator"] = token
 
         # Make changes visible to test browser
         transaction.commit()
 
         self.browser.handleErrors = True
         self.browser.addHeader(
-            'Authorization',
-            'Basic {0:s}:{1:s}'.format(TEST_USER_NAME, TEST_USER_PASSWORD))
+            "Authorization", f"Basic {TEST_USER_NAME:s}:{TEST_USER_PASSWORD:s}"
+        )
 
-        delete_url = '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
-            file2.absolute_url(), token)
+        delete_url = "{:s}/delete_confirmation?_authenticator={:s}".format(
+            file2.absolute_url(), token
+        )
 
         # Try to remove but cancel
         self.browser.open(delete_url)
 
         # Validate text
-        self.assertIn('Potential link breakage', self.browser.contents)
-        self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
-                      self.browser.contents)
-        self.assertIn('Would you like to delete it anyway?',
-                      self.browser.contents)
+        self.assertIn("Potential link breakage", self.browser.contents)
+        self.assertIn(
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>', self.browser.contents
+        )
+        self.assertIn("Would you like to delete it anyway?", self.browser.contents)
 
         # Click cancel button, item should stay in place
         # FIXME! This fails in Plone 6 with an internal server error,
         # but maybe no longer for the original reasons for which we skip this test.
-        self.browser.getControl(name='form.buttons.Cancel').click()
-        self.assertEqual(self.browser.url, file2.absolute_url() + '/view')
-        self.assertIn('Removal cancelled.', self.browser.contents)
-        self.assertIn('file2', self.portal.objectIds())
+        self.browser.getControl(name="form.buttons.Cancel").click()
+        self.assertEqual(self.browser.url, file2.absolute_url() + "/view")
+        self.assertIn("Removal cancelled.", self.browser.contents)
+        self.assertIn("file2", self.portal.objectIds())
 
         # Try to remove and confirm
         self.browser.open(delete_url)
-        self.browser.getControl(name='form.buttons.Delete').click()
-        self.assertNotIn('file2', self.portal.objectIds())
+        self.browser.getControl(name="form.buttons.Delete").click()
+        self.assertNotIn("file2", self.portal.objectIds())
 
     def test_unreferenced_removal(self):
         # This tests against #6666 and #7784, simple removal of a not
@@ -101,14 +109,13 @@ class FunctionalReferenceTestCase(unittest.TestCase):
 
         # We simply use a browser to try to delete a content item.
         self.browser.open(self.portal.doc1.absolute_url())
-        self.browser.getLink('Delete').click()
-        self.assertIn(
-            'Do you really want to delete this item?', self.browser.contents)
-        self.browser.getControl(name='form.buttons.Delete').click()
+        self.browser.getLink("Delete").click()
+        self.assertIn("Do you really want to delete this item?", self.browser.contents)
+        self.browser.getControl(name="form.buttons.Delete").click()
 
         # The resulting page should confirm the removal:
-        self.assertIn('Test Page 1 has been deleted', self.browser.contents)
-        self.assertNotIn('doc1', self.portal.objectIds())
+        self.assertIn("Test Page 1 has been deleted", self.browser.contents)
+        self.assertNotIn("doc1", self.portal.objectIds())
 
     def test_renaming_referenced_item(self):
         doc1 = self.portal.doc1
@@ -118,38 +125,41 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         # renamed (see the related bug report in #6608).  First we need
         # to create the necessary links:
         set_text(doc1, '<a href="doc2">doc2</a>')
-        self.assertEqual(
-            [i.from_object for i in getIncomingLinks(doc2)], [doc1])
+        self.assertEqual([i.from_object for i in getIncomingLinks(doc2)], [doc1])
 
         # Make changes visible to testbrowseropen
         transaction.commit()
 
         # Then we use a browser to rename the referenced image:
         self.browser.handleErrors = True
-        self.browser.open('{0:s}/object_rename?_authenticator={1:s}'.format(
-            doc1.absolute_url(), self._get_token(doc1)))
+        self.browser.open(
+            "{:s}/object_rename?_authenticator={:s}".format(
+                doc1.absolute_url(), self._get_token(doc1)
+            )
+        )
 
-        self.browser.getControl(name='form.widgets.new_id').value = 'nuname'
-        self.browser.getControl(name='form.buttons.Rename').click()
+        self.browser.getControl(name="form.widgets.new_id").value = "nuname"
+        self.browser.getControl(name="form.buttons.Rename").click()
         self.assertIn("Renamed 'doc1' to 'nuname'.", self.browser.contents)
         transaction.commit()
 
-        self.assertNotIn('doc1', self.portal.objectIds())
-        self.assertIn('nuname', self.portal.objectIds())
+        self.assertNotIn("doc1", self.portal.objectIds())
+        self.assertIn("nuname", self.portal.objectIds())
         self.assertIn(doc1, [i.from_object for i in getIncomingLinks(doc2)])
 
         # We simply use a browser to try to delete a content item.
         self.browser.open(doc2.absolute_url())
-        self.browser.getLink('Delete').click()
-        self.assertIn(
-            'Do you really want to delete this item?', self.browser.contents)
-        self.assertIn('nuname', self.portal.objectIds())
+        self.browser.getLink("Delete").click()
+        self.assertIn("Do you really want to delete this item?", self.browser.contents)
+        self.assertIn("nuname", self.portal.objectIds())
         # Link breakabe page should be shown
-        self.assertIn('Potential link breakage', self.browser.contents)
-        self.assertIn('<a href="http://nohost/plone/nuname">Test Page 1</a>',
-                      self.browser.contents)
-        self.browser.getControl(name='form.buttons.Delete').click()
-        self.assertNotIn('doc2', self.portal.objectIds())
+        self.assertIn("Potential link breakage", self.browser.contents)
+        self.assertIn(
+            '<a href="http://nohost/plone/nuname">Test Page 1</a>',
+            self.browser.contents,
+        )
+        self.browser.getControl(name="form.buttons.Delete").click()
+        self.assertNotIn("doc2", self.portal.objectIds())
 
     def test_removal_in_subfolder(self):
         doc1 = self.portal.doc1
@@ -171,17 +181,19 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.handleErrors = True
 
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            "{:s}/delete_confirmation?_authenticator={:s}".format(
                 folder1.absolute_url(), self._get_token(folder1)
             )
         )
-        self.assertIn('Potential link breakage', self.browser.contents)
-        self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
-                      self.browser.contents)
-        self.assertIn('<a href="http://nohost/plone/doc2">Test Page 2</a>',
-                      self.browser.contents)
-        self.browser.getControl(name='form.buttons.Delete').click()
-        self.assertNotIn('folder1', self.portal.objectIds())
+        self.assertIn("Potential link breakage", self.browser.contents)
+        self.assertIn(
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>', self.browser.contents
+        )
+        self.assertIn(
+            '<a href="http://nohost/plone/doc2">Test Page 2</a>', self.browser.contents
+        )
+        self.browser.getControl(name="form.buttons.Delete").click()
+        self.assertNotIn("folder1", self.portal.objectIds())
 
     def test_removal_with_cookie_auth(self):
         doc1 = self.portal.doc1
@@ -192,33 +204,35 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         set_text(doc1, '<a href="doc2">doc2</a>')
         transaction.commit()
 
-        browser = Browser(self.layer['app'])
+        browser = Browser(self.layer["app"])
         browser.handleErrors = True
-        browser.addHeader('Referer', self.portal.absolute_url())
-        browser.open(
-            '{0:s}/folder_contents'.format(self.portal.absolute_url()))
+        browser.addHeader("Referer", self.portal.absolute_url())
+        browser.open(f"{self.portal.absolute_url():s}/folder_contents")
 
         # At this point we shouldn't be able to look at the folder
         # contents (as an anonymous user):
-        self.assertIn('login?came_from', browser.url)
+        self.assertIn("login?came_from", browser.url)
 
         # So we log in via the regular plone login form and additionally check
         # that there is no 'authorization' header set afterwards:
-        browser.getControl(name='__ac_name').value = TEST_USER_NAME
-        browser.getControl(name='__ac_password').value = TEST_USER_PASSWORD
-        browser.getControl('Log in').click()
-        self.assertNotIn(
-            'authorization', [h.lower() for h in browser.headers.keys()])
+        browser.getControl(name="__ac_name").value = TEST_USER_NAME
+        browser.getControl(name="__ac_password").value = TEST_USER_PASSWORD
+        browser.getControl("Log in").click()
+        self.assertNotIn("authorization", [h.lower() for h in browser.headers.keys()])
 
         # This should lead us back to the "folder contents" listing,
         # where we try to delete the referenced document.
-        browser.open('{0:s}/delete_confirmation?_authenticator={1:s}'.format(
-            doc2.absolute_url(), self._get_token(doc2)))
-        self.assertIn('Potential link breakage', browser.contents)
-        self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
-                      browser.contents)
-        browser.getControl(name='form.buttons.Delete').click()
-        self.assertNotIn('doc2', self.portal.objectIds())
+        browser.open(
+            "{:s}/delete_confirmation?_authenticator={:s}".format(
+                doc2.absolute_url(), self._get_token(doc2)
+            )
+        )
+        self.assertIn("Potential link breakage", browser.contents)
+        self.assertIn(
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>', browser.contents
+        )
+        browser.getControl(name="form.buttons.Delete").click()
+        self.assertNotIn("doc2", self.portal.objectIds())
 
     def test_linkintegrity_on_off_switch(self):
         doc1 = self.portal.doc1
@@ -235,22 +249,23 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.handleErrors = True
 
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            "{:s}/delete_confirmation?_authenticator={:s}".format(
                 doc2.absolute_url(), self._get_token(doc2)
             )
         )
-        self.assertIn('Potential link breakage', self.browser.contents)
-        self.assertIn('<a href="http://nohost/plone/doc1">Test Page 1</a>',
-                      self.browser.contents)
+        self.assertIn("Potential link breakage", self.browser.contents)
+        self.assertIn(
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>', self.browser.contents
+        )
 
         # Now we turn the switch for link integrity checking off via the site
         # properties and try again:
         registry = getUtility(IRegistry)
-        settings = registry.forInterface(IEditingSchema, prefix='plone')
+        settings = registry.forInterface(IEditingSchema, prefix="plone")
         settings.enable_link_integrity_checks = False
         transaction.commit()
         self.browser.reload()
-        self.assertNotIn('Potential link breakage', self.browser.contents)
+        self.assertNotIn("Potential link breakage", self.browser.contents)
 
     def test_update(self):
         doc1 = self.portal.doc1
@@ -275,21 +290,25 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         # An update of link integrity information for all content is triggered
         # by browsing a specific url:
         transaction.commit()
-        self.browser.open('{0:s}/updateLinkIntegrityInformation'.format(
-            self.portal.absolute_url()))
-        self.browser.getControl('Update').click()
-        self.assertIn('Link integrity information updated for',
-                      self.browser.contents)
+        self.browser.open(
+            f"{self.portal.absolute_url():s}/updateLinkIntegrityInformation"
+        )
+        self.browser.getControl("Update").click()
+        self.assertIn("Link integrity information updated for", self.browser.contents)
 
         # Now the linking documents should hold the correct link integrity
         # references:
         self.assertEqual(
             [i.to_object for i in getOutgoingLinks(doc1)],
-            [doc2, ],
+            [
+                doc2,
+            ],
         )
         self.assertEqual(
             [i.to_object for i in getOutgoingLinks(doc2)],
-            [doc4, ],
+            [
+                doc4,
+            ],
         )
 
     def test_references_on_cloned_objects(self):
@@ -302,12 +321,12 @@ class FunctionalReferenceTestCase(unittest.TestCase):
 
         # Next we clone the document:
         token = self._get_token(doc1)
-        self.request['_authenticator'] = token
-        doc1.restrictedTraverse('object_copy')()
+        self.request["_authenticator"] = token
+        doc1.restrictedTraverse("object_copy")()
 
-        self.request['_authenticator'] = token
-        self.portal.restrictedTraverse('object_paste')()
-        self.assertIn('copy_of_doc1', self.portal)
+        self.request["_authenticator"] = token
+        self.portal.restrictedTraverse("object_paste")()
+        self.assertIn("copy_of_doc1", self.portal)
         transaction.commit()
 
         # Then we try to delete the document linked by the original document
@@ -318,20 +337,17 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         # Now we can continue and "click" the "delete" action. The confirmation
         # page should list both documents:
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            "{:s}/delete_confirmation?_authenticator={:s}".format(
                 doc2.absolute_url(), self._get_token(doc2)
             )
         )
+        self.assertIn("is referenced by the following items:", self.browser.contents)
+        self.assertIn("Potential link breakage", self.browser.contents)
         self.assertIn(
-            'is referenced by the following items:', self.browser.contents)
-        self.assertIn('Potential link breakage', self.browser.contents)
-        self.assertIn(
-            '<a href="http://nohost/plone/doc1">Test Page 1</a>',
-            self.browser.contents
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>', self.browser.contents
         )
         self.assertIn(
-            '<a href="http://nohost/plone/copy_of_doc1"',
-            self.browser.contents
+            '<a href="http://nohost/plone/copy_of_doc1"', self.browser.contents
         )
 
     def test_files_with_spaces_removal(self):
@@ -340,16 +356,16 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         # This tests the behaviour when removing a referenced file that has
         # spaces in its id.  First we need to rename the existing file:
         self.portal.invokeFactory(
-            'Document', id='some spaces.doc', title='A spaces doc')
+            "Document", id="some spaces.doc", title="A spaces doc"
+        )
 
-        self.assertIn('some spaces.doc', self.portal.objectIds())
-        spaces1 = self.portal['some spaces.doc']
+        self.assertIn("some spaces.doc", self.portal.objectIds())
+        spaces1 = self.portal["some spaces.doc"]
 
         set_text(doc1, '<a href="some spaces.doc">a document</a>')
 
         # The document should now have a reference to the file:
-        self.assertEqual(
-            [i.to_object for i in getOutgoingLinks(doc1)], [spaces1])
+        self.assertEqual([i.to_object for i in getOutgoingLinks(doc1)], [spaces1])
         transaction.commit()
 
         # Then we use a browser to try to delete the referenced file.
@@ -358,17 +374,16 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.handleErrors = True
 
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            "{:s}/delete_confirmation?_authenticator={:s}".format(
                 spaces1.absolute_url(), self._get_token(spaces1)
             )
         )
-        self.assertIn('Potential link breakage', self.browser.contents)
+        self.assertIn("Potential link breakage", self.browser.contents)
         self.assertIn(
-            '<a href="http://nohost/plone/doc1">Test Page 1</a>',
-            self.browser.contents
+            '<a href="http://nohost/plone/doc1">Test Page 1</a>', self.browser.contents
         )
-        self.browser.getControl(name='form.buttons.Delete').click()
-        self.assertNotIn('some spaces.doc', self.portal.objectIds())
+        self.browser.getControl(name="form.buttons.Delete").click()
+        self.assertNotIn("some spaces.doc", self.portal.objectIds())
 
     def test_removal_via_zmi(self):
         """Delete via ZMI is no longer protedted!"""
@@ -386,22 +401,22 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         # framework from choking on the exception we intentionally throw.
         self.browser.handleErrors = True
 
-        self.browser.open('http://nohost/plone/manage_main')
-        self.browser\
-            .getControl(name='ids:list')\
-            .getControl(value='doc2').selected = True
+        self.browser.open("http://nohost/plone/manage_main")
+        self.browser.getControl(name="ids:list").getControl(
+            value="doc2"
+        ).selected = True
 
-        self.browser.getControl('Delete').click()
-        self.assertNotIn('doc2', self.portal.objectIds())
+        self.browser.getControl("Delete").click()
+        self.assertNotIn("doc2", self.portal.objectIds())
 
     def test_warn_about_content(self):
         folder1 = self.portal.folder1
         self.browser.open(
-            '{0:s}/delete_confirmation?_authenticator={1:s}'.format(
+            "{:s}/delete_confirmation?_authenticator={:s}".format(
                 folder1.absolute_url(), self._get_token(folder1)
             )
         )
-        self.assertIn('Number of selected', self.browser.contents)
-        self.assertIn('2 Objects in all', self.browser.contents)
-        self.assertIn('1 Folders', self.browser.contents)
-        self.assertIn('0 Published objects', self.browser.contents)
+        self.assertIn("Number of selected", self.browser.contents)
+        self.assertTrue(re.search(r"2\s+Objects in all", self.browser.contents))
+        self.assertTrue(re.search(r"1\s+Folders", self.browser.contents))
+        self.assertTrue(re.search(r"0\s+Published objects", self.browser.contents))

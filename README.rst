@@ -65,7 +65,7 @@ API
 ---
 
 To check if there would be breaches when deleting one or more objects
-you can use the follwing code:
+you can use the following code:
 
 .. code-block:: python
 
