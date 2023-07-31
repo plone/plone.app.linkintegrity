@@ -78,7 +78,10 @@ def findObject(base, path):
 
 
 def getObjectsFromLinks(base, links):
-    """determine actual objects referred to by given links"""
+    """Determine actual objects referred to by given links.
+
+    return set of RelationValue
+    """
     intids = getUtility(IIntIds)
     objects = set()
     url = base.absolute_url()
@@ -109,6 +112,25 @@ def modifiedContent(obj, event):
         links = retriever.retrieveLinks()
         refs = getObjectsFromLinks(obj, links)
         updateReferences(obj, refs)
+
+
+def removedContent(obj, event):
+    if not check_linkintegrity_dependencies(obj):
+        return
+
+    int_id = ensure_intid(obj)
+    if int_id is None:
+        return
+
+    catalog = getUtility(ICatalog)
+    if catalog is None:
+        return
+
+    rels = catalog.findRelations(
+        {"from_id": int_id, "from_attribute": referencedRelationship}
+    )
+    for rel in list(rels):
+        catalog.unindex(rel)
 
 
 # BBB
