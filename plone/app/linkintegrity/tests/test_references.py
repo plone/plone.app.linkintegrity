@@ -146,7 +146,8 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         set_text(doc_temp, '<a href="doc1">Doc 1</a>')
         self.assertEqual(len(list(getIncomingLinks(doc1))), 1)
         self.assertEqual(
-            [link.from_object for link in getIncomingLinks(doc1)], [self.portal.doc_temp]
+            [link.from_object for link in getIncomingLinks(doc1)],
+            [self.portal.doc_temp],
         )
 
         catalog = getUtility(ICatalog)
