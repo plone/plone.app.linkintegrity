@@ -118,18 +118,13 @@ def removedContent(obj, event):
     if not check_linkintegrity_dependencies(obj):
         return
 
-    intids = getUtility(IIntIds, None)
-    if intids is None:
-        return
+    intids = getUtility(IIntIds)
     try:
         int_id = intids.getId(obj)
     except KeyError:
         return
 
     catalog = getUtility(ICatalog)
-    if catalog is None:
-        return
-
     rels = catalog.findRelations(
         {"from_id": int_id, "from_attribute": referencedRelationship}
     )
