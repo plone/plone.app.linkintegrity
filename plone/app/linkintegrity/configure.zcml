@@ -33,6 +33,14 @@
       handler=".handlers.modifiedContent"
       />
 
+  <!-- Not zope.lifecycleevent.interfaces.IObjectRemovedEvent!
+    That's too late to grep the intId. -->
+  <subscriber
+      for="plone.app.relationfield.interfaces.IDexterityHasRelations
+           OFS.interfaces.IObjectWillBeRemovedEvent"
+      handler=".handlers.removedContent"
+      />
+
   <genericsetup:registerProfile
       name="default"
       title="plone.app.linkintegrity"

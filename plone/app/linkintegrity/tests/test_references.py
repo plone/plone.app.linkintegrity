@@ -137,6 +137,33 @@ class ReferenceGenerationTestCase(unittest.TestCase):
             _marker = dict()
             self.assertEqual(getattr(obj, "aq_parent", _marker), _marker)
 
+    def test_catalog_cleaned_up(self):
+        doc1 = self.portal.doc1
+        # Create a temporary document to test with.
+        doc_temp = testing.create(self.portal, "Document", id="doc_temp")
+
+        self.assertEqual(len(list(getIncomingLinks(doc1))), 0)
+        set_text(doc_temp, '<a href="doc1">Doc 1</a>')
+        self.assertEqual(len(list(getIncomingLinks(doc1))), 1)
+        self.assertEqual(
+            [link.from_object for link in getIncomingLinks(doc1)],
+            [self.portal.doc_temp],
+        )
+
+        catalog = getUtility(ICatalog)
+        rels = list(catalog.findRelations())
+        self.assertEqual(len(rels), 1)
+
+        # Now delete the source item.
+        self.portal._delObject(doc_temp.id)
+
+        # Test, if relation is removed from the relation catalog.
+        catalog = getUtility(ICatalog)
+        rels = list(catalog.findRelations())
+        self.assertEqual(len(rels), 0)
+
+        self.assertEqual(len(list(getIncomingLinks(doc1))), 0)
+
     def test_relative_upwards_link_generates_matching_reference(self):
         doc1 = self.portal.doc1
         doc3 = self.portal.folder1.doc3
