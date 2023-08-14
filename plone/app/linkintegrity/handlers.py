@@ -118,8 +118,12 @@ def removedContent(obj, event):
     if not check_linkintegrity_dependencies(obj):
         return
 
-    int_id = ensure_intid(obj)
-    if int_id is None:
+    intids = getUtility(IIntIds, None)
+    if intids is None:
+        return
+    try:
+        int_id = intids.getId(obj)
+    except KeyError:
         return
 
     catalog = getUtility(ICatalog)
