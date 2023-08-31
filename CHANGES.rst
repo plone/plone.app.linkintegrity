@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.2 (2023-08-31)
+------------------
+
+Bug fixes:
+
+
+- Remove outgoing 'isReferencing' RelationValues from catalog on deleting content item.
+  [ksuess] (#93)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (7723aeaf)
+
+
 4.0.1 (2023-04-14)
 ------------------
 
