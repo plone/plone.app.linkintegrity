@@ -17,6 +17,9 @@ Bug fixes:
 - Remove outgoing 'isReferencing' RelationValues from catalog on deleting content item.
   [ksuess] (#93)
 
+- Report breaches once per item in delete_confirmation_info
+  [jaroel]
+
 
 Internal:
 
