@@ -1,5 +1,5 @@
-from collections import defaultdict
 from Acquisition import aq_inner
+from collections import defaultdict
 from OFS.interfaces import IFolder
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import linkintegrity_enabled
