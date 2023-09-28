@@ -1,5 +1,4 @@
 from plone.app.linkintegrity import testing
-from plone.app.linkintegrity.testing import create
 from plone.app.linkintegrity.tests.utils import set_text
 from plone.app.linkintegrity.browser.info import DeleteConfirmationInfo
 
@@ -16,7 +15,6 @@ class DeleteConfirmationInfoTestCase(unittest.TestCase):
     def test_get_breaches_shape(self):
         # Just here as a sanity check.
         folder1 = self.portal.folder1
-        create(folder1, "Document", id="doc5", title="Test Page 5")
         doc1 = self.portal.doc1
         set_text(doc1, '<a href="folder1">f1</a>')
         view = DeleteConfirmationInfo(self.portal, self.request)
