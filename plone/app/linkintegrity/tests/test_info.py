@@ -1,6 +1,6 @@
 from plone.app.linkintegrity import testing
-from plone.app.linkintegrity.tests.utils import set_text
 from plone.app.linkintegrity.browser.info import DeleteConfirmationInfo
+from plone.app.linkintegrity.tests.utils import set_text
 
 import unittest
 
