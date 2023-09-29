@@ -6,7 +6,7 @@ import unittest
 
 
 class DeleteConfirmationInfoTestCase(unittest.TestCase):
-    layer = testing.PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING
+    layer = testing.PLONE_APP_LINKINTEGRITY_DX_FUNCTIONAL_TESTING
 
     def setUp(self):
         self.portal = self.layer["portal"]
