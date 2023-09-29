@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.3 (2023-09-29)
+------------------
+
+Bug fixes:
+
+
+- Report sources once per breach in delete_confirmation_info.
+  [jaroel] (#95)
+
+
 4.0.2 (2023-08-31)
 ------------------
 
