@@ -1,4 +1,5 @@
 from Acquisition import aq_inner
+from collections import defaultdict
 from OFS.interfaces import IFolder
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import linkintegrity_enabled
@@ -101,7 +102,23 @@ class DeleteConfirmationInfo(BrowserView):
                         # This check is necessary since there can be multiple
                         # sources for a breach
                         results.remove(result)
-        return results
+
+        # De-duplicate targets * sources
+        uid_target = {}
+        uid_sources = defaultdict(list)
+        for result in results:
+            target_uid = result["target"]["uid"]
+            uid_target[target_uid] = result["target"]
+            sources = uid_sources[target_uid]
+            for source in result["sources"]:
+                if source not in sources:
+                    sources.append(source)
+
+        # List of breaches
+        return [
+            {"target": uid_target[uid], "sources": sources}
+            for uid, sources in uid_sources.items()
+        ]
 
     def get_breaches_for_item(self, obj=None):
         """Get breaches for one object and its children.
