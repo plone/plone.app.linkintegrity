@@ -58,7 +58,7 @@ On object created, added, modified events the ``modifiedContent`` handler
 is called. This handler adapts an ``IRetriever`` object if found.
 The package comes with two general adapters for Dexterity and Archetypes.
 You can easily write custom adapters implementing the ``IRetriever``
-interface for your contenttype. Look at the ``retriever`` module in this
+interface for your content type. Look at the ``retriever`` module in this
 package for examples.
 
 API
@@ -78,7 +78,7 @@ you can use the follwing code:
     breaches = view.get_breaches([obj1, obj2])
 
 `get_breaches` ignores breaches originating from any items that would also be
-deleted by deleting the items (and their chidlren if an item is a folder).
+deleted by deleting the items (and their children if an item is a folder).
 
 Each breach in `breaches` is a dictionary with a `target` (a dict with some
 info on the object to be deleted) and a list of `sources`.
