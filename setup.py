@@ -53,6 +53,7 @@ setup(
         "plone.app.uuid",
         "plone.registry",
         "plone.uuid",
+        "Zope",
         "z3c.relationfield",
         "zc.relation",
         "zope.intid",
