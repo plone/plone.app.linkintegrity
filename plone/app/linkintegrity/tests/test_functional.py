@@ -402,9 +402,9 @@ class FunctionalReferenceTestCase(unittest.TestCase):
         self.browser.handleErrors = True
 
         self.browser.open("http://nohost/plone/manage_main")
-        self.browser.getControl(name="ids:list").getControl(
-            value="doc2"
-        ).selected = True
+        self.browser.getControl(name="ids:list").getControl(value="doc2").selected = (
+            True
+        )
 
         self.browser.getControl("Delete").click()
         self.assertNotIn("doc2", self.portal.objectIds())
