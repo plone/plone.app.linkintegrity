@@ -59,6 +59,8 @@ class DeleteConfirmationInfo(BrowserView):
             # add the current items uid and all its children's uids to the
             # list of uids that are ignored
             uids_to_ignore.extend([i.UID for i in brains_to_delete])
+            # prepare the collection of breaches for current item
+            get_breaches_for_item = None
             for brain_to_delete in brains_to_delete:
                 try:
                     obj_to_delete = brain_to_delete.getObject()  # noqa
@@ -67,7 +69,9 @@ class DeleteConfirmationInfo(BrowserView):
                         "No object found for %s! Skipping", brain_to_delete
                     )
                     continue
-                for breach in self.get_breaches_for_item(obj):
+                if get_breaches_for_item is None:
+                    get_breaches_for_item = self.get_breaches_for_item(obj)
+                for breach in get_breaches_for_item:
                     add_breach = False
                     for source in breach["sources"]:
                         # Only add the breach if one the sources is not in the
