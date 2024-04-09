@@ -1,5 +1,4 @@
 from Acquisition import aq_inner
-from collections import defaultdict
 from OFS.interfaces import IFolder
 from plone.app.linkintegrity.utils import getIncomingLinks
 from plone.app.linkintegrity.utils import linkintegrity_enabled
@@ -80,7 +79,9 @@ class DeleteConfirmationInfo(BrowserView):
                     )
                     continue
                 # look into potential breach
-                breach = self.check_object(obj=obj_to_delete, excluded_paths=set(path2obj.keys()))
+                breach = self.check_object(
+                    obj=obj_to_delete, excluded_paths=set(path2obj.keys())
+                )
                 if breach:
                     for source in breach["sources"]:
                         # Only add the breach if one the sources is not in the
@@ -111,8 +112,11 @@ class DeleteConfirmationInfo(BrowserView):
         """
         # BBB: No direct usage is known, but keep this for backwards compatibility.
         # Sooner or later, we should use only one method.
-        warnings.warn("""Using `get_breaches_for_item` is deprecated. Use `get_breaches`
-                      instead.""", DeprecationWarning)
+        warnings.warn(
+            """Using `get_breaches_for_item` is deprecated. Use `get_breaches`
+                      instead.""",
+            DeprecationWarning,
+        )
         if obj is not None:
             obj = [obj]
         return self.get_breaches(obj)
@@ -135,7 +139,12 @@ class DeleteConfirmationInfo(BrowserView):
             if not source_path:
                 # link is broken
                 continue
-            if any([source_path.startswith(excluded_path) for excluded_path in excluded_paths]):
+            if any(
+                [
+                    source_path.startswith(excluded_path)
+                    for excluded_path in excluded_paths
+                ]
+            ):
                 # source is in excluded_path
                 continue
             source = direct_link.from_object
