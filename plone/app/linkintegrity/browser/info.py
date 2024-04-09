@@ -102,22 +102,7 @@ class DeleteConfirmationInfo(BrowserView):
                 if count:
                     self.breach_count[obj_path] = [count, count_dirs, count_public]
 
-        # De-duplicate targets * sources
-        uid_target = {}
-        uid_sources = defaultdict(list)
-        for result in results:
-            target_uid = result["target"]["uid"]
-            uid_target[target_uid] = result["target"]
-            sources = uid_sources[target_uid]
-            for source in result["sources"]:
-                if source not in sources:
-                    sources.append(source)
-
-        # List of breaches
-        return [
-            {"target": uid_target[uid], "sources": sources}
-            for uid, sources in uid_sources.items()
-        ]
+        return results
 
     def get_breaches_for_item(self, obj=None):
         """Get breaches for one object and its children.
