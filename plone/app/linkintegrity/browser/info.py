@@ -53,7 +53,6 @@ class DeleteConfirmationInfo(BrowserView):
         uids_to_ignore = set()
         uids_visited = set()
         self.breach_count = {}
-        brains_to_delete = []
         path2obj = dict()
         path2brains = dict()
 
@@ -69,7 +68,6 @@ class DeleteConfirmationInfo(BrowserView):
         # determine breaches
         for obj_path, obj in path2obj.items():
             brains_to_delete = path2brains[obj_path]
-            # prepare the collection of breaches for current item
             for brain_to_delete in brains_to_delete:
                 try:
                     obj_to_delete = brain_to_delete.getObject()  # noqa
