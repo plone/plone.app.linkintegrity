@@ -51,7 +51,6 @@ class DeleteConfirmationInfo(BrowserView):
         catalog = getToolByName(self.context, "portal_catalog")
         results = []
         uids_to_ignore = set()
-        uids_visited = set()
         self.breach_count = {}
         path2obj = dict()
         path2brains = dict()
@@ -84,12 +83,8 @@ class DeleteConfirmationInfo(BrowserView):
                     for source in breach["sources"]:
                         # Only add the breach if one the sources is not in the
                         # list of items that are to be deleted.
-                        if (
-                            source["uid"] not in uids_to_ignore
-                            and source["uid"] not in uids_visited
-                        ):
+                        if source["uid"] not in uids_to_ignore:
                             results.append(breach)
-                            uids_visited.add(source["uid"])
                             break
 
             if IFolder.providedBy(obj):

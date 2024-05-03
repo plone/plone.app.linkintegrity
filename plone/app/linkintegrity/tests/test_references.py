@@ -259,3 +259,22 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         breaches = info.get_breaches()
         self.assertEqual(len(breaches), 1)
         self.assertEqual(len(info.get_breaches()[0]["sources"]), 1)
+
+    def test_sources_with_multiple_links_can_appear_multiple_times(self):
+        """Test, if delete confirmation shows one document as source twice
+        if it links to two of our to-be-deleted documents.
+        """
+        from plone.app.linkintegrity.testing import create
+
+        doc1 = self.portal.doc1
+        doc2 = self.portal.doc2
+        # create a document and create links to two existing documents
+        doc5 = create(self.portal, "Document", id="doc5", title="Test Page 5")
+        set_text(doc5, '<a href="doc1">d1</a><a href="doc2">d2</a>')
+
+        doc5_breaches = {r.to_object for r in getOutgoingLinks(doc5)}
+        # the order of breaches is non-deterministic
+        self.assertEqual({doc1, doc2}, doc5_breaches)
+        view = self.portal.restrictedTraverse("@@delete_confirmation_info")
+        # deleting the two referenced document results in two reported breaches
+        self.assertEqual(len(view.get_breaches([doc1, doc2])), 2)
