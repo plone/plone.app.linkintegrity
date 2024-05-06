@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.4 (2024-05-06)
+------------------
+
+Bug fixes:
+
+
+- Improve performance for calculating breaches.
+  [pgrunewald] (#100)
+- Fix breaches reporting for documents with multiple links.
+  [pgrunewald] (#102)
+
+
 4.0.3 (2023-09-29)
 ------------------
 
