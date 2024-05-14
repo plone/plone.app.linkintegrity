@@ -278,3 +278,40 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         view = self.portal.restrictedTraverse("@@delete_confirmation_info")
         # deleting the two referenced document results in two reported breaches
         self.assertEqual(len(view.get_breaches([doc1, doc2])), 2)
+
+    def test_if_breaches_under_excluded_paths_are_ignored(self):
+        """Test, if breaches are ignored under certain conditions."""
+        folder_containing_doc4 = self.portal.folder1
+        doc4 = self.portal.folder1.doc4
+        doc1 = self.portal.doc1
+        set_text(doc4, '<a href="doc1">d1</a>')
+        # sanity check: deleting doc1 causes one breach
+        doc4_breaches = {r.to_object for r in getOutgoingLinks(doc4)}
+        self.assertEqual({doc1}, doc4_breaches)
+        view = self.portal.restrictedTraverse("@@delete_confirmation_info")
+        self.assertEqual(len(view.get_breaches([doc1])), 1)
+        # now check for other ways, that should do not produce any breach:
+        # a) we delete the document that links to doc1
+        self.assertEqual(len(view.get_breaches([doc1, doc4])), 0)
+        # b) we delete the folder, containing the document that links to doc1
+        self.assertEqual(len(view.get_breaches([doc1, folder_containing_doc4])), 0)
+
+    def test_if_same_prefix_and_breaches_work(self):
+        """Verify that the same prefix does not lead to acciddental ignored
+        links / breaches.
+        """
+        from plone.app.linkintegrity.testing import create
+
+        doc1 = self.portal.doc1
+        my_page = create(self.portal, "Document", id="my-page", title="My page")
+        my_page2 = create(
+            self.portal,
+            "Document",
+            id="my-page-being-linked",
+            title="My Page Being Linked",
+        )
+        # Create a link, that might be overlooked since both page' ids start
+        # with the same string ("my-page").
+        set_text(doc1, '<a href="my-page-being-linked">.</a>')
+        view = self.portal.restrictedTraverse("@@delete_confirmation_info")
+        self.assertEqual(len(view.get_breaches([my_page, my_page2])), 1)
