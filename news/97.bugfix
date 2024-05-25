@@ -1,0 +1,2 @@
+Fix potential issue calculating breaches with objects sharing the same prefix
+[pgrunewald]

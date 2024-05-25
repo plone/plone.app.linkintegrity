@@ -64,6 +64,8 @@ class DeleteConfirmationInfo(BrowserView):
             # list of uids that are ignored
             uids_to_ignore.update([i.UID for i in brains_to_delete])
 
+        excluded_paths = set(path2obj.keys())
+
         # determine breaches
         for obj_path, obj in path2obj.items():
             brains_to_delete = path2brains[obj_path]
@@ -77,7 +79,7 @@ class DeleteConfirmationInfo(BrowserView):
                     continue
                 # look into potential breach
                 breach = self.check_object(
-                    obj=obj_to_delete, excluded_paths=set(path2obj.keys())
+                    obj=obj_to_delete, excluded_paths=excluded_paths
                 )
                 if breach:
                     for source in breach["sources"]:
@@ -134,7 +136,8 @@ class DeleteConfirmationInfo(BrowserView):
                 continue
             if any(
                 [
-                    source_path.startswith(excluded_path)
+                    source_path == excluded_path
+                    or source_path.startswith(excluded_path + "/")
                     for excluded_path in excluded_paths
                 ]
             ):
