@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.5 (2024-05-30)
+------------------
+
+Bug fixes:
+
+
+- Fix potential issue calculating breaches with objects sharing the same prefix
+  [pgrunewald] (#97)
+
+
 4.0.4 (2024-05-06)
 ------------------
 
