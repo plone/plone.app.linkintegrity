@@ -1,6 +1,4 @@
-from plone.app.linkintegrity.testing import (  # noqa: E501
-    PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING,
-)
+from plone.app.linkintegrity.testing import PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.textfield import RichTextValue
@@ -11,7 +9,7 @@ import unittest
 
 class TestCopyPaste(unittest.TestCase):
 
-    layer = PLONE_APP_LINKINTEGRITY_DX_INTEGRATION_TESTING
+    layer = PLONE_APP_LINKINTEGRITY_INTEGRATION_TESTING
 
     def setUp(self):
         self.portal = self.layer["portal"]
