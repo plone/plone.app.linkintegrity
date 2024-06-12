@@ -8,6 +8,189 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.5 (2024-05-30)
+------------------
+
+Bug fixes:
+
+
+- Fix potential issue calculating breaches with objects sharing the same prefix
+  [pgrunewald] (#97)
+
+
+4.0.4 (2024-05-06)
+------------------
+
+Bug fixes:
+
+
+- Improve performance for calculating breaches.
+  [pgrunewald] (#100)
+- Fix breaches reporting for documents with multiple links.
+  [pgrunewald] (#102)
+
+
+4.0.3 (2023-09-29)
+------------------
+
+Bug fixes:
+
+
+- Report sources once per breach in delete_confirmation_info.
+  [jaroel] (#95)
+
+
+4.0.2 (2023-08-31)
+------------------
+
+Bug fixes:
+
+
+- Remove outgoing 'isReferencing' RelationValues from catalog on deleting content item.
+  [ksuess] (#93)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (7723aeaf)
+
+
+4.0.1 (2023-04-14)
+------------------
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (5623f8b3)
+
+
+4.0.0 (2023-03-13)
+------------------
+
+Breaking changes:
+
+
+- Drop compatibility for Plone 5.2.  Support Plone 6 only.
+  [maurits] (#60)
+
+
+Bug fixes:
+
+
+- Fixed test layer setup.
+  Created content was bleeding into layers from other packages.
+  [maurits] (#846)
+
+
+3.6.1 (2022-04-28)
+------------------
+
+Bug fixes:
+
+
+- Test fix: only load plone.app.contenttypes migration layer on Python 2.
+  [maurits] (#641)
+
+
+3.6.0 (2022-02-23)
+------------------
+
+New features:
+
+
+- Track link integrity of referenced PDFs and other site objects in IFRAME SRC references. (#84)
+
+
+3.5.0 (2021-12-29)
+------------------
+
+New features:
+
+
+- Track integrity of video and audio files in HTML source tags. (#77)
+
+
+3.4.1 (2021-03-02)
+------------------
+
+Bug fixes:
+
+
+- Use base64.decodebytes instead of decodestring when possible.
+  Fixes Python 3.9 compatibility in the tests.
+  [maurits] (#81)
+
+
+3.4.0 (2021-02-23)
+------------------
+
+New features:
+
+
+- Drop Plone 5.1 support, due to possible incompatibility with older plone.app.uuid.
+  [maurits] (#79)
+
+
+Bug fixes:
+
+
+- Fix Unauthorized exception when you edit a page that links to another page that you are not allowed to see.
+  Fixes `issue 79 <https://github.com/plone/plone.app.linkintegrity/issues/79>`_.
+  [maurits] (#79)
+
+
+3.3.14 (2020-09-07)
+-------------------
+
+Bug fixes:
+
+
+- Fixed deprecation warning for ComponentLookupError.
+  [maurits] (#3130)
+
+
+3.3.13 (2020-04-20)
+-------------------
+
+Bug fixes:
+
+
+- Minor packaging updates. (#1)
+
+
+3.3.12 (2019-10-12)
+-------------------
+
+Bug fixes:
+
+
+- Explicitly load zcml of dependencies, instead of using ``includeDependencies``.
+  [maurits] (#2952)
+
+
+3.3.11 (2019-06-27)
+-------------------
+
+Bug fixes:
+
+
+- Add missing i18n:translate calls
+  [erral] (#73)
+
+
+3.3.10 (2019-06-19)
+-------------------
+
+Bug fixes:
+
+
+- Accept to have a broken object w/o aq_parent in test.
+  [jensens] (#72)
+
+
 3.3.9 (2019-05-01)
 ------------------
 
@@ -414,7 +597,7 @@ New:
   for fields which have been added via schema extension.
   [malthe]
 
-- Support resolveuid/UID references explicitely, by parsing and resolving
+- Support resolveuid/UID references explicitly, by parsing and resolving
   these ourselves instead of relying on a view or script (which doesn't work).
   This fixes linkintegrity for sites with link-by-uid turned on.
   This closes https://dev.plone.org/ticket/12104

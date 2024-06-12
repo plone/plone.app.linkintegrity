@@ -2,56 +2,51 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    xmlns:zcml="http://namespaces.zope.org/zcml">
+    >
 
-  <includeDependencies package="." />
-  <include package="Products.CMFCore" file="permissions.zcml" />
+  <include package="plone.app.intid" />
+  <include package="plone.app.relationfield" />
+  <include
+      package="Products.CMFCore"
+      file="permissions.zcml"
+      />
 
   <include package=".browser" />
 
-  <adapter factory=".retriever.ATGeneral" />
   <adapter factory=".retriever.DXGeneral" />
 
-  <configure zcml:condition="installed Products.Archetypes">
-    <subscriber
-        for="Products.Archetypes.interfaces.IBaseObject
-             OFS.interfaces.IObjectClonedEvent"
-        handler=".handlers.modifiedContent" />
+  <subscriber
+      for="plone.app.relationfield.interfaces.IDexterityHasRelations
+           zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+      handler=".handlers.modifiedContent"
+      />
 
-    <subscriber
-        for="Products.Archetypes.interfaces.IBaseObject
-             zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-        handler=".handlers.modifiedContent" />
+  <subscriber
+      for="plone.app.relationfield.interfaces.IDexterityHasRelations
+           zope.lifecycleevent.interfaces.IObjectAddedEvent"
+      handler=".handlers.modifiedContent"
+      />
 
-    <subscriber
-        for="Products.Archetypes.interfaces.IBaseObject
-             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-        handler=".handlers.modifiedContent" />
-  </configure>
+  <subscriber
+      for="plone.app.relationfield.interfaces.IDexterityHasRelations
+           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler=".handlers.modifiedContent"
+      />
 
-  <configure zcml:condition="installed plone.dexterity">
-    <subscriber
-        for="plone.app.relationfield.interfaces.IDexterityHasRelations
-             zope.lifecycleevent.interfaces.IObjectCopiedEvent"
-        handler=".handlers.modifiedContent" />
-
-    <subscriber
-        for="plone.app.relationfield.interfaces.IDexterityHasRelations
-             zope.lifecycleevent.interfaces.IObjectAddedEvent"
-        handler=".handlers.modifiedContent" />
-
-    <subscriber
-        for="plone.app.relationfield.interfaces.IDexterityHasRelations
-             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-        handler=".handlers.modifiedContent" />
-  </configure>
+  <!-- Not zope.lifecycleevent.interfaces.IObjectRemovedEvent!
+    That's too late to grep the intId. -->
+  <subscriber
+      for="plone.app.relationfield.interfaces.IDexterityHasRelations
+           OFS.interfaces.IObjectWillBeRemovedEvent"
+      handler=".handlers.removedContent"
+      />
 
   <genericsetup:registerProfile
       name="default"
       title="plone.app.linkintegrity"
-      directory="profiles/default"
       description="Installs the plone.app.linkintegrity add-on."
       provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/default"
       />
 
 </configure>

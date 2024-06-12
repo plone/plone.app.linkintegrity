@@ -1,54 +1,60 @@
-# -*- coding: utf-8 -*-
-from .compat import IBaseObject
 from Acquisition import aq_get
 from Acquisition import aq_parent
 from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.linkintegrity.utils import ensure_intid
 from plone.app.linkintegrity.utils import referencedRelationship
-from plone.app.uuid.utils import uuidToObject
+from plone.app.uuid.utils import uuidToCatalogBrain
+from plone.base.interfaces import IEditingSchema
+from plone.base.interfaces import IPloneSiteRoot
 from plone.dexterity.interfaces import IDexterityContent
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IEditingSchema
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from six.moves.urllib.parse import unquote
-from six.moves.urllib.parse import urlsplit
+from urllib.parse import unquote
+from urllib.parse import urlsplit
 from z3c.relationfield import RelationValue
 from z3c.relationfield.event import _setRelation
 from zc.relation.interfaces import ICatalog
 from zExceptions import NotFound
 from ZODB.POSException import ConflictError
 from zope.component import getUtility
-from zope.component.interfaces import ComponentLookupError
+from zope.interface.interfaces import ComponentLookupError
 from zope.intid.interfaces import IIntIds
 from zope.publisher.interfaces import NotFound as ztkNotFound
 
 import logging
-import six
+
 
 logger = logging.getLogger(__name__)
 
 
 def findObject(base, path):
-    """ traverse to given path and find the upmost object """
-    if path.startswith('/'):
+    """traverse to given path and find the upmost object"""
+    if path.startswith("/"):
         # Make an absolute path relative to the portal root
-        obj = getToolByName(base, 'portal_url').getPortalObject()
-        portal_path = obj.absolute_url_path() + '/'
+        obj = getToolByName(base, "portal_url").getPortalObject()
+        portal_path = obj.absolute_url_path() + "/"
         if path.startswith(portal_path):
-            path = path[len(portal_path):]
+            path = path[len(portal_path) :]
     else:
-        obj = aq_parent(base)   # relative urls start at the parent...
+        obj = aq_parent(base)  # relative urls start at the parent...
 
-    components = path.split('/')
+    components = path.split("/")
 
-    # Support resolveuid/UID paths explicitely, without relying
+    # Support resolveuid/UID paths explicitly, without relying
     # on a view or skinscript to do this for us.
-    if 'resolveuid' in components:
-        uid = components[components.index('resolveuid') + 1]
-        obj = uuidToObject(uid)
-        if obj:
-            return obj, path
+    if "resolveuid" in components:
+        uid = components[components.index("resolveuid") + 1]
+        # This may be a link to a page that once was published but not anymore,
+        # or the current editor does not have View permission.
+        # In that case uuidToObject(uid) could fail with Unauthorized.
+        brain = uuidToCatalogBrain(uid)
+        if brain is not None:
+            # Note: _unrestrictedGetObject starts with an underscore,
+            # but it is documented in ZCatalog.interfaces,
+            # so should be safe to rely on.
+            obj = brain._unrestrictedGetObject()
+            if obj:
+                return obj, path
 
     while components:
         child_id = unquote(components[0])
@@ -56,24 +62,26 @@ def findObject(base, path):
             try:
                 child = obj.unrestrictedTraverse(child_id)
             except AttributeError:
-                request = aq_get(obj, 'REQUEST')
+                request = aq_get(obj, "REQUEST")
                 child = request.traverseName(obj, child_id)
         except ConflictError:
             raise
-        except (AttributeError, KeyError,
-                NotFound, ztkNotFound, UnicodeEncodeError):
+        except (AttributeError, KeyError, NotFound, ztkNotFound, UnicodeEncodeError):
             return None, None
-        if not IDexterityContent.providedBy(child) and \
-                not IBaseObject.providedBy(child) and \
-                not IPloneSiteRoot.providedBy(child):
+        if not IDexterityContent.providedBy(child) and not IPloneSiteRoot.providedBy(
+            child
+        ):
             break
         obj = child
         components.pop(0)
-    return obj, '/'.join(components)
+    return obj, "/".join(components)
 
 
 def getObjectsFromLinks(base, links):
-    """ determine actual objects refered to by given links """
+    """Determine actual objects referred to by given links.
+
+    return set of RelationValue
+    """
     intids = getUtility(IIntIds)
     objects = set()
     url = base.absolute_url()
@@ -82,10 +90,6 @@ def getObjectsFromLinks(base, links):
         s, h, path, q, f = urlsplit(link)
         # relative or local url
         if (not s and not h) or (s == scheme and h == host):
-            # Paths should always be strings
-            if six.PY2 and isinstance(path, six.text_type):
-                path = path.encode('utf-8')
-
             obj, extra = findObject(base, path)
             if obj and not IPloneSiteRoot.providedBy(obj):
                 objid = ensure_intid(obj, intids)
@@ -110,6 +114,24 @@ def modifiedContent(obj, event):
         updateReferences(obj, refs)
 
 
+def removedContent(obj, event):
+    if not check_linkintegrity_dependencies(obj):
+        return
+
+    intids = getUtility(IIntIds)
+    try:
+        int_id = intids.getId(obj)
+    except KeyError:
+        return
+
+    catalog = getUtility(ICatalog)
+    rels = catalog.findRelations(
+        {"from_id": int_id, "from_attribute": referencedRelationship}
+    )
+    for rel in list(rels):
+        catalog.unindex(rel)
+
+
 # BBB
 modifiedArchetype = modifiedContent
 modifiedDexterity = modifiedContent
@@ -127,9 +149,12 @@ def updateReferences(obj, refs):
         return
     catalog = getUtility(ICatalog)
     # unpack the rels before deleting
-    old_rels = [i for i in catalog.findRelations(
-        {'from_id': int_id,
-         'from_attribute': referencedRelationship})]
+    old_rels = [
+        i
+        for i in catalog.findRelations(
+            {"from_id": int_id, "from_attribute": referencedRelationship}
+        )
+    ]
     for old_rel in old_rels:
         catalog.unindex(old_rel)
     for ref in refs:
@@ -139,12 +164,12 @@ def updateReferences(obj, refs):
 def check_linkintegrity_dependencies(obj):
     try:
         reg = getUtility(IRegistry)
-        editing_settings = reg.forInterface(IEditingSchema, prefix='plone')
+        editing_settings = reg.forInterface(IEditingSchema, prefix="plone")
     except (ComponentLookupError, KeyError):
         return False
     if not editing_settings.enable_link_integrity_checks:
         return False
-    if not getToolByName(obj, 'portal_url', None):
+    if not getToolByName(obj, "portal_url", None):
         # `getObjectFromLinks` is not possible without access
         # to `portal_url`
         return False

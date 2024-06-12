@@ -1,20 +1,21 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser">
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
 
   <browser:page
-       for="*"
-       name="delete_confirmation_info"
-       class=".info.DeleteConfirmationInfo"
-       permission="zope2.Public"
-       />
+      name="delete_confirmation_info"
+      for="*"
+      class=".info.DeleteConfirmationInfo"
+      permission="zope2.Public"
+      />
 
   <browser:page
-        name="updateLinkIntegrityInformation"
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-        template="update.pt"
-        class=".update.UpdateView"
-        permission="cmf.ManagePortal"
-        />
+      name="updateLinkIntegrityInformation"
+      for="plone.base.interfaces.IPloneSiteRoot"
+      class=".update.UpdateView"
+      template="update.pt"
+      permission="cmf.ManagePortal"
+      />
 
 </configure>
