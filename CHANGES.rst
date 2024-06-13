@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.6 (2024-06-13)
+------------------
+
+Tests
+
+
+- Add regression-test for broken copy&paste. See https://github.com/plone/Products.CMFPlone/issues/2866
+  [pbauer] (#71)
+
+
 4.0.5 (2024-05-30)
 ------------------
 
