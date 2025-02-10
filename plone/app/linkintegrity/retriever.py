@@ -1,5 +1,4 @@
-"""Link Integrity - link retriever methods.
-"""
+"""Link Integrity - link retriever methods."""
 
 from plone.app.linkintegrity.interfaces import IRetriever
 from plone.app.linkintegrity.parser import extractLinks
