@@ -1,4 +1,5 @@
 from plone.app.linkintegrity import testing
+from plone.app.linkintegrity.browser.info import DeleteConfirmationInfo
 from plone.app.linkintegrity.parser import extractLinks
 from plone.app.linkintegrity.tests.utils import set_text
 from plone.app.linkintegrity.utils import getIncomingLinks
@@ -26,6 +27,7 @@ class ReferenceGenerationTestCase(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
 
     def _set_related_items(self, obj, items):
         assert IRelatedItems.providedBy(obj)
@@ -68,12 +70,14 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         self.assertTrue(checkPermission("View", img))
         self.assertTrue(checkPermission("Access contents information", img))
 
-        # The warning is shown.
+        # The API reports the breach; layout concerns (HTML rendering) are
+        # tested in plone.app.layout.
         self.assertTrue(hasOutgoingLinks(doc))
-        view = img.restrictedTraverse("delete_confirmation")
-        results = view()
-        self.assertIn("Potential link breakage", results)
-        self.assertIn("The item is not accessible.", results)
+        view = DeleteConfirmationInfo(img, self.request)
+        breaches = view.get_breaches()
+        self.assertEqual(len(breaches), 1)
+        # The linking source is not accessible to the current user (member)
+        self.assertFalse(breaches[0]["sources"][0]["accessible"])
 
         # delete linked item and check if the source still has the relation
 
