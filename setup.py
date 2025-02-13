@@ -18,7 +18,7 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
         "Framework :: Plone",
-        "Framework :: Plone :: 6.2",
+        "Framework :: Plone :: 6.1",
         "Framework :: Plone :: Core",
         "Framework :: Zope :: 5",
         "Intended Audience :: Other Audience",
