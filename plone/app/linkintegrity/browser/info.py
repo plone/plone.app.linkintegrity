@@ -1,15 +1,11 @@
 from Acquisition import aq_inner
 from OFS.interfaces import IFolder
 from plone.app.linkintegrity.utils import getIncomingLinks
-from plone.app.linkintegrity.utils import linkintegrity_enabled
-from plone.base import PloneMessageFactory as _
-from plone.base.interfaces import IPloneSiteRoot
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.i18n import translate
 
 import logging
@@ -24,7 +20,9 @@ class DeleteConfirmationInfo(BrowserView):
 
     def __call__(self, items=None):
         if self.template is None:
-            raise ValueError("Don't call this.  Override the 'DeleteConfirmationInfo' view from plone.app.layout.views.linkintegrity")
+            raise ValueError(
+                "Don't call this.  Override the 'DeleteConfirmationInfo' view from plone.app.layout.views.linkintegrity"
+            )
 
     def get_breaches(self, items=None):
         """Return breaches for multiple items.
