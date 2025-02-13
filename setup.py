@@ -44,7 +44,6 @@ setup(
         "plone.base",
         "plone.dexterity",
         "Products.GenericSetup",
-        "Products.statusmessages",
         "plone.app.textfield",
         "plone.app.uuid",
         "plone.registry",
