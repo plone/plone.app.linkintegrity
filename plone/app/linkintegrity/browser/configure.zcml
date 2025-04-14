@@ -10,12 +10,4 @@
       permission="zope2.Public"
       />
 
-  <browser:page
-      name="updateLinkIntegrityInformation"
-      for="plone.base.interfaces.IPloneSiteRoot"
-      class=".update.UpdateView"
-      template="update.pt"
-      permission="cmf.ManagePortal"
-      />
-
 </configure>

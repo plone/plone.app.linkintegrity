@@ -1,15 +1,11 @@
 from Acquisition import aq_inner
 from OFS.interfaces import IFolder
 from plone.app.linkintegrity.utils import getIncomingLinks
-from plone.app.linkintegrity.utils import linkintegrity_enabled
-from plone.base import PloneMessageFactory as _
-from plone.base.interfaces import IPloneSiteRoot
 from plone.uuid.interfaces import IUUID
 from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.i18n import translate
 
 import logging
@@ -20,25 +16,13 @@ logger = logging.getLogger(__name__)
 
 
 class DeleteConfirmationInfo(BrowserView):
-    template = ViewPageTemplateFile("delete_confirmation_info.pt")
-    breach_count = {}
-
-    def __init__(self, context, request):
-        self.linkintegrity_enabled = linkintegrity_enabled()
-        self.context = context
-        self.request = request
+    template = None
 
     def __call__(self, items=None):
-        if not self.linkintegrity_enabled:
-            return
-        if items is None:
-            if IPloneSiteRoot.providedBy(self.context):
-                # Checking the portal for breaches makes no sense.
-                return
-            else:
-                items = [self.context]
-        self.breaches = self.get_breaches(items)
-        return self.template()
+        if self.template is None:
+            raise ValueError(
+                "Don't call this.  Override the 'DeleteConfirmationInfo' view from plone.app.layout.views.linkintegrity"
+            )
 
     def get_breaches(self, items=None):
         """Return breaches for multiple items.
@@ -179,6 +163,3 @@ class DeleteConfirmationInfo(BrowserView):
 
     def is_accessible(self, obj):
         return _checkPermission(AccessContentsInformation, obj)
-
-    def objects(self):
-        return [_("Objects in all"), _("Folders"), _("Published objects")]
