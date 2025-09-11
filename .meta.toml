@@ -3,4 +3,7 @@
 # See the inline comments on how to expand/tweak this configuration file
 [meta]
 template = "default"
-commit-id = "319ac5d9"
+commit-id = "2.0.1.dev0"
+
+[tox]
+test_matrix = { "6.2" = ["3.13", "3.12", "3.11", "3.10"] }
