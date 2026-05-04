@@ -5,7 +5,6 @@ from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.keyreference.interfaces import NotYet
 
-
 referencedRelationship = "isReferencing"
 
 

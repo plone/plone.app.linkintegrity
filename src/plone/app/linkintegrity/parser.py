@@ -1,6 +1,5 @@
 from html.parser import HTMLParser
 
-
 TAG_ATTRS_TO_TRACK = {
     # The humble hyperlink.
     "a": ["href"],
