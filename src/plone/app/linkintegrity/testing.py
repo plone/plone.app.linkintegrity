@@ -13,7 +13,6 @@ from zope.configuration import xmlconfig
 
 import io
 
-
 B64_DATA = b"R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
 GIF = io.BytesIO(decodebytes(B64_DATA))
 GIF.filename = "sample.gif"
