@@ -18,10 +18,12 @@ class DeleteConfirmationInfo(BrowserView):
     template = None
 
     def __call__(self, items=None):
-        if self.template is None:
-            raise ValueError(
-                "Don't call this.  Override the 'DeleteConfirmationInfo' view from plone.app.layout.views.linkintegrity"
-            )
+        # Base implementation returns an empty string so the view is safe
+        # to call from templates (plone.app.content) even when
+        # plone.app.layout is not installed (e.g. Volto / API-only setups).
+        # plone.app.layout registers an IPloneAppLayoutLayer-scoped override
+        # that renders the full HTML confirmation snippet.
+        return ""
 
     def get_breaches(self, items=None):
         """Return breaches for multiple items.
