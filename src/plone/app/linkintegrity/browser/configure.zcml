@@ -3,19 +3,17 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     >
 
+  <!-- Global (layer-less) registration so API consumers (plone.restapi,
+       plone.api) can always traverse to @@delete_confirmation_info and
+       call get_breaches() without needing plone.app.layout.
+       __call__ returns "" so the view is safe to embed in templates too.
+       plone.app.layout registers an override on IPloneAppLayoutLayer that
+       renders the full HTML confirmation snippet. -->
   <browser:page
       name="delete_confirmation_info"
       for="*"
       class=".info.DeleteConfirmationInfo"
       permission="zope2.Public"
-      />
-
-  <browser:page
-      name="updateLinkIntegrityInformation"
-      for="plone.base.interfaces.IPloneSiteRoot"
-      class=".update.UpdateView"
-      template="update.pt"
-      permission="cmf.ManagePortal"
       />
 
 </configure>
