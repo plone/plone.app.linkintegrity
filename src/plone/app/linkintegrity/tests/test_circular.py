@@ -84,11 +84,7 @@ class CircularReferencesTestCase(unittest.TestCase):
         self.assertEqual(len(view.get_breaches([doc1])), 1)
         self.assertEqual(len(view.get_breaches([doc1, folder1])), 0)
 
-        view = folder1.restrictedTraverse("delete_confirmation")
-        self.assertIn("Potential link breakage", view())
-        view = folder1.restrictedTraverse("delete_confirmation_info")
-        self.assertIn("Potential link breakage", view())
-        view = doc4.restrictedTraverse("delete_confirmation")
-        self.assertNotIn("Potential link breakage", view())
-        view = doc4.restrictedTraverse("delete_confirmation_info")
-        self.assertNotIn("Potential link breakage", view())
+        # HTML rendering is a layout concern (plone.app.layout); test the API:
+        view = DeleteConfirmationInfo(self.portal, self.request)
+        self.assertGreater(len(view.get_breaches([folder1])), 0)
+        self.assertEqual(len(view.get_breaches([doc4])), 0)

@@ -9,7 +9,6 @@ from Products.CMFCore.permissions import AccessContentsInformation
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.i18n import translate
 
 import logging
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class DeleteConfirmationInfo(BrowserView):
-    template = ViewPageTemplateFile("delete_confirmation_info.pt")
+    template = None
     breach_count = {}
 
     def __init__(self, context, request):
@@ -37,7 +36,9 @@ class DeleteConfirmationInfo(BrowserView):
             else:
                 items = [self.context]
         self.breaches = self.get_breaches(items)
-        return self.template()
+        if self.template:
+            return self.template()
+        return ""
 
     def get_breaches(self, items=None):
         """Return breaches for multiple items.
