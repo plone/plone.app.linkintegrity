@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.0a1 (2026-06-15)
+--------------------
+
+New features:
+
+
+- Move Classic-UI template/view code to plone.app.layout
+  [petschki] (#3953)
+
+
 5.0.0 (2026-05-16)
 ------------------
 
