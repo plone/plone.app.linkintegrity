@@ -175,6 +175,17 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         self.assertEqual(len(list(getOutgoingLinks(doc1))), 0)
         self.assertEqual([link.to_object for link in getOutgoingLinks(doc3)], [doc1])
 
+    def test_links_to_the_same_object_create_one_reference(self):
+        doc1 = self.portal.doc1
+        img1 = self.portal.image1
+        set_text(
+            doc1,
+            '<picture><source srcset="image1/@@images/image/preview.avif" />'
+            '<img src="image1/@@images/image/preview" /></picture>'
+            '<a href="image1">image</a>',
+        )
+        self.assertEqual([link.to_object for link in getOutgoingLinks(doc1)], [img1])
+
     def test_unicode_links(self):
         doc1 = self.portal.doc1
 
