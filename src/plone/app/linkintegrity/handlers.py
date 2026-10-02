@@ -82,7 +82,8 @@ def getObjectsFromLinks(base, links):
     return set of RelationValue
     """
     intids = getUtility(IIntIds)
-    objects = set()
+    # RelationValue hashes by identity, so a set would not drop duplicates.
+    objids = set()
     url = base.absolute_url()
     scheme, host, path, query, frag = urlsplit(url)
     for link in links:
@@ -97,9 +98,8 @@ def getObjectsFromLinks(base, links):
                     # attached yet and we will need to get links
                     # at a later time when the object has an intid
                     continue
-                relation = RelationValue(objid)
-                objects.add(relation)
-    return objects
+                objids.add(objid)
+    return {RelationValue(objid) for objid in objids}
 
 
 def modifiedContent(obj, event):
