@@ -1,0 +1,2 @@
+Create one reference per linked object, not one per link, e.g. for a `<picture>` whose sources and `<img>` all point to the same image.
+@MrTango
