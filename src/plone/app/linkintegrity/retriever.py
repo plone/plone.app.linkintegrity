@@ -27,7 +27,7 @@ class DXGeneral:
         additional_schema = getAdditionalSchemata(
             context=self.context, portal_type=self.context.portal_type
         )
-        schemas = [i for i in additional_schema] + [schema]
+        schemas = [*additional_schema] + [schema]
         links = set()
         for schema in schemas:
             for name, field in getFieldsInOrder(schema):
