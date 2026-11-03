@@ -32,8 +32,7 @@ def findObject(base, path):
         # Make an absolute path relative to the portal root
         obj = getToolByName(base, "portal_url").getPortalObject()
         portal_path = obj.absolute_url_path() + "/"
-        if path.startswith(portal_path):
-            path = path[len(portal_path) :]
+        path = path.removeprefix(portal_path)
     else:
         obj = aq_parent(base)  # relative urls start at the parent...
 
@@ -149,8 +148,7 @@ def updateReferences(obj, refs):
     catalog = getUtility(ICatalog)
     # unpack the rels before deleting
     old_rels = [
-        i
-        for i in catalog.findRelations(
+        *catalog.findRelations(
             {"from_id": int_id, "from_attribute": referencedRelationship}
         )
     ]

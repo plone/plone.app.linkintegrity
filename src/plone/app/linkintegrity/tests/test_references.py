@@ -195,7 +195,7 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         # be any references added.
         set_text(doc1, '<a href="ö?foo=bar&baz=bam">bug</a>')
 
-        self.assertEqual([link for link in getOutgoingLinks(doc1)], [])
+        self.assertEqual([*getOutgoingLinks(doc1)], [])
 
     def test_reference_orthogonality(self):
         doc = self.portal.doc1
@@ -203,10 +203,10 @@ class ReferenceGenerationTestCase(unittest.TestCase):
         tag = img.restrictedTraverse("@@images").tag()
 
         # This tests the behavior when other references already exist.
-        self.assertEqual([link for link in getOutgoingLinks(doc)], [])
-        self.assertEqual([link for link in getIncomingLinks(doc)], [])
-        self.assertEqual([link for link in getOutgoingLinks(img)], [])
-        self.assertEqual([link for link in getOutgoingLinks(img)], [])
+        self.assertEqual([*getOutgoingLinks(doc)], [])
+        self.assertEqual([*getIncomingLinks(doc)], [])
+        self.assertEqual([*getOutgoingLinks(img)], [])
+        self.assertEqual([*getOutgoingLinks(img)], [])
 
         # Then establish a reference between the document and image as
         # a related item:
