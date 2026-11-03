@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.0a2 (2026-11-03)
+--------------------
+
+Bug fixes:
+
+
+- Create one reference per linked object, not one per link, e.g. for a `<picture>` whose sources and `<img>` all point to the same image.
+  @MrTango
+
+
+Internal:
+
+
+- Move package metadata from ``setup.py`` to ``pyproject.toml``.
+  [plone devs]
+
+
 6.0.0a1 (2026-06-15)
 --------------------
 
